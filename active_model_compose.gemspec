@@ -28,5 +28,7 @@ Gem::Specification.new do |spec|
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
+  spec.metadata['changelog_uri'] = 'https://github.com/hamajyotan/active_record_compose/blob/main/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = 'https://github.com/hamajyotan/active_record_compose'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
