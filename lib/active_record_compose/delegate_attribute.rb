@@ -1,6 +1,39 @@
 # frozen_string_literal: true
 
 module ActiveRecordCompose
+  # = Delegate \Attribute
+  #
+  # It provides a macro description that expresses access to the attributes of the AR model through delegation.
+  #
+  #   class AccountRegistration < ActiveRecordCompose::Model
+  #     def initialize(account, attributes = {})
+  #       @account = account
+  #       super(attributes)
+  #       models.push(account)
+  #     end
+  #
+  #     attribute :original_attribute, :string, default: 'qux'
+  #
+  #     # like a `delegate :name, :name=, to: :account`
+  #     delegate_attribute :name, to: :account
+  #
+  #     private
+  #
+  #     attr_reader :account
+  #   end
+  #
+  #   account = Account.new
+  #   account.name = 'foo'
+  #
+  #   registration = AccountRegistration.new(account)
+  #   registration.name  #=> 'foo'  # delegate to account#name
+  #
+  #   registration.name = 'bar'  # delegate to account#name=
+  #   account.name  #=> 'bar'
+  #
+  #   # Attributes defined in delegate_attribute will be included in the original `#attributes`.
+  #   registration.attributes  #=> { 'original_attribute' => 'qux', 'name' => 'bar' }
+  #
   module DelegateAttribute
     extend ActiveSupport::Concern
 
