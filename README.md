@@ -199,7 +199,7 @@ It provides a macro description that expresses access to the attributes of the A
 
 ```ruby
 class AccountRegistration < ActiveRecordCompose::Model
-  def initialize(account)
+  def initialize(account, attributes = {})
     @account = account
     super(attributes)
     models.push(account)
