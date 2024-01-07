@@ -32,6 +32,31 @@ module ActiveRecordCompose
 
     def save! = save || raise(error_class_on_save_error.new('Failed to save the model.', self))
 
+    # Behavior is same to `#save`, but `before_create` and `after_create` hooks fires.
+    #
+    #   class ComposedModel < ActiveRecordCompose::Model
+    #     # ...
+    #
+    #     before_save { puts 'before_save called!' }
+    #     before_create { puts 'before_create called!' }
+    #     before_update { puts 'before_update called!' }
+    #     after_save { puts 'after_save called!' }
+    #     after_create { puts 'after_create called!' }
+    #     after_update { puts 'after_update called!' }
+    #   end
+    #
+    #   model = ComposedModel.new
+    #
+    #   model.save
+    #   # before_save called!
+    #   # after_save called!
+    #
+    #   model.create
+    #   # before_save called!
+    #   # before_create called!
+    #   # after_create called!
+    #   # after_save called!
+    #
     def create(attributes = {})
       assign_attributes(attributes)
       return false if invalid?
@@ -39,10 +64,37 @@ module ActiveRecordCompose
       save_in_transaction { run_callbacks(:save) { run_callbacks(:create) { save_models } } }
     end
 
+    # Behavior is same to `#create`, but raises an exception prematurely on failure.
+    #
     def create!(attributes = {})
       create(attributes) || raise(error_class_on_save_error.new('Failed to create the model.', self))
     end
 
+    # Behavior is same to `#save`, but `before_update` and `after_update` hooks fires.
+    #
+    #   class ComposedModel < ActiveRecordCompose::Model
+    #     # ...
+    #
+    #     before_save { puts 'before_save called!' }
+    #     before_create { puts 'before_create called!' }
+    #     before_update { puts 'before_update called!' }
+    #     after_save { puts 'after_save called!' }
+    #     after_create { puts 'after_create called!' }
+    #     after_update { puts 'after_update called!' }
+    #   end
+    #
+    #   model = ComposedModel.new
+    #
+    #   model.save
+    #   # before_save called!
+    #   # after_save called!
+    #
+    #   model.update
+    #   # before_save called!
+    #   # before_update called!
+    #   # after_update called!
+    #   # after_save called!
+    #
     def update(attributes = {})
       assign_attributes(attributes)
       return false if invalid?
@@ -50,6 +102,8 @@ module ActiveRecordCompose
       save_in_transaction { run_callbacks(:save) { run_callbacks(:update) { save_models } } }
     end
 
+    # Behavior is same to `#update`, but raises an exception prematurely on failure.
+    #
     def update!(attributes = {})
       update(attributes) || raise(error_class_on_save_error.new('Failed to update the model.', self))
     end
