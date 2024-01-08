@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+- fix and add doc.
+- add development dependency
+- avoid instance variable name conflict (`@models` to `@__models`)
+
 ## [0.1.1] - 2024-01-08
 
 - fix 0.1.0 release date.
