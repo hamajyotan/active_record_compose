@@ -37,6 +37,19 @@ module ActiveRecordCompose
       self
     end
 
+    # Returns true if the element exists.
+    #
+    # @return [Boolean] Returns true if the element exists
+    def empty? = models.empty?
+
+    # Set to empty.
+    #
+    # @return [InnerModelCollection] self
+    def clear
+      models.clear
+      self
+    end
+
     # Enumerates model objects, but it should be noted that
     # application developers are not expected to use this interface.
     #
