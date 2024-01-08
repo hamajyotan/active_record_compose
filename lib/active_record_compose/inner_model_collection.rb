@@ -6,36 +6,43 @@ module ActiveRecordCompose
   class InnerModelCollection
     include Enumerable
 
-    def initialize
-      @inner_models = []
-    end
-
+    # @return [Enumerator] when not block given.
+    # @return [InnerModelCollection] self
     def each
       return enum_for(:each) unless block_given?
 
-      inner_models.each { yield _1 }
+      models.each { yield _1 }
       self
     end
 
-    def <<(inner_model)
-      inner_models << wrap(inner_model, context: :save)
+    # Appends model to collection.
+    #
+    # @param model [Object] the model instance
+    # @param context [Symbol] :save or :destroy
+    # @return [InnerModelCollection] self
+    def <<(model)
+      models << wrap(model, context: :save)
       self
     end
 
-    def push(inner_model, context: :save)
-      inner_models << wrap(inner_model, context:)
+    # Appends model to collection.
+    #
+    # @param model [Object] the model instance
+    # @return [InnerModelCollection] self
+    def push(model, context: :save)
+      models << wrap(model, context:)
       self
     end
 
     private
 
-    attr_reader :inner_models
+    def models = @models ||= []
 
-    def wrap(inner_model, context:)
-      if inner_model.is_a?(ActiveRecordCompose::InnerModel)
-        inner_model
+    def wrap(model, context:)
+      if model.is_a?(ActiveRecordCompose::InnerModel)
+        model
       else
-        ActiveRecordCompose::InnerModel.new(inner_model, context:)
+        ActiveRecordCompose::InnerModel.new(model, context:)
       end
     end
   end
