@@ -2,39 +2,46 @@
 
 module ActiveRecordCompose
   class InnerModel
-    def initialize(inner_model, context: :save)
-      @inner_model = inner_model
+    # @param model [Object] the model instance.
+    # @param context [Symbol] :save or :destroy
+    def initialize(model, context: :save)
+      @model = model
       @context = context
     end
 
-    delegate :errors, to: :inner_model
+    delegate :errors, to: :model
 
+    # @return [Symbol] :save or :destroy
     def context
-      @context.respond_to?(:call) ? @context.call(inner_model) : @context
+      ret = @context.respond_to?(:call) ? @context.call(model) : @context
+      ret.presence_in(%i[save destroy]) || :save
     end
 
+    # @return [InnerModel] self
     def save!
       case context
       when :destroy
-        inner_model.destroy!
+        model.destroy!
       else
-        inner_model.save!
+        model.save!
       end
     end
 
+    # @return [Boolean]
     def invalid?
       case context
       when :destroy
         false
       else
-        inner_model.invalid?
+        model.invalid?
       end
     end
 
+    # @return [Boolean]
     def valid? = !invalid?
 
     private
 
-    attr_reader :inner_model
+    attr_reader :model
   end
 end
