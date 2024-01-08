@@ -3,6 +3,9 @@ AllCops:
   NewCops: enable
   SuggestExtensions: false
 
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 
@@ -28,4 +31,7 @@ Layout/LineLength:
   Max: 120
 
 Metrics/BlockLength:
+  Enabled: false
+
+Naming/MemoizedInstanceVariableName:
   Enabled: false
