@@ -112,7 +112,9 @@ module ActiveRecordCompose
 
     def models = @models ||= ActiveRecordCompose::InnerModelCollection.new
 
-    def validate_models = models.select { _1.invalid? }.each { errors.merge!(_1) }
+    def wrapped_models = models.__each_by_wrapped
+
+    def validate_models = wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
 
     def save_in_transaction
       run_callbacks(:commit) do
@@ -128,6 +130,6 @@ module ActiveRecordCompose
       end.present?
     end
 
-    def save_models = models.all? { _1.save! }
+    def save_models = wrapped_models.all? { _1.save! }
   end
 end

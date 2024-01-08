@@ -40,6 +40,12 @@ module ActiveRecordCompose
     # @return [Boolean]
     def valid? = !invalid?
 
+    # Returns a model instance of raw, but it should
+    # be noted that application developers are not expected to use this interface.
+    #
+    # @return [Object] raw model instance
+    def __raw_model = model
+
     private
 
     attr_reader :model
