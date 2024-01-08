@@ -21,7 +21,6 @@ module ActiveRecordCompose
     # Appends model to collection.
     #
     # @param model [Object] the model instance
-    # @param context [Symbol] :save or :destroy
     # @return [InnerModelCollection] self
     def <<(model)
       models << wrap(model, context: :save)
@@ -31,6 +30,7 @@ module ActiveRecordCompose
     # Appends model to collection.
     #
     # @param model [Object] the model instance
+    # @param context [Symbol] :save or :destroy
     # @return [InnerModelCollection] self
     def push(model, context: :save)
       models << wrap(model, context:)
