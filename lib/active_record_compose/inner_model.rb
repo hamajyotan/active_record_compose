@@ -42,6 +42,17 @@ module ActiveRecordCompose
     # @return [Boolean]
     def valid? = !invalid?
 
+    # Returns true if equivalent.
+    #
+    # @return [Object] other
+    def ==(other)
+      return false unless self.class == other.class
+      return false unless __raw_model == other.__raw_model
+      return false unless context == other.context
+
+      true
+    end
+
     # Returns a model instance of raw, but it should
     # be noted that application developers are not expected to use this interface.
     #

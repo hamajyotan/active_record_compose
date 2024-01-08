@@ -4,6 +4,7 @@
 - add development dependency
 - avoid instance variable name conflict (`@models` to `@__models`)
 - add #empty?, #clear to InnerModelCollection
+- add #delete to InnerModelCollection
 
 ## [0.1.1] - 2024-01-08
 

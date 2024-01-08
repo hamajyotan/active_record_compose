@@ -50,6 +50,20 @@ module ActiveRecordCompose
       self
     end
 
+    # Removes the specified model from the collection.
+    # Returns nil if the deletion fails, self if it succeeds.
+    #
+    # @param model [Object] the model instance
+    # @param context [Symbol] :save or :destroy
+    # @return [InnerModelCollection] Successful deletion
+    # @return [nil] If deletion fails
+    def delete(model, context: :save)
+      wrapped = wrap(model, context:)
+      return nil unless models.delete(wrapped)
+
+      self
+    end
+
     # Enumerates model objects, but it should be noted that
     # application developers are not expected to use this interface.
     #
