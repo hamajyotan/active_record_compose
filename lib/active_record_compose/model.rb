@@ -110,7 +110,7 @@ module ActiveRecordCompose
 
     private
 
-    def models = @models ||= ActiveRecordCompose::InnerModelCollection.new
+    def models = @__models ||= ActiveRecordCompose::InnerModelCollection.new
 
     def wrapped_models = models.__each_by_wrapped
 
