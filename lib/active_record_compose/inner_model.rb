@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/object'
+
 module ActiveRecordCompose
   class InnerModel
     # @param model [Object] the model instance.
