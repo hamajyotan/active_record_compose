@@ -26,9 +26,9 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activerecord', '>= 6.1'
 
-  # For more information and examples about making a new gem, check out our
-  # guide at: https://bundler.io/guides/creating_gem.html
-  spec.metadata['changelog_uri'] = 'https://github.com/hamajyotan/active_record_compose/blob/main/CHANGELOG.md'
-  spec.metadata['source_code_uri'] = 'https://github.com/hamajyotan/active_record_compose'
+  spec.metadata['homepage_uri'] = spec.homepage
+  spec.metadata['source_code_uri'] = spec.homepage
+  spec.metadata['changelog_uri'] = "#{spec.homepage}/blob/main/CHANGELOG.md"
+  spec.metadata['documentation_uri'] = "https://www.rubydoc.info/gems/active_record_compose/#{spec.version}"
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
