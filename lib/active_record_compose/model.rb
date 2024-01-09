@@ -30,7 +30,7 @@ module ActiveRecordCompose
       save_in_transaction { run_callbacks(:save) { save_models } }
     end
 
-    def save! = save || raise(error_class_on_save_error.new('Failed to save the model.', self))
+    def save! = save || raise_on_save_error
 
     # Behavior is same to `#save`, but `before_create` and `after_create` hooks fires.
     #
@@ -67,7 +67,7 @@ module ActiveRecordCompose
     # Behavior is same to `#create`, but raises an exception prematurely on failure.
     #
     def create!(attributes = {})
-      create(attributes) || raise(error_class_on_save_error.new('Failed to create the model.', self))
+      create(attributes) || raise_on_save_error
     end
 
     # Behavior is same to `#save`, but `before_update` and `after_update` hooks fires.
@@ -105,7 +105,7 @@ module ActiveRecordCompose
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
     #
     def update!(attributes = {})
-      update(attributes) || raise(error_class_on_save_error.new('Failed to update the model.', self))
+      update(attributes) || raise_on_save_error
     end
 
     private
@@ -131,5 +131,7 @@ module ActiveRecordCompose
     end
 
     def save_models = wrapped_models.all? { _1.save! }
+
+    def raise_on_save_error = raise error_class_on_save_error.new('Failed to save the model.', self)
   end
 end
