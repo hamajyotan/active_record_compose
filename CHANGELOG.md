@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- when invalid, raises ActiveRecord::RecordInvalid on #save!
+
 ## [0.1.4] - 2024-01-10
 
 - remove uniquely defined exception class.

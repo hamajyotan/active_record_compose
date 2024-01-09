@@ -38,10 +38,10 @@ RSpec.describe ActiveRecordCompose::Model do
 
       specify 'not saved' do
         expect(model.save).to be_blank
-        expect { model.save! }.to raise_error(ActiveRecord::RecordNotSaved, 'Failed to save the model.')
+        expect { model.save! }.to raise_error(ActiveRecord::RecordInvalid)
         begin
           model.save!
-        rescue ActiveRecord::RecordNotSaved => e
+        rescue ActiveRecord::RecordInvalid => e
           expect(e.record).to eq model
         end
       end
@@ -63,6 +63,15 @@ RSpec.describe ActiveRecordCompose::Model do
 
       specify '#save is performed for each model entered in models by save.' do
         expect { model.save! }.to change(Account, :count).by(1).and change(Profile, :count).by(1)
+      end
+
+      context 'when raises on after_save' do
+        let(:account) { AccountWithBang.new }
+
+        specify 'exceptions must arrive as they are.' do
+          expect { model.save }.to raise_error(RuntimeError, 'bang!!')
+          expect { model.save! }.to raise_error(RuntimeError, 'bang!!')
+        end
       end
     end
   end

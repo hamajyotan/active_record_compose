@@ -12,3 +12,19 @@ class Profile < ActiveRecord::Base
   validates :lastname, length: { maximum: 32 }
   validates :age, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 end
+
+class AccountWithBang < ActiveRecord::Base
+  self.table_name = :accounts
+
+  after_save :bang!
+
+  has_one :profile, foreign_key: :account_id
+  validates :name, presence: true
+  validates :email, presence: true
+
+  private
+
+  def bang!
+    raise 'bang!!'
+  end
+end
