@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- remove uniquely defined exception class.
+
 ## [0.1.3] - 2024-01-09
 
 - fix documentation uri.

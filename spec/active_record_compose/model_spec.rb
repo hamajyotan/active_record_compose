@@ -38,20 +38,12 @@ RSpec.describe ActiveRecordCompose::Model do
 
       specify 'not saved' do
         expect(model.save).to be_blank
-        expect { model.save! }.to raise_error(ActiveRecordCompose::RecordNotSaved, 'Failed to save the model.')
+        expect { model.save! }.to raise_error(ActiveRecord::RecordNotSaved, 'Failed to save the model.')
         begin
           model.save!
-        rescue ActiveRecordCompose::RecordNotSaved => e
+        rescue ActiveRecord::RecordNotSaved => e
           expect(e.record).to eq model
         end
-      end
-
-      specify 'You can change the exception to be raised depending on the value of error_class_on_save_error' do
-        original = ComposedModel.error_class_on_save_error
-        ComposedModel.error_class_on_save_error = ActiveRecord::RecordNotSaved
-        expect { model.save! }.to raise_error(ActiveRecord::RecordNotSaved, 'Failed to save the model.')
-      ensure
-        ComposedModel.error_class_on_save_error = original
       end
     end
 

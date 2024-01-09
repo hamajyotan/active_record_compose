@@ -12,8 +12,6 @@ module ActiveRecordCompose
 
     include ActiveRecordCompose::DelegateAttribute
 
-    class_attribute :error_class_on_save_error, instance_writer: false, default: ActiveRecordCompose::RecordNotSaved
-
     define_model_callbacks :save
     define_model_callbacks :create
     define_model_callbacks :update
@@ -132,6 +130,6 @@ module ActiveRecordCompose
 
     def save_models = wrapped_models.all? { _1.save! }
 
-    def raise_on_save_error = raise error_class_on_save_error.new('Failed to save the model.', self)
+    def raise_on_save_error = raise ActiveRecord::RecordNotSaved.new('Failed to save the model.', self)
   end
 end
