@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.description = 'activemodel form object pattern'
   spec.summary = 'activemodel form object pattern'
-  spec.homepage = 'https://github.com/active_record_compose'
+  spec.homepage = 'https://github.com/hamajyotan/active_record_compose'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.1.0'
 
