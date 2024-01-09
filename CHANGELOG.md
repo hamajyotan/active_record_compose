@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.1.3] - 2024-01-09
+
+- fix documentation uri.
+
 ## [0.1.2] - 2024-01-09
 
 - fix and add doc.
