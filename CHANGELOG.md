@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.1.4] - 2024-01-10
+
 - remove uniquely defined exception class.
 
 ## [0.1.3] - 2024-01-09
