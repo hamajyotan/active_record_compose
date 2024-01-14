@@ -31,7 +31,7 @@ module ActiveRecordCompose
     def save
       return false if invalid?
 
-      save_in_transaction { run_callbacks(:save) { save_models } }
+      save_in_transaction { save_models }
     end
 
     # Save the models that exist in models.
@@ -42,7 +42,7 @@ module ActiveRecordCompose
     def save!
       valid? || raise_validation_error
 
-      save_in_transaction { run_callbacks(:save) { save_models } } || raise_on_save_error
+      save_in_transaction { save_models } || raise_on_save_error
     end
 
     # Behavior is same to `#save`, but `before_create` and `after_create` hooks fires.
@@ -74,7 +74,7 @@ module ActiveRecordCompose
       assign_attributes(attributes)
       return false if invalid?
 
-      save_in_transaction { run_callbacks(:save) { run_callbacks(:create) { save_models } } }
+      save_in_transaction { run_callbacks(:create) { save_models } }
     end
 
     # Behavior is same to `#create`, but raises an exception prematurely on failure.
@@ -83,7 +83,7 @@ module ActiveRecordCompose
       assign_attributes(attributes)
       valid? || raise_validation_error
 
-      save_in_transaction { run_callbacks(:save) { run_callbacks(:create) { save_models } } } || raise_on_save_error
+      save_in_transaction { run_callbacks(:create) { save_models } } || raise_on_save_error
     end
 
     # Behavior is same to `#save`, but `before_update` and `after_update` hooks fires.
@@ -115,7 +115,7 @@ module ActiveRecordCompose
       assign_attributes(attributes)
       return false if invalid?
 
-      save_in_transaction { run_callbacks(:save) { run_callbacks(:update) { save_models } } }
+      save_in_transaction { run_callbacks(:update) { save_models } }
     end
 
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
@@ -124,7 +124,7 @@ module ActiveRecordCompose
       assign_attributes(attributes)
       valid? || raise_validation_error
 
-      save_in_transaction { run_callbacks(:save) { run_callbacks(:update) { save_models } } } || raise_on_save_error
+      save_in_transaction { run_callbacks(:update) { save_models } } || raise_on_save_error
     end
 
     private
@@ -135,10 +135,10 @@ module ActiveRecordCompose
 
     def validate_models = wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
 
-    def save_in_transaction
+    def save_in_transaction(&)
       run_callbacks(:commit) do
         result = ::ActiveRecord::Base.transaction do
-          raise ActiveRecord::Rollback unless yield
+          raise ActiveRecord::Rollback unless run_callbacks(:save, &)
 
           true
         end
