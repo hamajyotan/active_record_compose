@@ -42,6 +42,8 @@ module ActiveRecordCompose
     end
 
     class_methods do
+      # Defines the reader and writer for the specified attribute.
+      #
       def delegate_attribute(*attributes, to:, **options)
         delegates = attributes.flat_map do |attribute|
           reader = attribute
@@ -56,6 +58,10 @@ module ActiveRecordCompose
       end
     end
 
+    # Returns a hash with the attribute name as key and the attribute value as value.
+    # Attributes declared with `delegate_attribute` are also merged.
+    #
+    # @return [Hash] hash with the attribute name as key and the attribute value as value.
     def attributes
       (defined?(super) ? super : {}).merge(delegated_attributes.to_h { [_1, public_send(_1)] })
     end
