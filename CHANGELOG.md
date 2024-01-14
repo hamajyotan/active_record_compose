@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- remove `add_development_dependency` from gemspec
+
 ## [0.1.6] - 2024-01-14
 
 - add doc for `#save` and `#save!`.
