@@ -6,6 +6,7 @@ module ActiveRecordCompose
   class InnerModel
     # @param model [Object] the model instance.
     # @param context [Symbol] :save or :destroy
+    # @param context [Proc] proc returning either :save or :destroy
     def initialize(model, context: :save)
       @model = model
       @context = context
