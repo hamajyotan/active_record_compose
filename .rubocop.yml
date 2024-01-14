@@ -30,5 +30,8 @@ Layout/LineLength:
 Metrics/BlockLength:
   Enabled: false
 
+Naming/BlockForwarding:
+  Enabled: false
+
 Naming/MemoizedInstanceVariableName:
   Enabled: false

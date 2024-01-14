@@ -135,10 +135,10 @@ module ActiveRecordCompose
 
     def validate_models = wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
 
-    def save_in_transaction(&)
+    def save_in_transaction(&block)
       run_callbacks(:commit) do
         result = ::ActiveRecord::Base.transaction do
-          raise ActiveRecord::Rollback unless run_callbacks(:save, &)
+          raise ActiveRecord::Rollback unless run_callbacks(:save, &block)
 
           true
         end
