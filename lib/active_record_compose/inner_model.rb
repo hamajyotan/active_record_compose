@@ -36,7 +36,6 @@ module ActiveRecordCompose
     # Execute save or destroy. Unlike #save, an exception is raises on failure.
     # Whether save or destroy is executed depends on the value of context.
     #
-    # @return [InnerModel] self
     def save!
       case context
       when :destroy
@@ -61,7 +60,8 @@ module ActiveRecordCompose
 
     # Returns true if equivalent.
     #
-    # @return [Object] other
+    # @param [Object] other
+    # @return [Boolean]
     def ==(other)
       return false unless self.class == other.class
       return false unless __raw_model == other.__raw_model

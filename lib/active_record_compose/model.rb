@@ -153,6 +153,8 @@ module ActiveRecordCompose
 
     def raise_validation_error = raise ActiveRecord::RecordInvalid, self
 
-    def raise_on_save_error = raise ActiveRecord::RecordNotSaved.new('Failed to save the model.', self)
+    def raise_on_save_error = raise ActiveRecord::RecordNotSaved.new(raise_on_save_error_message, self)
+
+    def raise_on_save_error_message = 'Failed to save the model.'
   end
 end

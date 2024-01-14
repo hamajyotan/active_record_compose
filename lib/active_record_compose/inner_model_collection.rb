@@ -10,7 +10,7 @@ module ActiveRecordCompose
     #
     # @yieldparam [Object] the model instance
     # @return [Enumerator] when not block given.
-    # @return [InnerModelCollection] self
+    # @return [self] when block given, returns itself.
     def each
       return enum_for(:each) unless block_given?
 
@@ -21,7 +21,7 @@ module ActiveRecordCompose
     # Appends model to collection.
     #
     # @param model [Object] the model instance
-    # @return [InnerModelCollection] self
+    # @return [self] returns itself.
     def <<(model)
       models << wrap(model, context: :save)
       self
@@ -31,7 +31,7 @@ module ActiveRecordCompose
     #
     # @param model [Object] the model instance
     # @param context [Symbol] :save or :destroy
-    # @return [InnerModelCollection] self
+    # @return [self] returns itself.
     def push(model, context: :save)
       models << wrap(model, context:)
       self
@@ -44,7 +44,7 @@ module ActiveRecordCompose
 
     # Set to empty.
     #
-    # @return [InnerModelCollection] self
+    # @return [self] returns itself.
     def clear
       models.clear
       self
@@ -55,7 +55,7 @@ module ActiveRecordCompose
     #
     # @param model [Object] the model instance
     # @param context [Symbol] :save or :destroy
-    # @return [InnerModelCollection] Successful deletion
+    # @return [self] Successful deletion
     # @return [nil] If deletion fails
     def delete(model, context: :save)
       wrapped = wrap(model, context:)
@@ -69,7 +69,7 @@ module ActiveRecordCompose
     #
     # @yieldparam [InnerModel] rawpped model instance.
     # @return [Enumerator] when not block given.
-    # @return [InnerModelCollection] self
+    # @return [self] when block given, returns itself.
     def __each_by_wrapped
       return enum_for(:__each_by_wrapped) unless block_given?
 
