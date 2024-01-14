@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - remove `add_development_dependency` from gemspec
+- add spec for DelegateAttribute module
 
 ## [0.1.6] - 2024-01-14
 

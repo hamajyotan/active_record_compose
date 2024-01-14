@@ -57,7 +57,7 @@ module ActiveRecordCompose
     end
 
     def attributes
-      super.merge(delegated_attributes.to_h { [_1, public_send(_1)] })
+      (defined?(super) ? super : {}).merge(delegated_attributes.to_h { [_1, public_send(_1)] })
     end
   end
 end
