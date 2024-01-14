@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.1.6] - 2024-01-14
+
 - add doc for `#save` and `#save!`.
 - implement `#save` for symmetry with `#save!`
 - add `InnerModel#initialize` doc.
