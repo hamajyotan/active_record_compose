@@ -22,12 +22,23 @@ module ActiveRecordCompose
       super(attributes)
     end
 
+    # Save the models that exist in models.
+    # Returns false if any of the targets fail, true if all succeed.
+    #
+    # The save is performed within a single transaction.
+    #
+    # @return [Boolean] returns true on success, false on failure.
     def save
       return false if invalid?
 
       save_in_transaction { run_callbacks(:save) { save_models } }
     end
 
+    # Save the models that exist in models.
+    # Unlike #save, an exception is raises on failure.
+    #
+    # Saving, like `#save`, is performed within a single transaction.
+    #
     def save!
       valid? || raise_validation_error
 

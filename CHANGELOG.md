@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- add doc for `#save` and `#save!`.
+
 ## [0.1.5] - 2024-01-11
 
 - when invalid, raises ActiveRecord::RecordInvalid on #save!
