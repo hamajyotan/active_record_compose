@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - add doc for `#save` and `#save!`.
+- implement `#save` for symmetry with `#save!`
 
 ## [0.1.5] - 2024-01-11
 

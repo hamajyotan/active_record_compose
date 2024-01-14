@@ -17,4 +17,28 @@ RSpec.describe ActiveRecordCompose::InnerModel do
       expect(inner_model).to eq ActiveRecordCompose::InnerModel.new(account, context: :save)
     end
   end
+
+  describe '#save' do
+    subject(:inner_model) { ActiveRecordCompose::InnerModel.new(already_persisted_account, context:) }
+
+    let(:already_persisted_account) { Account.create(name: 'foo', email: 'foo@example.com') }
+
+    context 'given save to context' do
+      let(:context) { :save }
+
+      specify do
+        expect(inner_model.save).to be_truthy
+        expect(already_persisted_account).to be_persisted
+      end
+    end
+
+    context 'given save to context' do
+      let(:context) { :destroy }
+
+      specify do
+        expect(inner_model.save).to be_truthy
+        expect(already_persisted_account).to be_destroyed
+      end
+    end
+  end
 end

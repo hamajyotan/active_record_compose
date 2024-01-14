@@ -19,6 +19,22 @@ module ActiveRecordCompose
       ret.presence_in(%i[save destroy]) || :save
     end
 
+    # Execute save or destroy. Returns true on success, false on failure.
+    # Whether save or destroy is executed depends on the value of context.
+    #
+    # @return [Boolean] returns true on success, false on failure.
+    def save
+      case context
+      when :destroy
+        model.destroy
+      else
+        model.save
+      end
+    end
+
+    # Execute save or destroy. Unlike #save, an exception is raises on failure.
+    # Whether save or destroy is executed depends on the value of context.
+    #
     # @return [InnerModel] self
     def save!
       case context
