@@ -31,7 +31,7 @@ module ActiveRecordCompose
     def save
       return false if invalid?
 
-      save_in_transaction { save_models }
+      save_in_transaction { save_models(bang: false) }
     end
 
     # Save the models that exist in models.
@@ -42,7 +42,7 @@ module ActiveRecordCompose
     def save!
       valid? || raise_validation_error
 
-      save_in_transaction { save_models } || raise_on_save_error
+      save_in_transaction { save_models(bang: true) } || raise_on_save_error
     end
 
     # Behavior is same to `#save`, but `before_create` and `after_create` hooks fires.
@@ -74,7 +74,7 @@ module ActiveRecordCompose
       assign_attributes(attributes)
       return false if invalid?
 
-      save_in_transaction { run_callbacks(:create) { save_models } }
+      save_in_transaction { run_callbacks(:create) { save_models(bang: false) } }
     end
 
     # Behavior is same to `#create`, but raises an exception prematurely on failure.
@@ -83,7 +83,7 @@ module ActiveRecordCompose
       assign_attributes(attributes)
       valid? || raise_validation_error
 
-      save_in_transaction { run_callbacks(:create) { save_models } } || raise_on_save_error
+      save_in_transaction { run_callbacks(:create) { save_models(bang: true) } } || raise_on_save_error
     end
 
     # Behavior is same to `#save`, but `before_update` and `after_update` hooks fires.
@@ -115,7 +115,7 @@ module ActiveRecordCompose
       assign_attributes(attributes)
       return false if invalid?
 
-      save_in_transaction { run_callbacks(:update) { save_models } }
+      save_in_transaction { run_callbacks(:update) { save_models(bang: false) } }
     end
 
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
@@ -124,7 +124,7 @@ module ActiveRecordCompose
       assign_attributes(attributes)
       valid? || raise_validation_error
 
-      save_in_transaction { run_callbacks(:update) { save_models } } || raise_on_save_error
+      save_in_transaction { run_callbacks(:update) { save_models(bang: true) } } || raise_on_save_error
     end
 
     private
@@ -149,7 +149,7 @@ module ActiveRecordCompose
       end.present?
     end
 
-    def save_models = wrapped_models.all? { _1.save! }
+    def save_models(bang:) = wrapped_models.all? { bang ? _1.save! : _1.save }
 
     def raise_validation_error = raise ActiveRecord::RecordInvalid, self
 

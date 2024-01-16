@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- avoid executing `#save!` from `Model#save`
+
 ## [0.1.7] - 2024-01-15
 
 - remove `add_development_dependency` from gemspec
