@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.1.8] - 2024-01-16
+
 - avoid executing `#save!` from `Model#save`
 - on save, ignore nil elements from models.
 
