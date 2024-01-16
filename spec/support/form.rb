@@ -12,6 +12,8 @@ class ComposedModel < ActiveRecordCompose::Model
   delegate_attribute :name, :email, to: :account
   delegate_attribute :firstname, :lastname, :age, to: :profile
 
+  def push_falsy_object_to_models = models << nil
+
   private
 
   attr_reader :account, :profile

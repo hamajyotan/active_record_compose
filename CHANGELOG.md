@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - avoid executing `#save!` from `Model#save`
+- on save, ignore nil elements from models.
 
 ## [0.1.7] - 2024-01-15
 

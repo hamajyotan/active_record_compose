@@ -73,6 +73,13 @@ RSpec.describe ActiveRecordCompose::Model do
           expect { model.save! }.to raise_error(RuntimeError, 'bang!!')
         end
       end
+
+      context 'when nil is mixed in with models' do
+        before { model.push_falsy_object_to_models }
+
+        it { is_expected.to be_valid }
+        it { expect(model.save).to be_truthy }
+      end
     end
   end
 
