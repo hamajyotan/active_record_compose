@@ -3,6 +3,9 @@ AllCops:
   NewCops: enable
   SuggestExtensions: false
 
+Style/ArgumentsForwarding:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 
