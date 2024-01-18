@@ -271,6 +271,30 @@ model.update
 # after_save called!
 ```
 
+### I18n
+
+When the `#save!` operation raises an `ActiveRecord::RecordInvalid` exception, it is necessary to have pre-existing locale definitions in order to construct i18n information correctly.
+The specific keys required are `activemodel.errors.messages.record_invalid` or `errors.messages.record_invalid`.
+
+(Replace `en` as appropriate in the context.)
+
+```yaml
+en:
+  activemodel:
+    errors:
+      messages:
+        record_invalid: 'Validation failed: %{errors}'
+```
+
+Alternatively, the following definition is also acceptable:
+
+```yaml
+en:
+  errors:
+    messages:
+      record_invalid: 'Validation failed: %{errors}'
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
