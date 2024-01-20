@@ -22,7 +22,7 @@ jobs:
     env:
       AR: ${{ matrix.ar }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -30,3 +30,15 @@ jobs:
         bundler-cache: true
     - name: Run the default task
       run: bundle exec rake
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - name: Run type check
+        run: bundle exec steep check

@@ -1,0 +1,100 @@
+# TypeProf 0.21.9
+
+# Classes
+module ActiveRecordCompose
+  VERSION: String
+
+  interface _ARLike
+    def is_a?: (untyped) -> bool
+    def save: -> bool
+    def save!: -> untyped
+    def destroy: -> bool
+    def destroy!: -> untyped
+    def invalid?: -> bool
+    def valid?: -> bool
+    def errors: -> untyped
+    def ==: (untyped) -> bool
+  end
+
+  type attribute_name = (String | Symbol)
+  type context_types = (:save | :destroy)
+  type context_proc = ^(_ARLike) -> context_types
+  type context = context_types | context_proc
+
+  module DelegateAttribute
+    extend ActiveSupport::Concern
+
+    def delegated_attribute: -> Array[untyped]
+    def attributes: -> Hash[String, untyped]
+    def delegated_attributes: -> Array[untyped]
+    def delegated_attributes=: (Array[untyped]) -> void
+
+    def self.class_attribute: (untyped, ?untyped) -> untyped
+    def delegate: (*untyped) -> untyped
+  end
+
+  class InnerModelCollection
+    include ::Enumerable[_ARLike]
+    @models: Array[InnerModel]
+
+    def each: () { (_ARLike) -> void } -> InnerModelCollection | () -> Enumerator[_ARLike, self]
+    def <<: (_ARLike) -> self
+    def push: (_ARLike, ?context: context) -> self
+    def empty?: -> bool
+    def clear: -> self
+    def delete: (_ARLike | InnerModel, ?context: context_types) -> InnerModelCollection?
+    def __each_by_wrapped: () { (InnerModel) -> void } -> InnerModelCollection | () -> Enumerator[InnerModel, self]
+
+    private
+    def models: -> Array[InnerModel]
+    def wrap: (_ARLike | InnerModel, context: context) -> InnerModel
+  end
+
+  class InnerModel
+    @context: context
+
+    def initialize: (_ARLike, ?context: context) -> void
+    def context: -> context
+    def save: -> bool
+    def save!: -> untyped
+    def invalid?: -> bool
+    def valid?: -> bool
+    def ==: (untyped) -> bool
+    def __raw_model: -> _ARLike
+
+    private
+    attr_reader model: _ARLike
+  end
+
+  class Model
+    extend ActiveModel::Callbacks
+    include ActiveModel::Model
+    include ActiveModel::Validations::Callbacks
+    include ActiveModel::Attributes
+    include ActiveRecord::Transactions
+    include DelegateAttribute
+
+    @__models: InnerModelCollection
+
+    def initialize: (?Hash[attribute_name, untyped]) -> void
+    def save: -> bool
+    def save!: -> untyped
+    def create: (?Hash[attribute_name, untyped]) -> bool
+    def create!: (?Hash[attribute_name, untyped]) -> untyped
+    def update: (?Hash[attribute_name, untyped]) -> bool
+    def update!: (?Hash[attribute_name, untyped]) -> untyped
+
+    private
+    def models: -> InnerModelCollection
+    def wrapped_models: -> Enumerator[InnerModel, InnerModelCollection]
+    def validate_models: -> void
+    def save_in_transaction: { -> bool } -> untyped
+    def save_models: (bang: bool) -> bool
+    def raise_validation_error: -> bot
+    def raise_on_save_error: -> bot
+    def raise_on_save_error_message: -> String
+
+    def self.validate: (*untyped) -> untyped
+    def run_callbacks: (untyped kind) ?{ () -> untyped } -> untyped
+  end
+end

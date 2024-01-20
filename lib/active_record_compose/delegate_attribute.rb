@@ -63,7 +63,11 @@ module ActiveRecordCompose
     #
     # @return [Hash] hash with the attribute name as key and the attribute value as value.
     def attributes
-      (defined?(super) ? super : {}).merge(delegated_attributes.to_h { [_1, public_send(_1)] })
+      # steep:ignore all
+      attrs = defined?(super) ? super : {}
+      # steep:ignore end
+      # @type var attrs: Hash[String, untyped]
+      attrs.merge(delegated_attributes.to_h { [_1, public_send(_1)] })
     end
   end
 end

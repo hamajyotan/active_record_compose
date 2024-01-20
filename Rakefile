@@ -9,4 +9,8 @@ require 'rubocop/rake_task'
 
 RuboCop::RakeTask.new
 
-task default: %i[spec rubocop]
+task :typecheck do
+  sh 'bundle exec steep check'
+end
+
+task default: %i[spec rubocop typecheck]

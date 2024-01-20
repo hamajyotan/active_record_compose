@@ -19,7 +19,9 @@ module ActiveRecordCompose
     validate :validate_models
 
     def initialize(attributes = {})
+      # steep:ignore all
       super(attributes)
+      # steep:ignore end
     end
 
     # Save the models that exist in models.

@@ -16,7 +16,8 @@ module ActiveRecordCompose
 
     # @return [Symbol] :save or :destroy
     def context
-      ret = @context.respond_to?(:call) ? @context.call(model) : @context
+      c = @context
+      ret = c.is_a?(Proc) ? c.call(model) : c
       ret.presence_in(%i[save destroy]) || :save
     end
 

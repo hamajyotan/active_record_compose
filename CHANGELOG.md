@@ -1,6 +1,8 @@
 ## [Unreleased]
 
 - add i18n doc.
+- add sig/
+- add typecheck for ci.
 
 ## [0.1.8] - 2024-01-16
 
