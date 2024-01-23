@@ -234,4 +234,22 @@ RSpec.describe ActiveRecordCompose::Model do
       end
     end
   end
+
+  describe 'when ActiveRecord::RecordInvalid error raises in the #after_save hook' do
+    subject(:model) { klass.new }
+    let(:klass) do
+      Class.new(ActiveRecordCompose::Model) do
+        after_save :raise_record_invalid
+
+        private
+
+        def raise_record_invalid = Account.create!(name: nil, email: nil)
+      end
+    end
+
+    specify '#ave without bang returns false, save with bang raises an exception.' do
+      expect(model.save).to be_blank
+      expect { model.save! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
 end

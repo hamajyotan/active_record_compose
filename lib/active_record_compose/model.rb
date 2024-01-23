@@ -34,6 +34,8 @@ module ActiveRecordCompose
       return false if invalid?
 
       save_in_transaction { save_models(bang: false) }
+    rescue ActiveRecord::RecordInvalid
+      false
     end
 
     # Save the models that exist in models.
@@ -77,6 +79,8 @@ module ActiveRecordCompose
       return false if invalid?
 
       save_in_transaction { run_callbacks(:create) { save_models(bang: false) } }
+    rescue ActiveRecord::RecordInvalid
+      false
     end
 
     # Behavior is same to `#create`, but raises an exception prematurely on failure.
@@ -118,6 +122,8 @@ module ActiveRecordCompose
       return false if invalid?
 
       save_in_transaction { run_callbacks(:update) { save_models(bang: false) } }
+    rescue ActiveRecord::RecordInvalid
+      false
     end
 
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
