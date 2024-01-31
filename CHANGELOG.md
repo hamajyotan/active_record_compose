@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.2.1] - 2024-01-31
+
 - in `#save` (without bang), `ActiveRecord::RecordInvalid` error is not passed outward.
 
 ## [0.2.0] - 2024-01-21
