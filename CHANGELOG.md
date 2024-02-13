@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- strictify type checking
+
 ## [0.2.1] - 2024-01-31
 
 - in `#save` (without bang), `ActiveRecord::RecordInvalid` error is not passed outward.

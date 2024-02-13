@@ -7,7 +7,5 @@ target :lib do
 
   check 'lib'
 
-  # TODO: change to strict. cf. soutaro/steep/pull#964
-  #   configure_code_diagnostics(D::Ruby.strict)
-  configure_code_diagnostics(D::Ruby.lenient)
+  configure_code_diagnostics(D::Ruby.strict)
 end
