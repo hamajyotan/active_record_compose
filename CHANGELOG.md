@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - strictify type checking
+- testing with CI even in the head version of rails
 
 ## [0.2.1] - 2024-01-31
 
