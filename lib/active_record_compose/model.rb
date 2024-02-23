@@ -35,10 +35,10 @@ module ActiveRecordCompose
     #
     # @return [Boolean] returns true on success, false on failure.
     def save
-      with_transaction_returning_status do
-        return false if invalid?
+      return false if invalid?
 
-        save_with_context(bang: false)
+      with_transaction_returning_status do
+        run_callbacks(:save) { save_models(bang: false) }
       rescue ActiveRecord::RecordInvalid
         false
       end
@@ -50,11 +50,11 @@ module ActiveRecordCompose
     # Saving, like `#save`, is performed within a single transaction.
     #
     def save!
-      with_transaction_returning_status do
-        valid? || raise_validation_error
+      valid? || raise_validation_error
 
-        save_with_context(bang: true) || raise_on_save_error
-      end
+      with_transaction_returning_status do
+        run_callbacks(:save) { save_models(bang: true) }
+      end || raise_on_save_error
     end
 
     # Behavior is same to `#save`, but `before_create` and `after_create` hooks fires.
@@ -84,14 +84,24 @@ module ActiveRecordCompose
     #
     def create(attributes = {})
       assign_attributes(attributes)
-      with_callback_context(:create) { save }
+      return false if invalid?
+
+      with_transaction_returning_status do
+        run_callbacks(:save) { run_callbacks(:create) { save_models(bang: false) } }
+      rescue ActiveRecord::RecordInvalid
+        false
+      end
     end
 
     # Behavior is same to `#create`, but raises an exception prematurely on failure.
     #
     def create!(attributes = {})
       assign_attributes(attributes)
-      with_callback_context(:create) { save! }
+      valid? || raise_validation_error
+
+      with_transaction_returning_status do
+        run_callbacks(:save) { run_callbacks(:create) { save_models(bang: true) } }
+      end || raise_on_save_error
     end
 
     # Behavior is same to `#save`, but `before_update` and `after_update` hooks fires.
@@ -121,14 +131,24 @@ module ActiveRecordCompose
     #
     def update(attributes = {})
       assign_attributes(attributes)
-      with_callback_context(:update) { save }
+      return false if invalid?
+
+      with_transaction_returning_status do
+        run_callbacks(:save) { run_callbacks(:update) { save_models(bang: false) } }
+      rescue ActiveRecord::RecordInvalid
+        false
+      end
     end
 
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
     #
     def update!(attributes = {})
       assign_attributes(attributes)
-      with_callback_context(:update) { save! }
+      valid? || raise_validation_error
+
+      with_transaction_returning_status do
+        run_callbacks(:save) { run_callbacks(:update) { save_models(bang: true) } }
+      end || raise_on_save_error
     end
 
     # for ActiveRecord::Transactions
@@ -146,25 +166,7 @@ module ActiveRecordCompose
 
     def wrapped_models = models.__each_by_wrapped
 
-    def with_callback_context(callback_context)
-      original = @__callback_context
-      @__callback_context = callback_context
-      yield
-    rescue StandardError
-      @__callback_context = original
-    end
-
     def validate_models = wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
-
-    def save_with_context(bang:)
-      run_callbacks(:save) do
-        if @__callback_context
-          run_callbacks(@__callback_context) { save_models(bang:) }
-        else
-          save_models(bang:)
-        end
-      end
-    end
 
     def save_models(bang:) = wrapped_models.all? { bang ? _1.save! : _1.save }
 
