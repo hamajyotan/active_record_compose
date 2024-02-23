@@ -17,6 +17,7 @@ module ActiveRecordCompose
   end
 
   type attribute_name = (String | Symbol)
+  type callback_context = (:create | :update)
   type context_types = (:save | :destroy)
   type context_proc = ^(_ARLike) -> context_types
   type context = context_types | context_proc
@@ -74,6 +75,7 @@ module ActiveRecordCompose
     include ActiveRecord::Transactions
     include DelegateAttribute
 
+    @__callback_context: callback_context?
     @__models: InnerModelCollection
 
     def initialize: (?Hash[attribute_name, untyped]) -> void
@@ -87,6 +89,7 @@ module ActiveRecordCompose
     private
     def models: -> InnerModelCollection
     def wrapped_models: -> Enumerator[InnerModel, InnerModelCollection]
+    def with_callback_context: (callback_context) { () -> untyped } -> untyped
     def validate_models: -> void
     def save_in_transaction: { -> bool } -> untyped
     def save_models: (bang: bool) -> bool

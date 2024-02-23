@@ -74,20 +74,14 @@ module ActiveRecordCompose
     #
     def create(attributes = {})
       assign_attributes(attributes)
-      return false if invalid?
-
-      save_in_transaction { run_callbacks(:create) { save_models(bang: false) } }
-    rescue ActiveRecord::RecordInvalid
-      false
+      with_callback_context(:create) { save }
     end
 
     # Behavior is same to `#create`, but raises an exception prematurely on failure.
     #
     def create!(attributes = {})
       assign_attributes(attributes)
-      valid? || raise_validation_error
-
-      save_in_transaction { run_callbacks(:create) { save_models(bang: true) } } || raise_on_save_error
+      with_callback_context(:create) { save! }
     end
 
     # Behavior is same to `#save`, but `before_update` and `after_update` hooks fires.
@@ -117,20 +111,14 @@ module ActiveRecordCompose
     #
     def update(attributes = {})
       assign_attributes(attributes)
-      return false if invalid?
-
-      save_in_transaction { run_callbacks(:update) { save_models(bang: false) } }
-    rescue ActiveRecord::RecordInvalid
-      false
+      with_callback_context(:update) { save }
     end
 
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
     #
     def update!(attributes = {})
       assign_attributes(attributes)
-      valid? || raise_validation_error
-
-      save_in_transaction { run_callbacks(:update) { save_models(bang: true) } } || raise_on_save_error
+      with_callback_context(:update) { save! }
     end
 
     private
@@ -139,12 +127,28 @@ module ActiveRecordCompose
 
     def wrapped_models = models.__each_by_wrapped
 
+    def with_callback_context(callback_context)
+      original = @__callback_context
+      @__callback_context = callback_context
+      yield
+    rescue StandardError
+      @__callback_context = original
+    end
+
     def validate_models = wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
 
     def save_in_transaction(&block)
       run_callbacks(:commit) do
         result = ::ActiveRecord::Base.transaction do
-          raise ActiveRecord::Rollback unless run_callbacks(:save, &block)
+          result =
+            run_callbacks(:save) do
+              if @__callback_context
+                run_callbacks(@__callback_context, &block)
+              else
+                block.call
+              end
+            end
+          raise ActiveRecord::Rollback unless result
 
           true
         end
