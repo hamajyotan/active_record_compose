@@ -3,6 +3,7 @@
 - strictify type checking
 - testing with CI even in the head version of rails
 - consolidate the main process of saving into the `#save` method
+- leave transaction control to ActiveRecord::Transactions
 
 ## [0.2.1] - 2024-01-31
 

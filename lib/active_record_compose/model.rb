@@ -18,6 +18,12 @@ module ActiveRecordCompose
 
     validate :validate_models
 
+    # for ActiveRecord::Transactions
+    class << self
+      def connection = ActiveRecord::Base.connection
+      __skip__ = def composite_primary_key? = false
+    end
+
     def initialize(attributes = {})
       __skip__ = super(attributes)
     end
@@ -29,11 +35,13 @@ module ActiveRecordCompose
     #
     # @return [Boolean] returns true on success, false on failure.
     def save
-      return false if invalid?
+      with_transaction_returning_status do
+        return false if invalid?
 
-      save_in_transaction { save_models(bang: false) }
-    rescue ActiveRecord::RecordInvalid
-      false
+        save_with_context(bang: false)
+      rescue ActiveRecord::RecordInvalid
+        false
+      end
     end
 
     # Save the models that exist in models.
@@ -42,9 +50,11 @@ module ActiveRecordCompose
     # Saving, like `#save`, is performed within a single transaction.
     #
     def save!
-      valid? || raise_validation_error
+      with_transaction_returning_status do
+        valid? || raise_validation_error
 
-      save_in_transaction { save_models(bang: true) } || raise_on_save_error
+        save_with_context(bang: true) || raise_on_save_error
+      end
     end
 
     # Behavior is same to `#save`, but `before_create` and `after_create` hooks fires.
@@ -121,6 +131,15 @@ module ActiveRecordCompose
       with_callback_context(:update) { save! }
     end
 
+    # for ActiveRecord::Transactions
+    __skip__ = def id = nil
+
+    # for ActiveRecord::Transactions
+    __skip__ = def trigger_transactional_callbacks? = true
+
+    # for ActiveRecord::Transactions
+    __skip__ = def restore_transaction_record_state(_force_restore_state) = nil
+
     private
 
     def models = @__models ||= ActiveRecordCompose::InnerModelCollection.new
@@ -137,26 +156,14 @@ module ActiveRecordCompose
 
     def validate_models = wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
 
-    def save_in_transaction(&block)
-      run_callbacks(:commit) do
-        result = ::ActiveRecord::Base.transaction do
-          result =
-            run_callbacks(:save) do
-              if @__callback_context
-                run_callbacks(@__callback_context, &block)
-              else
-                block.call
-              end
-            end
-          raise ActiveRecord::Rollback unless result
-
-          true
+    def save_with_context(bang:)
+      run_callbacks(:save) do
+        if @__callback_context
+          run_callbacks(@__callback_context) { save_models(bang:) }
+        else
+          save_models(bang:)
         end
-        result.present?
-      rescue StandardError
-        run_callbacks :rollback
-        raise
-      end.present?
+      end
     end
 
     def save_models(bang:) = wrapped_models.all? { bang ? _1.save! : _1.save }

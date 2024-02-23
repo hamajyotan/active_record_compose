@@ -91,7 +91,7 @@ module ActiveRecordCompose
     def wrapped_models: -> Enumerator[InnerModel, InnerModelCollection]
     def with_callback_context: (callback_context) { () -> untyped } -> untyped
     def validate_models: -> void
-    def save_in_transaction: { -> bool } -> untyped
+    def save_with_context: (bang: bool) -> untyped
     def save_models: (bang: bool) -> bool
     def raise_validation_error: -> bot
     def raise_on_save_error: -> bot
