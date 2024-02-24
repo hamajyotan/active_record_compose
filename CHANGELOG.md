@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.3.0] - 2024-02-24
+
 - strictify type checking
 - testing with CI even in the head version of rails
 - consolidate the main process of saving into the `#save` method
