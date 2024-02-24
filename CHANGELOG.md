@@ -4,6 +4,7 @@
 - testing with CI even in the head version of rails
 - consolidate the main process of saving into the `#save` method
 - leave transaction control to ActiveRecord::Transactions
+- execution of `before_commit`, `after_commit` and `after_rollback` hook is delayed until after the database commit (or rollback).
 
 ## [0.2.1] - 2024-01-31
 

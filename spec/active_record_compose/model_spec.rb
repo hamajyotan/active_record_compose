@@ -196,42 +196,92 @@ RSpec.describe ActiveRecordCompose::Model do
   end
 
   describe 'callback order' do
-    subject(:model) { CallbackOrder.new }
+    subject(:model) { CallbackOrder.new(tracer) }
+
+    let(:tracer) { [] }
 
     context 'when #save' do
       specify 'only #before_save, #after_save should work' do
         model.save
-        expect(model.before_save_called).to eq 1
-        expect(model.before_create_called).to eq 0
-        expect(model.before_update_called).to eq 0
-        expect(model.after_save_called).to eq 2
-        expect(model.after_create_called).to eq 0
-        expect(model.after_update_called).to eq 0
+        expect(tracer).to eq [
+          'before_save called',
+          'after_save called',
+          'before_commit called',
+          'after_commit called',
+        ]
       end
     end
 
     context 'when #create' do
       specify 'in addition to #before_save and #after_save, #before_create and #after_create must also work' do
         model.create
-        expect(model.before_save_called).to eq 1
-        expect(model.before_create_called).to eq 2
-        expect(model.before_update_called).to eq 0
-        expect(model.after_save_called).to eq 4
-        expect(model.after_create_called).to eq 3
-        expect(model.after_update_called).to eq 0
+        expect(tracer).to eq [
+          'before_save called',
+          'before_create called',
+          'after_create called',
+          'after_save called',
+          'before_commit called',
+          'after_commit called',
+        ]
       end
     end
 
     context 'when #update' do
       specify 'in addition to #before_save and #after_save, #before_update and #after_update must also work' do
         model.update
-        expect(model.before_save_called).to eq 1
-        expect(model.before_create_called).to eq 0
-        expect(model.before_update_called).to eq 2
-        expect(model.after_save_called).to eq 4
-        expect(model.after_create_called).to eq 0
-        expect(model.after_update_called).to eq 3
+        expect(tracer).to eq [
+          'before_save called',
+          'before_update called',
+          'after_update called',
+          'after_save called',
+          'before_commit called',
+          'after_commit called',
+        ]
       end
+    end
+
+    specify 'execution of (before|after)_commit hook is delayed until after the database commit.' do
+      ActiveRecord::Base.transaction do
+        tracer << 'outer transsaction starts'
+        ActiveRecord::Base.transaction do
+          tracer << 'inner transsaction starts'
+          model.save
+          tracer << 'inner transsaction ends'
+        end
+        tracer << 'outer transsaction ends'
+      end
+      expect(tracer).to eq [
+        'outer transsaction starts',
+        'inner transsaction starts',
+        'before_save called',
+        'after_save called',
+        'inner transsaction ends',
+        'outer transsaction ends',
+        'before_commit called',
+        'after_commit called',
+      ]
+    end
+
+    specify 'execution of after_rollback hook is delayed until after the database rollback.' do
+      ActiveRecord::Base.transaction do
+        tracer << 'outer transsaction starts'
+        ActiveRecord::Base.transaction do
+          tracer << 'inner transsaction starts'
+          model.save
+          tracer << 'inner transsaction ends'
+        end
+        tracer << 'outer transsaction ends'
+        raise ActiveRecord::Rollback
+      end
+      expect(tracer).to eq [
+        'outer transsaction starts',
+        'inner transsaction starts',
+        'before_save called',
+        'after_save called',
+        'inner transsaction ends',
+        'outer transsaction ends',
+        'after_rollback called',
+      ]
     end
   end
 

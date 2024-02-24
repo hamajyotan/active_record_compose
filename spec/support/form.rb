@@ -56,21 +56,22 @@ class ComposedModelWithConditionalDestroyContext < ActiveRecordCompose::Model
 end
 
 class CallbackOrder < ActiveRecordCompose::Model
-  attribute :before_save_called, :integer, default: 0
-  attribute :before_create_called, :integer, default: 0
-  attribute :before_update_called, :integer, default: 0
-  attribute :after_save_called, :integer, default: 0
-  attribute :after_create_called, :integer, default: 0
-  attribute :after_update_called, :integer, default: 0
-
-  before_save { self.before_save_called = order }
-  before_create { self.before_create_called = order }
-  before_update { self.before_update_called = order }
-  after_save { self.after_save_called = order }
-  after_create { self.after_create_called = order }
-  after_update { self.after_update_called = order }
-
-  def order
-    @order = @order.to_i.succ
+  def initialize(tracer)
+    @tracer = tracer
+    super()
   end
+
+  before_save { tracer << 'before_save called' }
+  before_create { tracer << 'before_create called' }
+  before_update { tracer << 'before_update called' }
+  before_commit { tracer << 'before_commit called' }
+  after_save { tracer << 'after_save called' }
+  after_create { tracer << 'after_create called' }
+  after_update { tracer << 'after_update called' }
+  after_rollback { tracer << 'after_rollback called' }
+  after_commit { tracer << 'after_commit called' }
+
+  private
+
+  attr_reader :tracer
 end
