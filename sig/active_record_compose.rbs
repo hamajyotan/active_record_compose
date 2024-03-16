@@ -73,6 +73,8 @@ module ActiveRecordCompose
     include ActiveModel::Attributes
     include ActiveRecord::Transactions
     include DelegateAttribute
+    include TransactionSupport
+    extend TransactionSupport::ClassMethods
 
     @__models: InnerModelCollection
 
@@ -95,5 +97,15 @@ module ActiveRecordCompose
 
     def self.validate: (*untyped) -> untyped
     def run_callbacks: (untyped kind) ?{ () -> untyped } -> untyped
+  end
+
+  module TransactionSupport
+    include ActiveRecord::Transactions
+
+    def id: -> untyped
+
+    module ClassMethods
+      def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+    end
   end
 end

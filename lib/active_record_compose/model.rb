@@ -2,27 +2,22 @@
 
 require 'active_record_compose/delegate_attribute'
 require 'active_record_compose/inner_model_collection'
+require 'active_record_compose/transaction_support'
 
 module ActiveRecordCompose
   class Model
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
     include ActiveModel::Attributes
-    include ActiveRecord::Transactions
 
     include ActiveRecordCompose::DelegateAttribute
+    include ActiveRecordCompose::TransactionSupport
 
     define_model_callbacks :save
     define_model_callbacks :create
     define_model_callbacks :update
 
     validate :validate_models
-
-    # for ActiveRecord::Transactions
-    class << self
-      def connection = ActiveRecord::Base.connection
-      __skip__ = def composite_primary_key? = false
-    end
 
     def initialize(attributes = {})
       __skip__ = super(attributes)
@@ -150,15 +145,6 @@ module ActiveRecordCompose
         run_callbacks(:save) { run_callbacks(:update) { save_models(bang: true) } }
       end || raise_on_save_error
     end
-
-    # for ActiveRecord::Transactions
-    __skip__ = def id = nil
-
-    # for ActiveRecord::Transactions
-    __skip__ = def trigger_transactional_callbacks? = true
-
-    # for ActiveRecord::Transactions
-    __skip__ = def restore_transaction_record_state(_force_restore_state) = nil
 
     private
 
