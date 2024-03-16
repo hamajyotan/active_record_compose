@@ -38,23 +38,26 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
 
     included do
-      class_attribute :delegated_attributes, instance_writer: false
+      __skip__ = class_attribute :delegated_attributes, instance_writer: false
     end
 
-    class_methods do
+    module ClassMethods
       # Defines the reader and writer for the specified attribute.
       #
       def delegate_attribute(*attributes, to:, **options)
-        delegates = attributes.flat_map do |attribute|
-          reader = attribute
-          writer = "#{attribute}="
+        __skip__ =
+          begin
+            delegates = attributes.flat_map do |attribute|
+              reader = attribute
+              writer = "#{attribute}="
 
-          [reader, writer]
-        end
+              [reader, writer]
+            end
 
-        delegate(*delegates, to:, **options)
-        delegated_attributes = (self.delegated_attributes ||= [])
-        attributes.each { delegated_attributes.push(_1.to_s) }
+            delegate(*delegates, to:, **options)
+            delegated_attributes = (self.delegated_attributes ||= [])
+            attributes.each { delegated_attributes.push(_1.to_s) }
+          end
       end
     end
 
@@ -64,7 +67,10 @@ module ActiveRecordCompose
     # @return [Hash] hash with the attribute name as key and the attribute value as value.
     def attributes
       attrs = __skip__ = defined?(super) ? super : {}
-      attrs.merge(delegated_attributes.to_h { [_1, public_send(_1)] })
+      delegates = __skip__ = delegated_attributes
+
+      # @type var delegates: Array[untyped]
+      attrs.merge(delegates.to_h { [_1, public_send(_1)] })
     end
   end
 end
