@@ -6,6 +6,14 @@ module ActiveRecordCompose
     include ActiveRecord::Transactions
 
     module ClassMethods
+      def lease_connection
+        if ActiveRecord::Base.respond_to?(:lease_connection)
+          __skip__ = ActiveRecord::Base.lease_connection
+        else
+          ActiveRecord::Base.connection
+        end
+      end
+
       def connection = ActiveRecord::Base.connection
 
       def composite_primary_key? = false

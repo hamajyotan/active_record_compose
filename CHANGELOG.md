@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - purge nodoc definitions from type signature
+- support `ActiveRecord::Base#lease_connection`
 
 ## [0.3.0] - 2024-02-24
 

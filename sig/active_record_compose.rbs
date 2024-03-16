@@ -100,6 +100,7 @@ module ActiveRecordCompose
 
     module ClassMethods
       def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+      def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
     end
   end
 end
