@@ -14,7 +14,7 @@ module ActiveRecordCompose
     def each
       return enum_for(:each) unless block_given?
 
-      models.each { yield _1.__raw_model }
+      __skip__ = models.each { yield _1.__raw_model }
       self
     end
 
@@ -73,7 +73,7 @@ module ActiveRecordCompose
     def __each_by_wrapped
       return enum_for(:__each_by_wrapped) unless block_given?
 
-      models.each { yield _1 if _1.__raw_model }
+      __skip__ = models.each { yield _1 if _1.__raw_model }
       self
     end
 

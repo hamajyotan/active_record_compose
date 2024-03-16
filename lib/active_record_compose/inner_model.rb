@@ -65,7 +65,7 @@ module ActiveRecordCompose
     # @return [Boolean]
     def ==(other)
       return false unless self.class == other.class
-      return false unless __raw_model == other.__raw_model
+      return false unless (__skip__ = (__raw_model == other.__raw_model))
       return false unless context == other.context
 
       true

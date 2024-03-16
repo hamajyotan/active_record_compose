@@ -24,13 +24,7 @@ module ActiveRecordCompose
   module DelegateAttribute
     extend ActiveSupport::Concern
 
-    def delegated_attribute: -> Array[untyped]
     def attributes: -> Hash[String, untyped]
-    def delegated_attributes: -> Array[untyped]
-    def delegated_attributes=: (Array[untyped]) -> void
-
-    def self.class_attribute: (untyped, ?untyped) -> untyped
-    def delegate: (*untyped) -> untyped
 
     module ClassMethods
       def delegate_attribute: (*untyped methods, to: untyped?, **untyped) -> untyped
@@ -47,7 +41,6 @@ module ActiveRecordCompose
     def empty?: -> bool
     def clear: -> self
     def delete: (_ARLike | InnerModel, ?context: context_types) -> InnerModelCollection?
-    def __each_by_wrapped: () { (InnerModel) -> void } -> InnerModelCollection | () -> Enumerator[InnerModel, self]
 
     private
     def models: -> Array[InnerModel]
@@ -64,7 +57,6 @@ module ActiveRecordCompose
     def invalid?: -> bool
     def valid?: -> bool
     def ==: (untyped) -> bool
-    def __raw_model: -> _ARLike
 
     private
     attr_reader model: _ARLike
@@ -74,8 +66,8 @@ module ActiveRecordCompose
     extend ActiveModel::Callbacks
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
+    extend ActiveModel::Validations::ClassMethods
     include ActiveModel::Attributes
-    include ActiveRecord::Transactions
     include DelegateAttribute
     extend DelegateAttribute::ClassMethods
     include TransactionSupport
@@ -99,9 +91,6 @@ module ActiveRecordCompose
     def raise_validation_error: -> bot
     def raise_on_save_error: -> bot
     def raise_on_save_error_message: -> String
-
-    def self.validate: (*untyped) -> untyped
-    def run_callbacks: (untyped kind) ?{ () -> untyped } -> untyped
   end
 
   module TransactionSupport
