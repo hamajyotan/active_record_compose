@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- support `ActiveRecord::Base#with_connection`
+
 ## [0.3.1] - 2024-03-17
 
 - purge nodoc definitions from type signature

@@ -101,6 +101,10 @@ module ActiveRecordCompose
     module ClassMethods
       def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
       def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+      def with_connection: () { () -> untyped } -> untyped
+
+      private
+      def ar_class: -> singleton(ActiveRecord::Base)
     end
   end
 end
