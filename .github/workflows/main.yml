@@ -21,20 +21,19 @@ jobs:
           - '~> 7.0.0'
           - '~> 7.1.0'
           - 'head'
-
     env:
       AR: ${{ matrix.ar }}
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-    - name: Run rspec
-      run: bundle exec rake spec
-    - name: Run rubocop
-      run: bundle exec rake rubocop
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run rspec
+        run: bundle exec rake spec
+      - name: Run rubocop
+        run: bundle exec rake rubocop
 
   type-check:
     runs-on: ubuntu-latest
