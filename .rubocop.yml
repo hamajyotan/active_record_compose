@@ -6,7 +6,13 @@ AllCops:
 Style/ArgumentsForwarding:
   Enabled: false
 
+Style/CommentedKeyword:
+  Enabled: false
+
 Style/Documentation:
+  Enabled: false
+
+Style/NumericPredicate:
   Enabled: false
 
 Style/StringLiterals:
@@ -26,6 +32,9 @@ Style/TrailingCommaInArrayLiteral:
 
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
+
+Layout/LeadingCommentSpace:
+  Enabled: false
 
 Layout/LineLength:
   Max: 120

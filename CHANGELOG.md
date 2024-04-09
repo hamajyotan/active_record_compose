@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - support `ActiveRecord::Base#with_connection`
+- rbs maintained.
 
 ## [0.3.1] - 2024-03-17
 

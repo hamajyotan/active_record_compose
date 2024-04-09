@@ -82,9 +82,11 @@ module ActiveRecordCompose
     def models = @models ||= []
 
     def wrap(model, context:)
-      if model.is_a?(ActiveRecordCompose::InnerModel)
+      if (__skip__ = model.is_a?(ActiveRecordCompose::InnerModel))
+        # @type var model: ActiveRecordCompose::InnerModel
         model
       else
+        # @type var model: ActiveRecordCompose::_ARLike
         ActiveRecordCompose::InnerModel.new(model, context:)
       end
     end

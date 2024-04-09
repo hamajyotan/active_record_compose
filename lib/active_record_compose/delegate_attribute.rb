@@ -45,15 +45,15 @@ module ActiveRecordCompose
       # Defines the reader and writer for the specified attribute.
       #
       def delegate_attribute(*attributes, to:, **options)
+        delegates = attributes.flat_map do |attribute|
+          reader = attribute.to_s
+          writer = "#{attribute}="
+
+          [reader, writer]
+        end
+
         __skip__ =
           begin
-            delegates = attributes.flat_map do |attribute|
-              reader = attribute
-              writer = "#{attribute}="
-
-              [reader, writer]
-            end
-
             delegate(*delegates, to:, **options)
             delegated_attributes = (self.delegated_attributes ||= [])
             attributes.each { delegated_attributes.push(_1.to_s) }
@@ -69,7 +69,8 @@ module ActiveRecordCompose
       attrs = __skip__ = defined?(super) ? super : {}
       delegates = __skip__ = delegated_attributes
 
-      # @type var delegates: Array[untyped]
+      # @type var attrs: Hash[String, untyped]
+      # @type var delegates: Array[String]
       attrs.merge(delegates.to_h { [_1, public_send(_1)] })
     end
   end

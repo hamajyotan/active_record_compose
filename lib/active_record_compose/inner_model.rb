@@ -15,9 +15,14 @@ module ActiveRecordCompose
     delegate :errors, to: :model
 
     # @return [Symbol] :save or :destroy
-    def context
+    def context #: ActiveRecordCompose::context
       c = @context
-      ret = c.is_a?(Proc) ? c.call(model) : c
+      ret =
+        if c.respond_to?(:call)
+          c.call(model) # @type var c: ActiveRecordCompose::context_proc
+        else
+          c
+        end
       ret.presence_in(%i[save destroy]) || :save
     end
 
