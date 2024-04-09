@@ -18,8 +18,14 @@ module ActiveRecordCompose
     def context #: ActiveRecordCompose::context
       c = @context
       ret =
-        if c.respond_to?(:call)
-          c.call(model) # @type var c: ActiveRecordCompose::context_proc
+        if c.is_a?(Proc)
+          if c.arity == 0
+            # @type var c: ^() -> context
+            c.call
+          else
+            # @type var c: ^(_ARLike) -> context
+            c.call(model)
+          end
         else
           c
         end

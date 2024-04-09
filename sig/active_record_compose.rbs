@@ -16,7 +16,7 @@ module ActiveRecordCompose
 
   type attribute_name = (String | Symbol)
   type context = (:save | :destroy)
-  type context_proc = ^(?_ARLike) -> context
+  type context_proc = ((^() -> context) | (^(_ARLike) -> context))
 
   module DelegateAttribute
     extend ActiveSupport::Concern

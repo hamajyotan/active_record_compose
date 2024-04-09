@@ -2,6 +2,7 @@
 
 - support `ActiveRecord::Base#with_connection`
 - rbs maintained.
+- relax context proc arity.
 
 ## [0.3.1] - 2024-03-17
 
