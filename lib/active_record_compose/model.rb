@@ -20,7 +20,7 @@ module ActiveRecordCompose
     validate :validate_models
 
     def initialize(attributes = {})
-      __skip__ = super(attributes)
+      super
     end
 
     # Save the models that exist in models.
