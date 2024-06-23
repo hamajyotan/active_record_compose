@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.3] - 2024-06-24
+
+- use steep:ignore
+
 ## [0.3.2] - 2024-04-10
 
 - support `ActiveRecord::Base#with_connection`
