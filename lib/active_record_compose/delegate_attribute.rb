@@ -38,7 +38,7 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
 
     included do
-      __skip__ = class_attribute :delegated_attributes, instance_writer: false
+      class_attribute :delegated_attributes, instance_writer: false # steep:ignore
     end
 
     module ClassMethods
@@ -52,12 +52,9 @@ module ActiveRecordCompose
           [reader, writer]
         end
 
-        __skip__ =
-          begin
-            delegate(*delegates, to:, **options)
-            delegated_attributes = (self.delegated_attributes ||= [])
-            attributes.each { delegated_attributes.push(_1.to_s) }
-          end
+        delegate(*delegates, to:, **options) # steep:ignore
+        delegated_attributes = (self.delegated_attributes ||= []) # steep:ignore
+        attributes.each { delegated_attributes.push(_1.to_s) }
       end
     end
 
@@ -66,8 +63,8 @@ module ActiveRecordCompose
     #
     # @return [Hash] hash with the attribute name as key and the attribute value as value.
     def attributes
-      attrs = __skip__ = defined?(super) ? super : {}
-      delegates = __skip__ = delegated_attributes
+      attrs = defined?(super) ? super : {} # steep:ignore
+      delegates = delegated_attributes # steep:ignore
 
       # @type var attrs: Hash[String, untyped]
       # @type var delegates: Array[String]

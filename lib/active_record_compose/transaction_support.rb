@@ -8,7 +8,7 @@ module ActiveRecordCompose
     module ClassMethods
       def lease_connection
         if ar_class.respond_to?(:lease_connection)
-          __skip__ = ar_class.lease_connection
+          ar_class.lease_connection # steep:ignore
         else
           ar_class.connection
         end
@@ -16,7 +16,7 @@ module ActiveRecordCompose
 
       def connection = ar_class.connection
 
-      def with_connection(&) = __skip__ = ar_class.with_connection(&)
+      def with_connection(&) = ar_class.with_connection(&) # steep:ignore
 
       def composite_primary_key? = false
 

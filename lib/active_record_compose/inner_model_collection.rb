@@ -14,7 +14,7 @@ module ActiveRecordCompose
     def each
       return enum_for(:each) unless block_given?
 
-      __skip__ = models.each { yield _1.__raw_model }
+      models.each { yield _1.__raw_model } # steep:ignore
       self
     end
 
@@ -73,7 +73,7 @@ module ActiveRecordCompose
     def __each_by_wrapped
       return enum_for(:__each_by_wrapped) unless block_given?
 
-      __skip__ = models.each { yield _1 if _1.__raw_model }
+      models.each { yield _1 if _1.__raw_model } # steep:ignore
       self
     end
 
@@ -82,7 +82,7 @@ module ActiveRecordCompose
     def models = @models ||= []
 
     def wrap(model, context:)
-      if (__skip__ = model.is_a?(ActiveRecordCompose::InnerModel))
+      if model.is_a?(ActiveRecordCompose::InnerModel) # steep:ignore
         # @type var model: ActiveRecordCompose::InnerModel
         model
       else

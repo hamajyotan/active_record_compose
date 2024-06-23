@@ -150,7 +150,7 @@ module ActiveRecordCompose
 
     def models = @__models ||= ActiveRecordCompose::InnerModelCollection.new
 
-    def wrapped_models = (__skip__ = models.__each_by_wrapped)
+    def wrapped_models = models.__each_by_wrapped # steep:ignore
 
     def validate_models = wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
 
