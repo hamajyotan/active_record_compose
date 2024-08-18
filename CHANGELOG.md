@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- ci: removed sqlite3 version specifing for new AR.
+
 ## [0.3.3] - 2024-06-24
 
 - use steep:ignore
