@@ -8,12 +8,14 @@ gemspec
 case ENV.fetch('AR', 'latest')
 when 'latest'
   gem 'activerecord'
+  gem 'sqlite3'
 when 'head'
   gem 'activerecord', github: 'rails/rails'
+  gem 'sqlite3'
 else
   gem 'activerecord', ENV.fetch('AR', nil)
+  gem 'sqlite3', '~> 1.4'
 end
-gem 'sqlite3', '~> 1.4'
 
 gem 'debug'
 gem 'rake'
