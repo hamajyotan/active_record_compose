@@ -120,12 +120,10 @@ RSpec.describe ActiveRecordCompose::Model do
 
   describe 'composed model with conditional destroy context' do
     subject(:model) do
-      ComposedModelWithConditionalDestroyContext.new(
-        account,
-        name: 'bar',
-        email: 'bar@example.com',
-      )
+      form.new(account, name: 'bar', email: 'bar@example.com')
     end
+
+    let(:form) { ComposedModelWithConditionalDestroyContext }
 
     let(:account) do
       Account.create!(name: 'foo', email: 'foo@example.com').tap do |a|
@@ -148,6 +146,18 @@ RSpec.describe ActiveRecordCompose::Model do
         expect(account.profile.firstname).to eq 'qux'
         expect(account.profile.lastname).to eq 'quux'
         expect(account.profile.age).to eq 36
+      end
+
+      context 'when context block argument' do
+        let(:form) { ComposedModelWithConditionalDestroyContextWithNoBlockArgument }
+
+        specify 'same way' do
+          expect { model.save! }.not_to change(Profile, :count)
+          account.profile.reload
+          expect(account.profile.firstname).to eq 'qux'
+          expect(account.profile.lastname).to eq 'quux'
+          expect(account.profile.age).to eq 36
+        end
       end
     end
 

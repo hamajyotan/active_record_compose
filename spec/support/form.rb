@@ -43,7 +43,7 @@ class ComposedModelWithConditionalDestroyContext < ActiveRecordCompose::Model
     super(attributes)
     models.push(account)
 
-    context = ->(p) { p.firstname.blank? && p.lastname.blank? && age.blank? ? :destroy : :save }
+    context = ->(p) { p.firstname.blank? && p.lastname.blank? && p.age.blank? ? :destroy : :save }
     models.push(profile, context:)
   end
 
@@ -53,6 +53,25 @@ class ComposedModelWithConditionalDestroyContext < ActiveRecordCompose::Model
   private
 
   attr_reader :account, :profile
+end
+
+class ComposedModelWithConditionalDestroyContextWithNoBlockArgument < ActiveRecordCompose::Model
+  def initialize(account, attributes = {})
+    @account = account
+    @profile = account.profile || account.build_profile
+    super(attributes)
+    models.push(account)
+    models.push(profile, context: -> { blank_profile? ? :destroy : :save })
+  end
+
+  delegate_attribute :name, :email, to: :account
+  delegate_attribute :firstname, :lastname, :age, to: :profile
+
+  private
+
+  attr_reader :account, :profile
+
+  def blank_profile? = firstname.blank? && lastname.blank? && age.blank?
 end
 
 class CallbackOrder < ActiveRecordCompose::Model
