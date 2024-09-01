@@ -24,7 +24,7 @@ module ActiveRecordCompose
     def attributes: -> Hash[String, untyped]
 
     module ClassMethods
-      def delegate_attribute: (*untyped methods, to: untyped?, **untyped) -> untyped
+      def delegate_attribute: (*untyped methods, to: untyped?, ?allow_nil: untyped?, ?private: untyped?) -> untyped
     end
   end
 
