@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.3.4] - 2024-09-01
+
 - ci: removed sqlite3 version specifing for new AR.
 - `delegate_attribute` options are now specific and do not accept `prefix`
 
