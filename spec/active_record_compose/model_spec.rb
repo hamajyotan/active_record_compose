@@ -176,6 +176,101 @@ RSpec.describe ActiveRecordCompose::Model do
     end
   end
 
+  describe 'deprecated option support' do
+    describe 'composed model with destroy context' do
+      subject(:model) do
+        ComposedModelWithDestroyContextByDeprecatedOption.new(
+          account,
+          name: 'bar',
+          email: 'bar@example.com',
+          firstname: 'qux',
+          lastname: 'quux',
+          age: 36,
+        )
+      end
+
+      let(:account) do
+        Account.create!(name: 'foo', email: 'foo@example.com').tap do |a|
+          a.create_profile!(firstname: 'bar', lastname: 'baz', age: 45)
+        end
+      end
+
+      context 'assign account attributes' do
+        before do
+          model.name = 'bar'
+          model.email = 'bar@example.com'
+        end
+
+        it { is_expected.to be_valid }
+
+        specify 'model in the destroy context must be destroyed' do
+          expect { model.save! }.to change(Profile, :count).by(-1)
+          account.reload
+          expect(account.name).to eq 'bar'
+          expect(account.email).to eq 'bar@example.com'
+        end
+      end
+    end
+
+    describe 'composed model with conditional destroy context' do
+      subject(:model) do
+        form.new(account, name: 'bar', email: 'bar@example.com')
+      end
+
+      let(:form) { ComposedModelWithConditionalDestroyContextByDeprecatedOption }
+
+      let(:account) do
+        Account.create!(name: 'foo', email: 'foo@example.com').tap do |a|
+          a.create_profile!(firstname: 'bar', lastname: 'baz', age: 45)
+        end
+      end
+
+      context 'settings evaluated as not destroy (=save)' do
+        before do
+          model.firstname = 'qux'
+          model.lastname = 'quux'
+          model.age = 36
+        end
+
+        it { is_expected.to be_valid }
+
+        specify 'model in the save context must be updated' do
+          expect { model.save! }.not_to change(Profile, :count)
+          account.profile.reload
+          expect(account.profile.firstname).to eq 'qux'
+          expect(account.profile.lastname).to eq 'quux'
+          expect(account.profile.age).to eq 36
+        end
+
+        context 'when context block argument' do
+          let(:form) { ComposedModelWithConditionalDestroyContextWithNoBlockArgumentByDeprecatedOption }
+
+          specify 'same way' do
+            expect { model.save! }.not_to change(Profile, :count)
+            account.profile.reload
+            expect(account.profile.firstname).to eq 'qux'
+            expect(account.profile.lastname).to eq 'quux'
+            expect(account.profile.age).to eq 36
+          end
+        end
+      end
+
+      context 'settings evaluated as destroy' do
+        before do
+          model.firstname = nil
+          model.lastname = nil
+          model.age = nil
+        end
+
+        it { is_expected.to be_valid }
+
+        specify 'model in the destroy context must be destroyed' do
+          expect { model.save! }.to change(Profile, :count).by(-1)
+        end
+      end
+    end
+  end
+
   describe '.delegate_attributes' do
     subject(:model) do
       ComposedModel.new(

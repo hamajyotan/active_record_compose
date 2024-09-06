@@ -34,21 +34,21 @@ module ActiveRecordCompose
 
     def each: () { (_ARLike) -> void } -> InnerModelCollection | () -> Enumerator[_ARLike, self]
     def <<: (_ARLike) -> self
-    def push: (_ARLike, ?context: (context | context_proc)) -> self
+    def push: (_ARLike, ?destroy: bool, ?context: (nil | context | context_proc)) -> self
     def empty?: -> bool
     def clear: -> self
-    def delete: (_ARLike | InnerModel, ?context: (context | context_proc)) -> InnerModelCollection?
+    def delete: (_ARLike | InnerModel, ?destroy: bool, ?context: (nil | context | context_proc)) -> InnerModelCollection?
 
     private
     def models: -> Array[InnerModel]
-    def wrap: (_ARLike | InnerModel, context: (context | context_proc)) -> InnerModel
+    def wrap: (_ARLike | InnerModel, destroy: bool, ?context: (nil | context | context_proc)) -> InnerModel
   end
 
   class InnerModel
     @context: (context | context_proc)
 
-    def initialize: (_ARLike, ?context: (context | context_proc)) -> void
-    def context: -> context
+    def initialize: (_ARLike, ?destroy: bool, ?context: (nil | context | context_proc)) -> void
+    def destroy_context?: -> bool
     def save: -> bool
     def save!: -> untyped
     def invalid?: -> bool

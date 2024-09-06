@@ -5,67 +5,79 @@ require 'active_support/core_ext/object'
 module ActiveRecordCompose
   class InnerModel
     # @param model [Object] the model instance.
-    # @param context [Symbol] :save or :destroy
-    # @param context [Proc] proc returning either :save or :destroy
-    def initialize(model, context: :save)
+    # @param destroy [Boolean] given true, destroy model.
+    # @param destroy [Proc] when proc returning true, destroy model.
+    def initialize(model, destroy: false, context: nil)
       @model = model
-      @context = context
+      @destroy =
+        if context
+          c = context
+
+          if c.is_a?(Proc)
+            # @type var c: ((^() -> (context)) | (^(_ARLike) -> (context)))
+            if c.arity == 0
+              ActiveRecord.deprecator.warn(
+                '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
+                'for example, `context: -> { foo? ? :destroy : :save }` ' \
+                'is replaced by `destroy: -> { foo? }`.',
+              )
+
+              # @type var c: ^() -> (context)
+              -> { c.call == :destroy }
+            else
+              ActiveRecord.deprecator.warn(
+                '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
+                'for example, `context: ->(model) { model.bar? ? :destroy : :save }` ' \
+                'is replaced by `destroy: ->(model) { foo? }`.',
+              )
+
+              # @type var c: ^(_ARLike) -> (context)
+              ->(model) { c.call(model) == :destroy }
+            end
+          else # :save or :destroy
+            ActiveRecord.deprecator.warn(
+              '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
+              "for example, `context: #{c.inspect}` is replaced by `destroy: #{(c == :destroy).inspect}`.",
+            )
+
+            # @type var c: (:save | :destory)
+            c == :destroy
+          end
+        else
+          destroy
+        end
     end
 
     delegate :errors, to: :model
 
-    # @return [Symbol] :save or :destroy
-    def context #: ActiveRecordCompose::context
-      c = @context
-      ret =
-        if c.is_a?(Proc)
-          if c.arity == 0
-            # @type var c: ^() -> context
-            c.call
-          else
-            # @type var c: ^(_ARLike) -> context
-            c.call(model)
-          end
+    def destroy_context?
+      d = destroy
+      if d.is_a?(Proc)
+        if d.arity == 0
+          # @type var d: ^() -> (bool | context)
+          d.call
         else
-          c
+          # @type var d: ^(_ARLike) -> (bool | context)
+          d.call(model)
         end
-      ret.presence_in(%i[save destroy]) || :save
+      else
+        !!d
+      end
     end
 
     # Execute save or destroy. Returns true on success, false on failure.
-    # Whether save or destroy is executed depends on the value of context.
+    # Whether save or destroy is executed depends on the value of `#destroy_context?`.
     #
     # @return [Boolean] returns true on success, false on failure.
-    def save
-      case context
-      when :destroy
-        model.destroy
-      else
-        model.save
-      end
-    end
+    def save = destroy_context? ? model.destroy : model.save
 
     # Execute save or destroy. Unlike #save, an exception is raises on failure.
-    # Whether save or destroy is executed depends on the value of context.
+    # Whether save or destroy is executed depends on the value of `#destroy_context?`.
     #
-    def save!
-      case context
-      when :destroy
-        model.destroy!
-      else
-        model.save!
-      end
-    end
+    def save! = destroy_context? ? model.destroy! : model.save!
 
     # @return [Boolean]
-    def invalid?
-      case context
-      when :destroy
-        false
-      else
-        model.invalid?
-      end
-    end
+    def invalid? = destroy_context? ? false : model.invalid?
 
     # @return [Boolean]
     def valid? = !invalid?
@@ -76,8 +88,8 @@ module ActiveRecordCompose
     # @return [Boolean]
     def ==(other)
       return false unless self.class == other.class
-      return false unless __raw_model == other.__raw_model # steep:ignore
-      return false unless context == other.context
+      return false unless __raw_model == other.__raw_model
+      return false unless __destroy == other.__destroy
 
       true
     end
@@ -88,8 +100,15 @@ module ActiveRecordCompose
     # @return [Object] raw model instance
     def __raw_model = model
 
+    # Returns a model instance of raw, but it should
+    # be noted that application developers are not expected to use this interface.
+    #
+    # @return [Boolean] raw destroy instance
+    # @return [Proc] raw destroy instance
+    def __destroy = destroy
+
     private
 
-    attr_reader :model
+    attr_reader :model, :destroy
   end
 end

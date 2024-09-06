@@ -39,6 +39,9 @@ Layout/LeadingCommentSpace:
 Layout/LineLength:
   Max: 120
 
+Metrics/AbcSize:
+  Enabled: false
+
 Metrics/BlockLength:
   Enabled: false
 

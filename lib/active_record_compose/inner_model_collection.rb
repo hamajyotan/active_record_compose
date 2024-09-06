@@ -23,17 +23,18 @@ module ActiveRecordCompose
     # @param model [Object] the model instance
     # @return [self] returns itself.
     def <<(model)
-      models << wrap(model, context: :save)
+      models << wrap(model, destroy: false)
       self
     end
 
     # Appends model to collection.
     #
     # @param model [Object] the model instance
+    # @param destroy [Boolean] given true, destroy model.
     # @param context [Symbol] :save or :destroy
     # @return [self] returns itself.
-    def push(model, context: :save)
-      models << wrap(model, context:)
+    def push(model, destroy: false, context: nil)
+      models << wrap(model, destroy:, context:)
       self
     end
 
@@ -54,11 +55,12 @@ module ActiveRecordCompose
     # Returns nil if the deletion fails, self if it succeeds.
     #
     # @param model [Object] the model instance
+    # @param destroy [Boolean] given true, destroy model.
     # @param context [Symbol] :save or :destroy
     # @return [self] Successful deletion
     # @return [nil] If deletion fails
-    def delete(model, context: :save)
-      wrapped = wrap(model, context:)
+    def delete(model, destroy: false, context: nil)
+      wrapped = wrap(model, destroy:, context:)
       return nil unless models.delete(wrapped)
 
       self
@@ -81,13 +83,13 @@ module ActiveRecordCompose
 
     def models = @models ||= []
 
-    def wrap(model, context:)
+    def wrap(model, destroy:, context: nil)
       if model.is_a?(ActiveRecordCompose::InnerModel) # steep:ignore
         # @type var model: ActiveRecordCompose::InnerModel
         model
       else
         # @type var model: ActiveRecordCompose::_ARLike
-        ActiveRecordCompose::InnerModel.new(model, context:)
+        ActiveRecordCompose::InnerModel.new(model, destroy:, context:)
       end
     end
   end

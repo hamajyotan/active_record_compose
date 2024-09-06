@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+- support `destrpy` option. and deprecated `context` option.
+  `:context` will be removed in 0.5.0. Use `:destroy`  option instead.
+  for example,
+  - `context: :destroy` is replaced by `destroy: true`
+  - `context: -> { foo? ? :destroy : :save }` is replaced by `destroy: -> { foo? }`
+  - `context: ->(model) { model.bar? ? :destroy : :save }` is replaced by `destroy: ->(model) { foo? }`.'
+
 ## [0.3.4] - 2024-09-01
 
 - ci: removed sqlite3 version specifing for new AR.

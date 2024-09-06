@@ -156,7 +156,7 @@ Account.count  #=> 1
 Profile.count  #=> 1
 ```
 
-By adding to the `models` array while specifying `context: :destroy`, you can perform a delete instead of a save on the model at `#save` time.
+By adding to the `models` array while specifying `destroy: true`, you can perform a delete instead of a save on the model at `#save` time.
 
 ```ruby
 class AccountResignation < ActiveRecordCompose::Model
@@ -164,7 +164,7 @@ class AccountResignation < ActiveRecordCompose::Model
     @account = account
     @profile = account.profile  # Suppose that Account has_one Profile.
     models.push(account)
-    models.push(profile, context: :destroy)
+    models.push(profile, destroy: true)
   end
 
   attr_reader :account, :profile
