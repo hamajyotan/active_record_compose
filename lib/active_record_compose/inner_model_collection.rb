@@ -6,6 +6,10 @@ module ActiveRecordCompose
   class InnerModelCollection
     include Enumerable
 
+    def initialize(owner)
+      @owner = owner
+    end
+
     # Enumerates model objects.
     #
     # @yieldparam [Object] the model instance
@@ -81,6 +85,8 @@ module ActiveRecordCompose
 
     private
 
+    attr_reader :owner
+
     def models = @models ||= []
 
     def wrap(model, destroy:, context: nil)
@@ -89,7 +95,7 @@ module ActiveRecordCompose
         model
       else
         # @type var model: ActiveRecordCompose::_ARLike
-        ActiveRecordCompose::InnerModel.new(model, destroy:, context:)
+        ActiveRecordCompose::InnerModel.new(owner, model, destroy:, context:)
       end
     end
   end

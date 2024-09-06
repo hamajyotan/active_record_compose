@@ -12,6 +12,9 @@ Style/CommentedKeyword:
 Style/Documentation:
   Enabled: false
 
+Style/DoubleNegation:
+  Enabled: false
+
 Style/NumericPredicate:
   Enabled: false
 

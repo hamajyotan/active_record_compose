@@ -148,7 +148,7 @@ module ActiveRecordCompose
 
     private
 
-    def models = @__models ||= ActiveRecordCompose::InnerModelCollection.new
+    def models = @__models ||= ActiveRecordCompose::InnerModelCollection.new(self)
 
     def wrapped_models = models.__each_by_wrapped # steep:ignore
 

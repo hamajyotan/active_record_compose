@@ -7,7 +7,8 @@ module ActiveRecordCompose
     # @param model [Object] the model instance.
     # @param destroy [Boolean] given true, destroy model.
     # @param destroy [Proc] when proc returning true, destroy model.
-    def initialize(model, destroy: false, context: nil)
+    def initialize(owner, model, destroy: false, context: nil)
+      @owner = owner
       @model = model
       @destroy =
         if context
@@ -34,7 +35,7 @@ module ActiveRecordCompose
               # @type var c: ^(_ARLike) -> (context)
               ->(model) { c.call(model) == :destroy }
             end
-          else # :save or :destroy
+          elsif %i[save destroy].include?(c)
             ActiveRecord.deprecator.warn(
               '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
               "for example, `context: #{c.inspect}` is replaced by `destroy: #{(c == :destroy).inspect}`.",
@@ -42,6 +43,8 @@ module ActiveRecordCompose
 
             # @type var c: (:save | :destory)
             c == :destroy
+          else
+            c
           end
         else
           destroy
@@ -60,6 +63,8 @@ module ActiveRecordCompose
           # @type var d: ^(_ARLike) -> (bool | context)
           d.call(model)
         end
+      elsif d.is_a?(Symbol)
+        owner.send(d)
       else
         !!d
       end
@@ -109,6 +114,6 @@ module ActiveRecordCompose
 
     private
 
-    attr_reader :model, :destroy
+    attr_reader :owner, :model, :destroy
   end
 end

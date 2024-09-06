@@ -4,9 +4,11 @@ require 'spec_helper'
 require 'active_record_compose/inner_model_collection'
 
 RSpec.describe ActiveRecordCompose::InnerModelCollection do
-  describe '#empty?' do
-    subject(:collection) { ActiveRecordCompose::InnerModelCollection.new }
+  subject(:collection) { ActiveRecordCompose::InnerModelCollection.new(owner) }
 
+  let(:owner) { nil }
+
+  describe '#empty?' do
     context 'when models is blank' do
       specify 'returns true' do
         expect(collection).to be_empty
@@ -23,8 +25,6 @@ RSpec.describe ActiveRecordCompose::InnerModelCollection do
   end
 
   describe '#clear' do
-    subject(:collection) { ActiveRecordCompose::InnerModelCollection.new }
-
     before { collection << Account.new }
 
     specify 'can be made empty by #clear' do
@@ -34,8 +34,6 @@ RSpec.describe ActiveRecordCompose::InnerModelCollection do
   end
 
   describe '#delete' do
-    subject(:collection) { ActiveRecordCompose::InnerModelCollection.new }
-
     let(:account) { Account.new }
     let(:profile) { Profile.new }
 

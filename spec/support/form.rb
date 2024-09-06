@@ -74,6 +74,25 @@ class ComposedModelWithConditionalDestroyContextWithNoBlockArgument < ActiveReco
   def blank_profile? = firstname.blank? && lastname.blank? && age.blank?
 end
 
+class ComposedModelWithConditionalDestroyContextWithMethodName < ActiveRecordCompose::Model
+  def initialize(account, attributes = {})
+    @account = account
+    @profile = account.profile || account.build_profile
+    super(attributes)
+    models.push(account)
+    models.push(profile, destroy: :blank_profile?)
+  end
+
+  delegate_attribute :name, :email, to: :account
+  delegate_attribute :firstname, :lastname, :age, to: :profile
+
+  private
+
+  attr_reader :account, :profile
+
+  def blank_profile? = firstname.blank? && lastname.blank? && age.blank?
+end
+
 class ComposedModelWithDestroyContextByDeprecatedOption < ActiveRecordCompose::Model
   def initialize(account, attributes = {})
     @account = account

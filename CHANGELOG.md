@@ -6,6 +6,7 @@
   - `context: :destroy` is replaced by `destroy: true`
   - `context: -> { foo? ? :destroy : :save }` is replaced by `destroy: -> { foo? }`
   - `context: ->(model) { model.bar? ? :destroy : :save }` is replaced by `destroy: ->(model) { foo? }`.'
+- `destroy` option can now be specified with a `Symbol` representing the method name.
 
 ## [0.3.4] - 2024-09-01
 

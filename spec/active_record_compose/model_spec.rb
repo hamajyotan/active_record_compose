@@ -159,6 +159,18 @@ RSpec.describe ActiveRecordCompose::Model do
           expect(account.profile.age).to eq 36
         end
       end
+
+      context 'when context with method name' do
+        let(:form) { ComposedModelWithConditionalDestroyContextWithMethodName }
+
+        specify 'same way' do
+          expect { model.save! }.not_to change(Profile, :count)
+          account.profile.reload
+          expect(account.profile.firstname).to eq 'qux'
+          expect(account.profile.lastname).to eq 'quux'
+          expect(account.profile.age).to eq 36
+        end
+      end
     end
 
     context 'settings evaluated as destroy' do
