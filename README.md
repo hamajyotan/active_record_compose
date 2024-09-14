@@ -193,6 +193,29 @@ account.resigned_at.present?  #=> Tue, 02 Jan 2024 22:58:01.991008870 JST +09:00
 account.profile.blank?        #=> true
 ```
 
+Conditional destroy (or save) can be written like this.
+
+```ruby
+class AccountRegistration < ActiveRecordCompose::Model
+  def initialize(account, attributes = {})
+    @account = account
+    @profile = account.profile || account.build_profile
+    super(attributes)
+    models.push(account)
+    models.push(profile, destroy: :all_blank?) # destroy if all blank, otherwise save.
+  end
+
+  delegate_attribute :name, :email, to: :account
+  delegate_attribute :firstname, :lastname, :age, to: :profile
+
+  private
+
+  attr_reader :account, :profile
+
+  def all_blank? = firstname.blank && lastname.blank? && age.blank?
+end
+```
+
 ### `delegate_attribute`
 
 It provides a macro description that expresses access to the attributes of the AR model through delegation.
