@@ -17,7 +17,7 @@ module ActiveRecordCompose
           if c.is_a?(Proc)
             # @type var c: ((^() -> (context)) | (^(_ARLike) -> (context)))
             if c.arity == 0
-              ActiveRecord.deprecator.warn(
+              deprecator.warn(
                 '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
                 'for example, `context: -> { foo? ? :destroy : :save }` ' \
                 'is replaced by `destroy: -> { foo? }`.',
@@ -26,7 +26,7 @@ module ActiveRecordCompose
               # @type var c: ^() -> (context)
               -> { c.call == :destroy }
             else
-              ActiveRecord.deprecator.warn(
+              deprecator.warn(
                 '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
                 'for example, `context: ->(model) { model.bar? ? :destroy : :save }` ' \
                 'is replaced by `destroy: ->(model) { foo? }`.',
@@ -36,7 +36,7 @@ module ActiveRecordCompose
               ->(model) { c.call(model) == :destroy }
             end
           elsif %i[save destroy].include?(c)
-            ActiveRecord.deprecator.warn(
+            deprecator.warn(
               '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
               "for example, `context: #{c.inspect}` is replaced by `destroy: #{(c == :destroy).inspect}`.",
             )
@@ -115,5 +115,13 @@ module ActiveRecordCompose
     private
 
     attr_reader :owner, :model, :destroy
+
+    def deprecator
+      if ActiveRecord.respond_to?(:deprecator)
+        ActiveRecord.deprecator
+      else # for rails 7.0.x or lower
+        ActiveSupport::Deprecation
+      end
+    end
   end
 end
