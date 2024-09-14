@@ -19,8 +19,8 @@ module ActiveRecordCompose
             if c.arity == 0
               deprecator.warn(
                 '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
-                'for example, `context: -> { foo? ? :destroy : :save }` ' \
-                'is replaced by `destroy: -> { foo? }`.',
+                'for example, `models.push(model, context: -> { foo? ? :destroy : :save })` ' \
+                'is replaced by `models.push(model, destroy: -> { foo? })`.',
               )
 
               # @type var c: ^() -> (context)
@@ -28,8 +28,8 @@ module ActiveRecordCompose
             else
               deprecator.warn(
                 '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
-                'for example, `context: ->(model) { model.bar? ? :destroy : :save }` ' \
-                'is replaced by `destroy: ->(model) { foo? }`.',
+                'for example, `models.push(model, context: ->(m) { m.bar? ? :destroy : :save })` ' \
+                'is replaced by `models.push(model, destroy: ->(m) { m.bar? })`.',
               )
 
               # @type var c: ^(_ARLike) -> (context)
@@ -38,7 +38,8 @@ module ActiveRecordCompose
           elsif %i[save destroy].include?(c)
             deprecator.warn(
               '`:context` will be removed in 0.5.0. Use `:destroy` option instead. ' \
-              "for example, `context: #{c.inspect}` is replaced by `destroy: #{(c == :destroy).inspect}`.",
+              "for example, `models.push(model, context: #{c.inspect})` " \
+              "is replaced by `models.push(model, destroy: #{(c == :destroy).inspect})`.",
             )
 
             # @type var c: (:save | :destory)

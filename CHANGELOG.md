@@ -3,9 +3,9 @@
 - support `destrpy` option. and deprecated `context` option.
   `:context` will be removed in 0.5.0. Use `:destroy`  option instead.
   for example,
-  - `context: :destroy` is replaced by `destroy: true`
-  - `context: -> { foo? ? :destroy : :save }` is replaced by `destroy: -> { foo? }`
-  - `context: ->(model) { model.bar? ? :destroy : :save }` is replaced by `destroy: ->(model) { foo? }`.'
+  - `models.push(model, context: :destroy)` is replaced by `models.push(model, destroy: true)`
+  - `models.push(model, context: -> { foo? ? :destroy : :save })` is replaced by `models.push(model, destroy: -> { foo? })`
+  - `models.push(model, context: ->(m) { m.bar? ? :destroy : :save })` is replaced by `models.push(model, destroy: ->(m) { m.bar? })`
 - `destroy` option can now be specified with a `Symbol` representing the method name.
 
 ## [0.3.4] - 2024-09-01
