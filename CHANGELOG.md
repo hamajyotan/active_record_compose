@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.4.0] - 2024-09-15
+
 - support `destrpy` option. and deprecated `context` option.
   `:context` will be removed in 0.5.0. Use `:destroy`  option instead.
   for example,
