@@ -66,7 +66,7 @@ module ActiveRecordCompose
           !!d.call(model)
         end
       elsif d.is_a?(Symbol)
-        !!owner.send(d)
+        !!owner.__send__(d)
       else
         !!d
       end
