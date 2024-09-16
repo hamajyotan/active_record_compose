@@ -73,6 +73,7 @@ module ActiveRecordCompose
       self
     end
 
+    # @private
     # Enumerates model objects, but it should be noted that
     # application developers are not expected to use this interface.
     #
