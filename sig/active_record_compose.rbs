@@ -17,6 +17,7 @@ module ActiveRecordCompose
   type attribute_name = (String | Symbol)
   type context = (:save | :destroy)
   type context_proc = ((^() -> context) | (^(_ARLike) -> context))
+  type destroy_context_type = (bool | Symbol | (^() -> boolish) | (^(_ARLike) -> boolish))
 
   module DelegateAttribute
     extend ActiveSupport::Concern
@@ -30,8 +31,6 @@ module ActiveRecordCompose
 
   class InnerModelCollection
     include ::Enumerable[_ARLike]
-    @owner: Model
-    @models: Array[InnerModel]
 
     def initialize: (Model) -> void
     def each: () { (_ARLike) -> void } -> InnerModelCollection | () -> Enumerator[_ARLike, self]
@@ -43,15 +42,12 @@ module ActiveRecordCompose
 
     private
     attr_reader owner: Model
-    def models: -> Array[InnerModel]
+    attr_reader models: Array[InnerModel]
     def wrap: (_ARLike | InnerModel, destroy: bool, ?context: (nil | context | context_proc)) -> InnerModel
   end
 
   class InnerModel
-    @owner: Model
-    @context: (context | context_proc)
-
-    def initialize: (Model, _ARLike, ?destroy: bool, ?context: (nil | context | context_proc)) -> void
+    def initialize: (Model, _ARLike, ?destroy: destroy_context_type, ?context: (nil | context | context_proc)) -> void
     def destroy_context?: -> bool
     def save: -> bool
     def save!: -> untyped
@@ -62,6 +58,7 @@ module ActiveRecordCompose
     private
     attr_reader owner: Model
     attr_reader model: _ARLike
+    attr_reader destroy_context_type: destroy_context_type
   end
 
   class Model

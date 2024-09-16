@@ -8,6 +8,7 @@ module ActiveRecordCompose
 
     def initialize(owner)
       @owner = owner
+      @models = []
     end
 
     # Enumerates model objects.
@@ -35,7 +36,8 @@ module ActiveRecordCompose
     #
     # @param model [Object] the model instance
     # @param destroy [Boolean] given true, destroy model.
-    # @param context [Symbol] :save or :destroy
+    # @param destroy [Proc] when proc returning true, destroy model.
+    # @param destroy [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
     # @return [self] returns itself.
     def push(model, destroy: false, context: nil)
       models << wrap(model, destroy:, context:)
@@ -60,7 +62,8 @@ module ActiveRecordCompose
     #
     # @param model [Object] the model instance
     # @param destroy [Boolean] given true, destroy model.
-    # @param context [Symbol] :save or :destroy
+    # @param destroy [Proc] when proc returning true, destroy model.
+    # @param destroy [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
     # @return [self] Successful deletion
     # @return [nil] If deletion fails
     def delete(model, destroy: false, context: nil)
@@ -85,9 +88,7 @@ module ActiveRecordCompose
 
     private
 
-    attr_reader :owner
-
-    def models = @models ||= []
+    attr_reader :owner, :models
 
     def wrap(model, destroy:, context: nil)
       if model.is_a?(ActiveRecordCompose::InnerModel) # steep:ignore

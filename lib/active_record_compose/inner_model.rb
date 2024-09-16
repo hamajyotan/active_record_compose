@@ -7,10 +7,11 @@ module ActiveRecordCompose
     # @param model [Object] the model instance.
     # @param destroy [Boolean] given true, destroy model.
     # @param destroy [Proc] when proc returning true, destroy model.
+    # @param destroy [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
     def initialize(owner, model, destroy: false, context: nil)
       @owner = owner
       @model = model
-      @destroy =
+      @destroy_context_type =
         if context
           c = context
 
@@ -55,17 +56,17 @@ module ActiveRecordCompose
     delegate :errors, to: :model
 
     def destroy_context?
-      d = destroy
+      d = destroy_context_type
       if d.is_a?(Proc)
         if d.arity == 0
           # @type var d: ^() -> (bool | context)
-          d.call
+          !!d.call
         else
           # @type var d: ^(_ARLike) -> (bool | context)
-          d.call(model)
+          !!d.call(model)
         end
       elsif d.is_a?(Symbol)
-        owner.send(d)
+        !!owner.send(d)
       else
         !!d
       end
@@ -94,8 +95,8 @@ module ActiveRecordCompose
     # @return [Boolean]
     def ==(other)
       return false unless self.class == other.class
-      return false unless __raw_model == other.__raw_model
-      return false unless __destroy == other.__destroy
+      return false unless __raw_model == other.__raw_model # steep:ignore
+      return false unless __destroy_context_type == other.__destroy_context_type # steep:ignore
 
       true
     end
@@ -111,11 +112,11 @@ module ActiveRecordCompose
     #
     # @return [Boolean] raw destroy instance
     # @return [Proc] raw destroy instance
-    def __destroy = destroy
+    def __destroy_context_type = destroy_context_type
 
     private
 
-    attr_reader :owner, :model, :destroy
+    attr_reader :owner, :model, :destroy_context_type
 
     def deprecator
       if ActiveRecord.respond_to?(:deprecator)
