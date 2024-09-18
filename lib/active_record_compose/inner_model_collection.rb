@@ -61,13 +61,19 @@ module ActiveRecordCompose
     # Returns nil if the deletion fails, self if it succeeds.
     #
     # @param model [Object] the model instance
-    # @param destroy [Boolean] given true, destroy model.
-    # @param destroy [Proc] when proc returning true, destroy model.
-    # @param destroy [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
     # @return [self] Successful deletion
     # @return [nil] If deletion fails
-    def delete(model, destroy: false, context: nil)
-      wrapped = wrap(model, destroy:, context:)
+    def delete(model, destroy: nil, context: nil)
+      if !destroy.nil? || !context.nil?
+        # steep:ignore:start
+        deprecator.warn(
+          'In `InnerModelConnection#destroy`, the option values `destroy` and `context` are ignored. ' \
+          'These options will be removed in 0.5.0.',
+        )
+        # steep:ignore:end
+      end
+
+      wrapped = wrap(model)
       return nil unless models.delete(wrapped)
 
       self
@@ -91,13 +97,21 @@ module ActiveRecordCompose
 
     attr_reader :owner, :models
 
-    def wrap(model, destroy:, context: nil)
+    def wrap(model, destroy: false, context: nil)
       if model.is_a?(ActiveRecordCompose::InnerModel) # steep:ignore
         # @type var model: ActiveRecordCompose::InnerModel
         model
       else
         # @type var model: ActiveRecordCompose::_ARLike
         ActiveRecordCompose::InnerModel.new(owner, model, destroy:, context:)
+      end
+    end
+
+    def deprecator
+      if ActiveRecord.respond_to?(:deprecator)
+        ActiveRecord.deprecator # steep:ignore
+      else # for rails 7.0.x or lower
+        ActiveSupport::Deprecation
       end
     end
   end

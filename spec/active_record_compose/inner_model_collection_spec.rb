@@ -46,10 +46,10 @@ RSpec.describe ActiveRecordCompose::InnerModelCollection do
 
     specify 'context must also be the same to get a hit' do
       expect(collection).to be_blank
-      collection.push(account, context: :save)
+      collection.push(account)
       expect(collection).to be_present
-      collection.delete(account, context: :destroy)
-      expect(collection).to be_present
+      collection.delete(account)
+      expect(collection).to be_blank
     end
   end
 end

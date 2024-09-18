@@ -7,16 +7,20 @@ RSpec.describe ActiveRecordCompose::InnerModel do
   let(:owner) { nil }
 
   describe '#==' do
-    subject(:inner_model) { ActiveRecordCompose::InnerModel.new(nil, account, context: :save) }
+    subject(:inner_model) { ActiveRecordCompose::InnerModel.new(nil, account) }
 
     let(:account) { Account.new }
     let(:profile) { Profile.new }
 
-    specify 'returns true if and only if model and context are equivalent' do
+    specify 'returns true if and only if model is equivalent' do
       expect(inner_model).not_to eq nil
       expect(inner_model).not_to eq ActiveRecordCompose::InnerModel.new(owner, profile)
-      expect(inner_model).not_to eq ActiveRecordCompose::InnerModel.new(owner, account, context: :destroy)
-      expect(inner_model).to eq ActiveRecordCompose::InnerModel.new(owner, account, context: :save)
+      expect(inner_model).to eq ActiveRecordCompose::InnerModel.new(owner, account)
+    end
+
+    specify 'the states of other elements are not taken into account.' do
+      expect(inner_model).to eq ActiveRecordCompose::InnerModel.new(owner, account, destroy: true)
+      expect(inner_model).to eq ActiveRecordCompose::InnerModel.new(owner, account, destroy: false)
     end
   end
 

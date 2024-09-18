@@ -96,7 +96,6 @@ module ActiveRecordCompose
     def ==(other)
       return false unless self.class == other.class
       return false unless __raw_model == other.__raw_model # steep:ignore
-      return false unless __destroy_context_type == other.__destroy_context_type # steep:ignore
 
       true
     end
@@ -107,14 +106,6 @@ module ActiveRecordCompose
     #
     # @return [Object] raw model instance
     def __raw_model = model
-
-    # @private
-    # Returns a model instance of raw, but it should
-    # be noted that application developers are not expected to use this interface.
-    #
-    # @return [Boolean] raw destroy instance
-    # @return [Proc] raw destroy instance
-    def __destroy_context_type = destroy_context_type
 
     private
 

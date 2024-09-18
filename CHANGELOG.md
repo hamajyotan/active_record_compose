@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+- Omitted optional argument for `InnerModelCollection#destroy`.
+  `InnerModel` equivalence is always performed based on the instance of the inner `model`.
+  Since there are no use cases that depend on the original behavior.
+
 ## [0.4.0] - 2024-09-15
 
 - support `destrpy` option. and deprecated `context` option.
