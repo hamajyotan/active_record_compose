@@ -102,8 +102,12 @@ module ActiveRecordCompose
         # @type var model: ActiveRecordCompose::InnerModel
         model
       else
+        if destroy.is_a?(Symbol)
+          method = destroy
+          destroy = -> { owner.__send__(method) }
+        end
         # @type var model: ActiveRecordCompose::_ARLike
-        ActiveRecordCompose::InnerModel.new(owner, model, destroy:, context:)
+        ActiveRecordCompose::InnerModel.new(model, destroy:, context:)
       end
     end
 

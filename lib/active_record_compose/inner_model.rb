@@ -7,9 +7,7 @@ module ActiveRecordCompose
     # @param model [Object] the model instance.
     # @param destroy [Boolean] given true, destroy model.
     # @param destroy [Proc] when proc returning true, destroy model.
-    # @param destroy [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
-    def initialize(owner, model, destroy: false, context: nil)
-      @owner = owner
+    def initialize(model, destroy: false, context: nil)
       @model = model
       @destroy_context_type =
         if context
@@ -65,8 +63,6 @@ module ActiveRecordCompose
           # @type var d: ^(_ARLike) -> (bool | context)
           !!d.call(model)
         end
-      elsif d.is_a?(Symbol)
-        !!owner.__send__(d)
       else
         !!d
       end
@@ -109,7 +105,7 @@ module ActiveRecordCompose
 
     private
 
-    attr_reader :owner, :model, :destroy_context_type
+    attr_reader :model, :destroy_context_type
 
     def deprecator
       if ActiveRecord.respond_to?(:deprecator)

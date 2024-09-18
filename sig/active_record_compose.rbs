@@ -47,7 +47,7 @@ module ActiveRecordCompose
   end
 
   class InnerModel
-    def initialize: (Model, _ARLike, ?destroy: destroy_context_type, ?context: (nil | context | context_proc)) -> void
+    def initialize: (_ARLike, ?destroy: destroy_context_type, ?context: (nil | context | context_proc)) -> void
     def destroy_context?: -> bool
     def save: -> bool
     def save!: -> untyped
@@ -56,7 +56,6 @@ module ActiveRecordCompose
     def ==: (untyped) -> bool
 
     private
-    attr_reader owner: Model
     attr_reader model: _ARLike
     attr_reader destroy_context_type: destroy_context_type
   end
