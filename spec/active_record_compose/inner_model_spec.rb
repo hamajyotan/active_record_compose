@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'active_record_compose/inner_model_collection'
+require 'active_record_compose/inner_model'
 
 RSpec.describe ActiveRecordCompose::InnerModel do
   let(:owner) { nil }
