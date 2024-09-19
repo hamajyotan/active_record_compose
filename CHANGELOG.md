@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.4.1] - 2024-09-20
+
 - Omitted optional argument for `InnerModelCollection#destroy`.
   `InnerModel` equivalence is always performed based on the instance of the inner `model`.
   Since there are no use cases that depend on the original behavior.
