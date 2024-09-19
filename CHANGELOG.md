@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- remove `:context` option. use `:destroy` option instead.
+
 ## [0.4.1] - 2024-09-20
 
 - Omitted optional argument for `InnerModelCollection#destroy`.

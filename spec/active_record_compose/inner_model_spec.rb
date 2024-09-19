@@ -23,12 +23,12 @@ RSpec.describe ActiveRecordCompose::InnerModel do
   end
 
   describe '#save' do
-    subject(:inner_model) { ActiveRecordCompose::InnerModel.new(already_persisted_account, context:) }
+    subject(:inner_model) { ActiveRecordCompose::InnerModel.new(already_persisted_account, destroy:) }
 
     let(:already_persisted_account) { Account.create(name: 'foo', email: 'foo@example.com') }
 
-    context 'given save to context' do
-      let(:context) { :save }
+    context 'given save to destroy' do
+      let(:destroy) { false }
 
       specify do
         expect(inner_model.save).to be_truthy
@@ -36,8 +36,8 @@ RSpec.describe ActiveRecordCompose::InnerModel do
       end
     end
 
-    context 'given save to context' do
-      let(:context) { :destroy }
+    context 'given save to destroy' do
+      let(:destroy) { true }
 
       specify do
         expect(inner_model.save).to be_truthy

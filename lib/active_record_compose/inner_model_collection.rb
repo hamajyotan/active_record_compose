@@ -39,8 +39,8 @@ module ActiveRecordCompose
     # @param destroy [Proc] when proc returning true, destroy model.
     # @param destroy [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
     # @return [self] returns itself.
-    def push(model, destroy: false, context: nil)
-      models << wrap(model, destroy:, context:)
+    def push(model, destroy: false)
+      models << wrap(model, destroy:)
       self
     end
 
@@ -63,11 +63,11 @@ module ActiveRecordCompose
     # @param model [Object] the model instance
     # @return [self] Successful deletion
     # @return [nil] If deletion fails
-    def delete(model, destroy: nil, context: nil)
-      if !destroy.nil? || !context.nil?
+    def delete(model, destroy: nil)
+      unless destroy.nil?
         # steep:ignore:start
         deprecator.warn(
-          'In `InnerModelConnection#destroy`, the option values `destroy` and `context` are ignored. ' \
+          'In `InnerModelConnection#destroy`, the option values `destroy` is ignored. ' \
           'These options will be removed in 0.5.0.',
         )
         # steep:ignore:end
@@ -97,7 +97,7 @@ module ActiveRecordCompose
 
     attr_reader :owner, :models
 
-    def wrap(model, destroy: false, context: nil)
+    def wrap(model, destroy: false)
       if model.is_a?(ActiveRecordCompose::InnerModel) # steep:ignore
         # @type var model: ActiveRecordCompose::InnerModel
         model
@@ -107,7 +107,7 @@ module ActiveRecordCompose
           destroy = -> { owner.__send__(method) }
         end
         # @type var model: ActiveRecordCompose::_ARLike
-        ActiveRecordCompose::InnerModel.new(model, destroy:, context:)
+        ActiveRecordCompose::InnerModel.new(model, destroy:)
       end
     end
 

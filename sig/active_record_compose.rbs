@@ -15,8 +15,6 @@ module ActiveRecordCompose
   end
 
   type attribute_name = (String | Symbol)
-  type context = (:save | :destroy)
-  type context_proc = ((^() -> context) | (^(_ARLike) -> context))
   type destroy_context_type = (bool | Symbol | (^() -> boolish) | (^(_ARLike) -> boolish))
 
   module DelegateAttribute
@@ -35,19 +33,19 @@ module ActiveRecordCompose
     def initialize: (Model) -> void
     def each: () { (_ARLike) -> void } -> InnerModelCollection | () -> Enumerator[_ARLike, self]
     def <<: (_ARLike) -> self
-    def push: (_ARLike, ?destroy: destroy_context_type, ?context: (nil | context | context_proc)) -> self
+    def push: (_ARLike, ?destroy: destroy_context_type) -> self
     def empty?: -> bool
     def clear: -> self
-    def delete: (_ARLike | InnerModel, ?destroy: (nil | destroy_context_type), ?context: (nil | context | context_proc)) -> InnerModelCollection?
+    def delete: (_ARLike | InnerModel, ?destroy: (nil | destroy_context_type)) -> InnerModelCollection?
 
     private
     attr_reader owner: Model
     attr_reader models: Array[InnerModel]
-    def wrap: (_ARLike | InnerModel, ?destroy: destroy_context_type, ?context: (nil | context | context_proc)) -> InnerModel
+    def wrap: (_ARLike | InnerModel, ?destroy: destroy_context_type) -> InnerModel
   end
 
   class InnerModel
-    def initialize: (_ARLike, ?destroy: destroy_context_type, ?context: (nil | context | context_proc)) -> void
+    def initialize: (_ARLike, ?destroy: destroy_context_type) -> void
     def destroy_context?: -> bool
     def save: -> bool
     def save!: -> untyped

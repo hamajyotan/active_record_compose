@@ -59,11 +59,6 @@ RSpec.describe ActiveRecordCompose::InnerModelCollection do
         expect(collection).to be_present
         collection.delete(account, destroy: true)
         expect(collection).to be_blank
-
-        collection.push(account, context: :save)
-        expect(collection).to be_present
-        collection.delete(account, context: :destroy)
-        expect(collection).to be_blank
       end
     end
   end
