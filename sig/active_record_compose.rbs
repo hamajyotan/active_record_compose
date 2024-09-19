@@ -36,7 +36,7 @@ module ActiveRecordCompose
     def push: (_ARLike, ?destroy: destroy_context_type) -> self
     def empty?: -> bool
     def clear: -> self
-    def delete: (_ARLike | InnerModel, ?destroy: (nil | destroy_context_type)) -> InnerModelCollection?
+    def delete: (_ARLike | InnerModel) -> InnerModelCollection?
 
     private
     attr_reader owner: Model

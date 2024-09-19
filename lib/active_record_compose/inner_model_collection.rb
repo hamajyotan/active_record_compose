@@ -63,16 +63,7 @@ module ActiveRecordCompose
     # @param model [Object] the model instance
     # @return [self] Successful deletion
     # @return [nil] If deletion fails
-    def delete(model, destroy: nil)
-      unless destroy.nil?
-        # steep:ignore:start
-        deprecator.warn(
-          'In `InnerModelConnection#destroy`, the option values `destroy` is ignored. ' \
-          'These options will be removed in 0.5.0.',
-        )
-        # steep:ignore:end
-      end
-
+    def delete(model)
       wrapped = wrap(model)
       return nil unless models.delete(wrapped)
 
@@ -108,14 +99,6 @@ module ActiveRecordCompose
         end
         # @type var model: ActiveRecordCompose::_ARLike
         ActiveRecordCompose::InnerModel.new(model, destroy:)
-      end
-    end
-
-    def deprecator
-      if ActiveRecord.respond_to?(:deprecator)
-        ActiveRecord.deprecator # steep:ignore
-      else # for rails 7.0.x or lower
-        ActiveSupport::Deprecation
       end
     end
   end
