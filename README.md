@@ -31,7 +31,7 @@ A callback is useful to define some processing before or after a save in a parti
 However, if a callback is written directly in the AR model, it is necessary to consider the case where the model is updated in other contexts.
 In particular, if you frequently create with test data, previously unnecessary processing will be called at every point of creation.
 In addition to cost, the more complicated the callbacks you write, the more difficult it will be to create even a single test data.
-If the callbacks are written in a class that inherits from `ApplicationRecordCompose::Model`, the AR model itself will not be polluted, and the context can be limited.
+If the callbacks are written in a class that inherits from `ActiveRecordCompose::Model`, the AR model itself will not be polluted, and the context can be limited.
 
 ```ruby
 class AccountRegistration < ActiveRecordCompose::Model
@@ -70,7 +70,7 @@ Validates are basically fired in all cases where the model is manipulated. To av
 and so on to work only in specific cases. This allows you to create context-sensitive validations for the same model operation.
 However, this is the first step in making the model more and more complex. You will have to go around with `update(context: :foo)`
 In some cases, you may have to go around with the context option, such as `update(context: :foo)` everywhere.
-By writing validates in a class that extends `ApplicationRecordCompose::Model`, you can define context-specific validation without polluting the AR model itself.
+By writing validates in a class that extends `ActiveRecordCompose::Model`, you can define context-specific validation without polluting the AR model itself.
 
 ```ruby
 class AccountRegistration < ActiveRecordCompose::Model
@@ -116,7 +116,7 @@ account_registration.valid?  #=> false
 
 In an AR model, you can add, for example, `autosave: true` or `accepts_nested_attributes_for` to an association to update the related models at the same time.
 There are ways to update related models at the same time. The operation is safe because it is transactional.
-`ApplicationRecordCompose::Model` has an internal array called models. By adding an AR object to this models array
+`ActiveRecordCompose::Model` has an internal array called models. By adding an AR object to this models array
 By adding an AR object to the models, the object stored in the models provides an atomic update operation via #save.
 
 ```ruby
@@ -167,11 +167,11 @@ class AccountResignation < ActiveRecordCompose::Model
     models.push(profile, destroy: true)
   end
 
-  attr_reader :account, :profile
-
   before_save :set_resigned_at
 
   private
+
+  attr_reader :account, :profile
 
   def set_resigned_at
     account.resigned_at = Time.zone.now
