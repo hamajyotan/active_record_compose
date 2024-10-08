@@ -14,6 +14,15 @@ module ActiveRecordCompose
 
     delegate :errors, to: :model
 
+    # Determines whether to save or delete the target object.
+    # Depends on the `destroy` value of the InnerModel object initialization option.
+    #
+    # On the other hand, there are values `mark_for_destruction` and `marked_for_destruction?` in ActiveRecord.
+    # However, these values are not substituted here.
+    # These values only work if the `autosave` option is enabled for the parent model,
+    # and are not appropriate for other cases.
+    #
+    # @return [Boolean] returns true on destroy, false on save.
     def destroy_context?
       d = destroy_context_type
       if d.is_a?(Proc)
