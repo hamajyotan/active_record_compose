@@ -81,7 +81,6 @@ module ActiveRecordCompose
 
     private
     def models: -> InnerModelCollection
-    def wrapped_models: -> Enumerator[InnerModel, InnerModelCollection]
     def validate_models: -> void
     def save_models: (bang: bool) -> bool
     def raise_validation_error: -> bot

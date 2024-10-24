@@ -70,19 +70,11 @@ module ActiveRecordCompose
       self
     end
 
-    # @private
-    # Enumerates model objects, but it should be noted that
-    # application developers are not expected to use this interface.
+    # Returns array of wrapped model instance.
     #
-    # @yieldparam [InnerModel] rawpped model instance.
-    # @return [Enumerator] when not block given.
-    # @return [self] when block given, returns itself.
-    def __each_by_wrapped
-      return enum_for(:__each_by_wrapped) unless block_given?
-
-      models.each { yield _1 if _1.__raw_model } # steep:ignore
-      self
-    end
+    # @private
+    # @return [Array[InnerModel] array of wrapped model instance.
+    def __wrapped_models = models.select { _1.__raw_model } # steep:ignore
 
     private
 

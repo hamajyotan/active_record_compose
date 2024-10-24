@@ -150,11 +150,15 @@ module ActiveRecordCompose
 
     def models = @__models ||= ActiveRecordCompose::InnerModelCollection.new(self)
 
-    def wrapped_models = models.__each_by_wrapped # steep:ignore
+    def validate_models
+      wms = models.__wrapped_models # steep:ignore
+      wms.select { _1.invalid? }.each { errors.merge!(_1) }
+    end
 
-    def validate_models = wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
-
-    def save_models(bang:) = wrapped_models.all? { bang ? _1.save! : _1.save }
+    def save_models(bang:)
+      wms = models.__wrapped_models # steep:ignore
+      wms.all? { bang ? _1.save! : _1.save }
+    end
 
     def raise_validation_error = raise ActiveRecord::RecordInvalid, self
 
