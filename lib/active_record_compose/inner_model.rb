@@ -61,7 +61,7 @@ module ActiveRecordCompose
     # @return [Boolean]
     def ==(other)
       return false unless self.class == other.class
-      return false unless __raw_model == other.__raw_model # steep:ignore
+      return false unless model == other.model
 
       true
     end
@@ -73,8 +73,12 @@ module ActiveRecordCompose
     # @return [Object] raw model instance
     def __raw_model = model
 
+    protected
+
+    attr_reader :model
+
     private
 
-    attr_reader :model, :destroy_context_type
+    attr_reader :destroy_context_type
   end
 end

@@ -12,6 +12,7 @@ module ActiveRecordCompose
     def invalid?: -> bool
     def valid?: -> bool
     def errors: -> untyped
+    def ==: (untyped) -> bool
   end
 
   type attribute_name = (String | Symbol)
