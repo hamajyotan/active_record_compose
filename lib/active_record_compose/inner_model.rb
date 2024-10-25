@@ -66,13 +66,6 @@ module ActiveRecordCompose
       true
     end
 
-    # @private
-    # Returns a model instance of raw, but it should
-    # be noted that application developers are not expected to use this interface.
-    #
-    # @return [Object] raw model instance
-    def __raw_model = model
-
     protected
 
     attr_reader :model
@@ -80,5 +73,20 @@ module ActiveRecordCompose
     private
 
     attr_reader :destroy_context_type
+
+    # @private
+    # steep:ignore:start
+    module PackagePrivate
+      refine InnerModel do
+        # @private
+        # Returns a model instance of raw, but it should
+        # be noted that application developers are not expected to use this interface.
+        #
+        # @return [Object] raw model instance
+        def __raw_model = model
+      end
+    end
+    using PackagePrivate
+    # steep:ignore:end
   end
 end

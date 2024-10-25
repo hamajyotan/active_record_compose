@@ -3,6 +3,8 @@
 require 'active_record_compose/inner_model'
 
 module ActiveRecordCompose
+  using InnerModel::PackagePrivate # steep:ignore
+
   class InnerModelCollection
     include Enumerable
 
@@ -70,12 +72,6 @@ module ActiveRecordCompose
       self
     end
 
-    # Returns array of wrapped model instance.
-    #
-    # @private
-    # @return [Array[InnerModel] array of wrapped model instance.
-    def __wrapped_models = models.select { _1.__raw_model } # steep:ignore
-
     private
 
     attr_reader :owner, :models
@@ -93,5 +89,18 @@ module ActiveRecordCompose
         ActiveRecordCompose::InnerModel.new(model, destroy:)
       end
     end
+
+    # @private
+    # steep:ignore:start
+    module PackagePrivate
+      refine InnerModelCollection do
+        # Returns array of wrapped model instance.
+        #
+        # @private
+        # @return [Array[InnerModel] array of wrapped model instance.
+        def __wrapped_models = models.select { _1.__raw_model }
+      end
+    end
+    # steep:ignore:end
   end
 end

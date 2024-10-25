@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- refactor: limit the scope of methods needed only for internal library purposes.
+
 ## [0.5.0] - 2024-10-09
 
 - remove `:context` option. use `:destroy` option instead.

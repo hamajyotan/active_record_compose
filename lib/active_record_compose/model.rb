@@ -5,6 +5,8 @@ require 'active_record_compose/inner_model_collection'
 require 'active_record_compose/transaction_support'
 
 module ActiveRecordCompose
+  using InnerModelCollection::PackagePrivate # steep:ignore
+
   class Model
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
