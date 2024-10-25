@@ -86,7 +86,6 @@ module ActiveRecordCompose
         def __raw_model = model
       end
     end
-    using PackagePrivate
     # steep:ignore:end
   end
 end
