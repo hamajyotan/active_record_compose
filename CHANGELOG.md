@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - refactor: limit the scope of methods needed only for internal library purposes.
+- support rails 8.0.x
 
 ## [0.5.0] - 2024-10-09
 
