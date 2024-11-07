@@ -17,6 +17,7 @@ module ActiveRecordCompose
 
   type attribute_name = (String | Symbol)
   type destroy_context_type = (bool | Symbol | (^() -> boolish) | (^(_ARLike) -> boolish))
+  type condition_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
 
   module DelegateAttribute
     extend ActiveSupport::Concern
@@ -34,7 +35,7 @@ module ActiveRecordCompose
     def initialize: (Model) -> void
     def each: () { (_ARLike) -> void } -> InnerModelCollection | () -> Enumerator[_ARLike, self]
     def <<: (_ARLike) -> self
-    def push: (_ARLike, ?destroy: destroy_context_type) -> self
+    def push: (_ARLike, ?destroy: destroy_context_type, ?if: (nil | Symbol | condition_type)) -> self
     def empty?: -> bool
     def clear: -> self
     def delete: (_ARLike | InnerModel) -> InnerModelCollection?
@@ -42,12 +43,13 @@ module ActiveRecordCompose
     private
     attr_reader owner: Model
     attr_reader models: Array[InnerModel]
-    def wrap: (_ARLike | InnerModel, ?destroy: destroy_context_type) -> InnerModel
+    def wrap: (_ARLike | InnerModel, ?destroy: destroy_context_type, ?if: (nil | Symbol | condition_type)) -> InnerModel
   end
 
   class InnerModel
-    def initialize: (_ARLike, ?destroy: destroy_context_type) -> void
+    def initialize: (_ARLike, ?destroy: destroy_context_type, ?if: (nil | condition_type)) -> void
     def destroy_context?: -> bool
+    def ignore?: -> bool
     def save: -> bool
     def save!: -> untyped
     def invalid?: -> bool
@@ -57,6 +59,7 @@ module ActiveRecordCompose
     private
     attr_reader model: _ARLike
     attr_reader destroy_context_type: destroy_context_type
+    attr_reader if_option: (nil | condition_type)
   end
 
   class Model

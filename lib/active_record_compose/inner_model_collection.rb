@@ -40,9 +40,11 @@ module ActiveRecordCompose
     # @param destroy [Boolean] given true, destroy model.
     # @param destroy [Proc] when proc returning true, destroy model.
     # @param destroy [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
+    # @param if [Proc] evaluation result is false, it will not be included in the renewal.
+    # @param if [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
     # @return [self] returns itself.
-    def push(model, destroy: false)
-      models << wrap(model, destroy:)
+    def push(model, destroy: false, if: nil)
+      models << wrap(model, destroy:, if:)
       self
     end
 
@@ -76,7 +78,7 @@ module ActiveRecordCompose
 
     attr_reader :owner, :models
 
-    def wrap(model, destroy: false)
+    def wrap(model, destroy: false, if: nil)
       if model.is_a?(ActiveRecordCompose::InnerModel) # steep:ignore
         # @type var model: ActiveRecordCompose::InnerModel
         model
@@ -85,8 +87,12 @@ module ActiveRecordCompose
           method = destroy
           destroy = -> { owner.__send__(method) }
         end
-        # @type var model: ActiveRecordCompose::_ARLike
-        ActiveRecordCompose::InnerModel.new(model, destroy:)
+        if_option = binding.local_variable_get(:if)
+        if if_option.is_a?(Symbol)
+          method = if_option
+          if_option = -> { owner.__send__(method) }
+        end
+        ActiveRecordCompose::InnerModel.new(model, destroy:, if: if_option)
       end
     end
 
@@ -98,7 +104,7 @@ module ActiveRecordCompose
         #
         # @private
         # @return [Array[InnerModel] array of wrapped model instance.
-        def __wrapped_models = models.select { _1.__raw_model }
+        def __wrapped_models = models.reject { _1.ignore? }.select { _1.__raw_model }
       end
     end
     # steep:ignore:end

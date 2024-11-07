@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - refactor: limit the scope of methods needed only for internal library purposes.
+- add optional value `if` to exclude from save (or destroy).
 
 ## [0.5.0] - 2024-10-09
 

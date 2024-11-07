@@ -188,6 +188,28 @@ RSpec.describe ActiveRecordCompose::Model do
     end
   end
 
+  describe 'composed model with if option' do
+    subject(:model) do
+      ComposedModelWithOperationLog.new(name: 'foobar', email: 'foobar@example.com', output_log:)
+    end
+
+    context 'given true to output_log' do
+      let(:output_log) { true }
+
+      it 'Both Account and OperationLog are updated.' do
+        expect { model.save! }.to change(Account, :count).by(1).and change(OperationLog, :count).by(1)
+      end
+    end
+
+    context 'given false to output_log' do
+      let(:output_log) { false }
+
+      it 'OperationLog is not updated because the condition of the `if` option is not satisfied.' do
+        expect { model.save! }.to change(Account, :count).by(1).and change(OperationLog, :count).by(0)
+      end
+    end
+  end
+
   describe '.delegate_attributes' do
     subject(:model) do
       ComposedModel.new(

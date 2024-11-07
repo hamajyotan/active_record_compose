@@ -7,9 +7,11 @@ module ActiveRecordCompose
     # @param model [Object] the model instance.
     # @param destroy [Boolean] given true, destroy model.
     # @param destroy [Proc] when proc returning true, destroy model.
-    def initialize(model, destroy: false)
+    # @param if [Proc] evaluation result is false, it will not be included in the renewal.
+    def initialize(model, destroy: false, if: nil)
       @model = model
       @destroy_context_type = destroy
+      @if_option = binding.local_variable_get(:if)
     end
 
     delegate :errors, to: :model
@@ -35,6 +37,22 @@ module ActiveRecordCompose
         end
       else
         !!d
+      end
+    end
+
+    # Returns a boolean indicating whether or not to exclude the user from the update.
+    #
+    # @return [Boolean] if true, exclude from update.
+    def ignore?
+      i = if_option
+      if i.nil?
+        false
+      elsif i.arity == 0
+        # @type var i: ^() -> bool
+        !i.call
+      else
+        # @type var i: ^(_ARLike) -> bool
+        !i.call(model)
       end
     end
 
@@ -72,7 +90,7 @@ module ActiveRecordCompose
 
     private
 
-    attr_reader :destroy_context_type
+    attr_reader :destroy_context_type, :if_option
 
     # @private
     # steep:ignore:start

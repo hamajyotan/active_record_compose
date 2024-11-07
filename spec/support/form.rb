@@ -93,6 +93,23 @@ class ComposedModelWithConditionalDestroyContextWithMethodName < ActiveRecordCom
   def blank_profile? = firstname.blank? && lastname.blank? && age.blank?
 end
 
+class ComposedModelWithOperationLog < ActiveRecordCompose::Model
+  def initialize(attributes = {})
+    @account = Account.new
+    @operation_log = OperationLog.new(action: 'account_registration')
+    super(attributes)
+    models.push(account)
+    models.push(operation_log, if: :output_log)
+  end
+
+  attribute :output_log, :boolean, default: true
+  delegate_attribute :name, :email, to: :account
+
+  private
+
+  attr_reader :account, :operation_log
+end
+
 class CallbackOrder < ActiveRecordCompose::Model
   def initialize(tracer)
     @tracer = tracer

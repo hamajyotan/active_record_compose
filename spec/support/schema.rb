@@ -21,4 +21,8 @@ ActiveRecord::Schema.define do
     t.integer :age
     t.timestamps
   end
+
+  create_table :operation_logs, force: true do |t|
+    t.string :action, null: false
+  end
 end
