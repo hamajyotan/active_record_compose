@@ -24,6 +24,9 @@ Style/StringLiterals:
 Style/StringLiteralsInInterpolation:
   Enabled: true
 
+Style/SuperArguments:
+  Enabled: false
+
 Style/SymbolProc:
   Enabled: false
 

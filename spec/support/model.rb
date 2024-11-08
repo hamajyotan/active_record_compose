@@ -13,6 +13,10 @@ class Profile < ActiveRecord::Base
   validates :age, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 end
 
+class OperationLog < ActiveRecord::Base
+  validates :action, presence: true
+end
+
 class AccountWithBang < ActiveRecord::Base
   self.table_name = :accounts
 
