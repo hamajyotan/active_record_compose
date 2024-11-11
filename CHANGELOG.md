@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.6.0] - 2024-11-11
+
 - refactor: limit the scope of methods needed only for internal library purposes.
 - support rails 8.0.x
 - add optional value `if` to exclude from save (or destroy).
