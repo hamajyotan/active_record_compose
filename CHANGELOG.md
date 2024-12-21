@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- refactor: reorganize the overall structure of the test. Change from rspec to minitest
+
 ## [0.6.0] - 2024-11-11
 
 - refactor: limit the scope of methods needed only for internal library purposes.
