@@ -22,10 +22,11 @@ else
   gem 'sqlite3', '~> 1.4'
 end
 
+gem 'activesupport'
 gem 'debug'
+gem 'minitest'
 gem 'rake'
-gem 'rspec'
 gem 'rubocop'
+gem 'rubocop-minitest'
 gem 'rubocop-rake'
-gem 'rubocop-rspec'
 gem 'steep', require: false

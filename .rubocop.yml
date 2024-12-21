@@ -9,6 +9,9 @@ Style/ArgumentsForwarding:
 Style/CommentedKeyword:
   Enabled: false
 
+Style/ClassAndModuleChildren:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 
@@ -49,6 +52,9 @@ Metrics/AbcSize:
   Enabled: false
 
 Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
   Enabled: false
 
 Metrics/MethodLength:
