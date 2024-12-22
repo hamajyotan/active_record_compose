@@ -16,19 +16,3 @@ end
 class OperationLog < ActiveRecord::Base
   validates :action, presence: true
 end
-
-class AccountWithBang < ActiveRecord::Base
-  self.table_name = :accounts
-
-  after_save :bang!
-
-  has_one :profile, foreign_key: :account_id
-  validates :name, presence: true
-  validates :email, presence: true
-
-  private
-
-  def bang!
-    raise 'bang!!'
-  end
-end

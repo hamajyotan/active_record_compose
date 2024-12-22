@@ -12,7 +12,9 @@ when 'latest'
   gem 'activerecord'
   gem 'sqlite3', '~> 2.1'
 when 'head'
+  gem 'activemodel', github: 'rails/rails'
   gem 'activerecord', github: 'rails/rails'
+  gem 'activesupport', github: 'rails/rails'
   gem 'sqlite3', '~> 2.1'
 when '~> 8.0.0'
   gem 'activerecord', ar_version
@@ -23,9 +25,9 @@ else
 end
 
 gem 'debug'
+gem 'minitest'
 gem 'rake'
-gem 'rspec'
 gem 'rubocop'
+gem 'rubocop-minitest'
 gem 'rubocop-rake'
-gem 'rubocop-rspec'
 gem 'steep', require: false
