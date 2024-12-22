@@ -1,6 +1,9 @@
 ## [Unreleased]
 
+## [0.6.1] - 2024-12-23
+
 - refactor: reorganize the overall structure of the test. Change from rspec to minitest
+- ci: fix CI for rails new version.
 
 ## [0.6.0] - 2024-11-11
 
