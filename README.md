@@ -37,7 +37,7 @@ If the callbacks are written in a class that inherits from `ActiveRecordCompose:
 class AccountRegistration < ActiveRecordCompose::Model
   def initialize(account = Account.new, attributes = {})
     @account = account
-    super(attributes)
+    super(attributes) # When overrides `#initialize`, be sure to call `super`.
 
     # By including AR instance in models, AR instance itself is saved when this model is saved.
     models.push(account)
