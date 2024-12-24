@@ -5,7 +5,7 @@ require 'active_record_compose/inner_model_collection'
 require 'active_record_compose/transaction_support'
 
 module ActiveRecordCompose
-  using InnerModelCollection::PackagePrivate # steep:ignore
+  using InnerModelCollection::PackagePrivate
 
   class Model
     include ActiveModel::Model
@@ -153,12 +153,12 @@ module ActiveRecordCompose
     def models = @__models ||= ActiveRecordCompose::InnerModelCollection.new(self)
 
     def validate_models
-      wms = models.__wrapped_models # steep:ignore
+      wms = models.__wrapped_models
       wms.select { _1.invalid? }.each { errors.merge!(_1) }
     end
 
     def save_models(bang:)
-      wms = models.__wrapped_models # steep:ignore
+      wms = models.__wrapped_models
       wms.all? { bang ? _1.save! : _1.save }
     end
 

@@ -93,7 +93,6 @@ module ActiveRecordCompose
     attr_reader :destroy_context_type, :if_option
 
     # @private
-    # steep:ignore:start
     module PackagePrivate
       refine InnerModel do
         # @private
@@ -104,6 +103,5 @@ module ActiveRecordCompose
         def __raw_model = model
       end
     end
-    # steep:ignore:end
   end
 end

@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - support ruby 3.4.x
+- refactor: remove some `steep:ignore` by private rbs.
 
 ## [0.6.1] - 2024-12-23
 

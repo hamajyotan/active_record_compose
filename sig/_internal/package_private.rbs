@@ -1,0 +1,23 @@
+module ActiveRecordCompose
+  class InnerModelCollection
+    module PackagePrivate
+      def __wrapped_models: () -> Array[InnerModel]
+
+      private
+      def models: () -> Array[InnerModel]
+    end
+
+    include PackagePrivate
+  end
+
+  class InnerModel
+    module PackagePrivate
+      def __raw_model: () -> _ARLike
+
+      private
+      def model: () -> _ARLike
+    end
+
+    include PackagePrivate
+  end
+end

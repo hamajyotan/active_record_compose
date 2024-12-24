@@ -3,7 +3,7 @@
 require 'active_record_compose/inner_model'
 
 module ActiveRecordCompose
-  using InnerModel::PackagePrivate # steep:ignore
+  using InnerModel::PackagePrivate
 
   class InnerModelCollection
     include Enumerable
@@ -21,7 +21,7 @@ module ActiveRecordCompose
     def each
       return enum_for(:each) unless block_given?
 
-      models.each { yield _1.__raw_model } # steep:ignore
+      models.each { yield _1.__raw_model }
       self
     end
 
@@ -97,7 +97,6 @@ module ActiveRecordCompose
     end
 
     # @private
-    # steep:ignore:start
     module PackagePrivate
       refine InnerModelCollection do
         # Returns array of wrapped model instance.
@@ -107,6 +106,5 @@ module ActiveRecordCompose
         def __wrapped_models = models.reject { _1.ignore? }.select { _1.__raw_model }
       end
     end
-    # steep:ignore:end
   end
 end
