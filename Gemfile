@@ -16,12 +16,12 @@ when 'head'
   gem 'activerecord', github: 'rails/rails'
   gem 'activesupport', github: 'rails/rails'
   gem 'sqlite3', '~> 2.1'
-when '~> 8.0.0'
-  gem 'activerecord', ar_version
-  gem 'sqlite3', '~> 2.1'
-else
+when '~> 6.1.0', '~> 7.0.0'
   gem 'activerecord', ar_version
   gem 'sqlite3', '~> 1.4'
+else
+  gem 'activerecord', ar_version
+  gem 'sqlite3', '~> 2.1'
 end
 
 gem 'debug'
