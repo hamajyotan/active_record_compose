@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- support ruby 3.4.x
+
 ## [0.6.1] - 2024-12-23
 
 - refactor: reorganize the overall structure of the test. Change from rspec to minitest
