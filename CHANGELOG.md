@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.6.2] - 2025-01-04
+
 - fix: `delegate_attribute` defined in a subclass had an unintended side effect on the superclass.
 - support ruby 3.4.x
 - refactor: remove some `steep:ignore` by private rbs.
