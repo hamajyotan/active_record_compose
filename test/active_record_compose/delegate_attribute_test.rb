@@ -5,10 +5,12 @@ require 'active_record_compose/delegate_attribute'
 
 class ActiveRecordCompose::InnerModelTest < ActiveSupport::TestCase
   class Dummy
+    include ActiveModel::Attributes
     include ActiveRecordCompose::DelegateAttribute
 
     def initialize(data)
       @data = data
+      super()
     end
 
     delegate_attribute :x, :y, to: :data

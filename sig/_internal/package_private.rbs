@@ -1,11 +1,14 @@
 module ActiveRecordCompose
-  module DelegateAttribute
+  module DelegateAttribute : ActiveModel::Attributes
     extend ActiveSupport::Concern
 
     def attributes: -> Hash[String, untyped]
+    def delegated_attributes: () -> Array[String]
 
     module ClassMethods
       def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
+      def delegated_attributes: () -> Array[String]
+      def delegated_attributes=: (Array[String]) -> untyped
     end
   end
 

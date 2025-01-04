@@ -53,7 +53,7 @@ module ActiveRecordCompose
         end
 
         delegate(*delegates, to:, allow_nil:, private:) # steep:ignore
-        self.delegated_attributes = delegated_attributes.to_a + attributes.map { _1.to_s } # steep:ignore
+        self.delegated_attributes = delegated_attributes.to_a + attributes.map { _1.to_s }
       end
     end
 
@@ -62,12 +62,7 @@ module ActiveRecordCompose
     #
     # @return [Hash] hash with the attribute name as key and the attribute value as value.
     def attributes
-      attrs = defined?(super) ? super : {} # steep:ignore
-      delegates = delegated_attributes # steep:ignore
-
-      # @type var attrs: Hash[String, untyped]
-      # @type var delegates: Array[String]
-      attrs.merge(delegates.to_h { [_1, public_send(_1)] })
+      super.merge(delegated_attributes.to_h { [_1, public_send(_1)] })
     end
   end
 end
