@@ -53,8 +53,7 @@ module ActiveRecordCompose
         end
 
         delegate(*delegates, to:, allow_nil:, private:) # steep:ignore
-        delegated_attributes = (self.delegated_attributes ||= []) # steep:ignore
-        attributes.each { delegated_attributes.push(_1.to_s) }
+        self.delegated_attributes = delegated_attributes.to_a + attributes.map { _1.to_s } # steep:ignore
       end
     end
 

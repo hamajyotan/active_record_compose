@@ -40,4 +40,20 @@ class ActiveRecordCompose::InnerModelTest < ActiveSupport::TestCase
 
     assert_equal object.attributes, { 'x' => 'foo', 'y' => 'bar' }
   end
+
+  test 'attributes to be transferred must be independent, even if there is an inheritance relationship' do
+    data = Struct.new(:x, :y, :z, keyword_init: true).new
+    data.x = 'foo'
+    data.y = 'bar'
+    data.z = 'baz'
+
+    o1 = Dummy.new(data)
+    assert_equal o1.attributes, { 'x' => 'foo', 'y' => 'bar' }
+
+    subclass = Class.new(Dummy) do
+      delegate_attribute :z, to: :data
+    end
+    o2 = subclass.new(data)
+    assert_equal o2.attributes, { 'x' => 'foo', 'y' => 'bar', 'z' => 'baz' }
+  end
 end
