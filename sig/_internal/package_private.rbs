@@ -5,7 +5,7 @@ module ActiveRecordCompose
     def attributes: -> Hash[String, untyped]
     def delegated_attributes: () -> Array[String]
 
-    module ClassMethods
+    module ClassMethods : Module
       def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
       def delegated_attributes: () -> Array[String]
       def delegated_attributes=: (Array[String]) -> untyped

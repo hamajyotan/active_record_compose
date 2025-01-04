@@ -38,7 +38,8 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
 
     included do
-      class_attribute :delegated_attributes, instance_writer: false # steep:ignore
+      # @type self: Class
+      class_attribute :delegated_attributes, instance_writer: false
     end
 
     module ClassMethods
@@ -52,7 +53,7 @@ module ActiveRecordCompose
           [reader, writer]
         end
 
-        delegate(*delegates, to:, allow_nil:, private:) # steep:ignore
+        delegate(*delegates, to:, allow_nil:, private:)
         self.delegated_attributes = delegated_attributes.to_a + attributes.map { _1.to_s }
       end
     end
