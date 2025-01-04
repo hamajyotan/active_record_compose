@@ -16,7 +16,7 @@ module ActiveRecordCompose
   end
 
   type attribute_name = (String | Symbol)
-  type destroy_context_type = (bool | Symbol | (^() -> boolish) | (^(_ARLike) -> boolish))
+  type destroy_context_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
   type condition_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
 
   module DelegateAttribute
@@ -25,7 +25,7 @@ module ActiveRecordCompose
     def attributes: -> Hash[String, untyped]
 
     module ClassMethods
-      def delegate_attribute: (*untyped methods, to: untyped?, ?allow_nil: untyped?, ?private: untyped?) -> untyped
+      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
     end
   end
 
@@ -35,19 +35,19 @@ module ActiveRecordCompose
     def initialize: (Model) -> void
     def each: () { (_ARLike) -> void } -> InnerModelCollection | () -> Enumerator[_ARLike, self]
     def <<: (_ARLike) -> self
-    def push: (_ARLike, ?destroy: destroy_context_type, ?if: (nil | Symbol | condition_type)) -> self
+    def push: (_ARLike, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> self
     def empty?: -> bool
     def clear: -> self
-    def delete: (_ARLike | InnerModel) -> InnerModelCollection?
+    def delete: (_ARLike) -> InnerModelCollection?
 
     private
     attr_reader owner: Model
     attr_reader models: Array[InnerModel]
-    def wrap: (_ARLike | InnerModel, ?destroy: destroy_context_type, ?if: (nil | Symbol | condition_type)) -> InnerModel
+    def wrap: (_ARLike | InnerModel, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> InnerModel
   end
 
   class InnerModel
-    def initialize: (_ARLike, ?destroy: destroy_context_type, ?if: (nil | condition_type)) -> void
+    def initialize: (_ARLike, ?destroy: (bool | destroy_context_type), ?if: (nil | condition_type)) -> void
     def destroy_context?: -> bool
     def ignore?: -> bool
     def save: -> bool
@@ -58,7 +58,7 @@ module ActiveRecordCompose
 
     private
     attr_reader model: _ARLike
-    attr_reader destroy_context_type: destroy_context_type
+    attr_reader destroy_context_type: (bool | destroy_context_type)
     attr_reader if_option: (nil | condition_type)
   end
 
