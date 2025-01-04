@@ -79,7 +79,7 @@ module ActiveRecordCompose
     attr_reader :owner, :models
 
     def wrap(model, destroy: false, if: nil)
-      if model.is_a?(ActiveRecordCompose::InnerModel) # steep:ignore
+      if model.is_a?(ActiveRecordCompose::InnerModel)
         # @type var model: ActiveRecordCompose::InnerModel
         model
       else

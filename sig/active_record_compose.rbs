@@ -12,54 +12,23 @@ module ActiveRecordCompose
     def invalid?: -> bool
     def valid?: -> bool
     def errors: -> untyped
+    def is_a?: (untyped) -> bool
     def ==: (untyped) -> bool
   end
 
   type attribute_name = (String | Symbol)
-  type destroy_context_type = (bool | Symbol | (^() -> boolish) | (^(_ARLike) -> boolish))
+  type destroy_context_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
   type condition_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
-
-  module DelegateAttribute
-    extend ActiveSupport::Concern
-
-    def attributes: -> Hash[String, untyped]
-
-    module ClassMethods
-      def delegate_attribute: (*untyped methods, to: untyped?, ?allow_nil: untyped?, ?private: untyped?) -> untyped
-    end
-  end
 
   class InnerModelCollection
     include ::Enumerable[_ARLike]
 
-    def initialize: (Model) -> void
     def each: () { (_ARLike) -> void } -> InnerModelCollection | () -> Enumerator[_ARLike, self]
     def <<: (_ARLike) -> self
-    def push: (_ARLike, ?destroy: destroy_context_type, ?if: (nil | Symbol | condition_type)) -> self
+    def push: (_ARLike, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> self
     def empty?: -> bool
     def clear: -> self
-    def delete: (_ARLike | InnerModel) -> InnerModelCollection?
-
-    private
-    attr_reader owner: Model
-    attr_reader models: Array[InnerModel]
-    def wrap: (_ARLike | InnerModel, ?destroy: destroy_context_type, ?if: (nil | Symbol | condition_type)) -> InnerModel
-  end
-
-  class InnerModel
-    def initialize: (_ARLike, ?destroy: destroy_context_type, ?if: (nil | condition_type)) -> void
-    def destroy_context?: -> bool
-    def ignore?: -> bool
-    def save: -> bool
-    def save!: -> untyped
-    def invalid?: -> bool
-    def valid?: -> bool
-    def ==: (untyped) -> bool
-
-    private
-    attr_reader model: _ARLike
-    attr_reader destroy_context_type: destroy_context_type
-    attr_reader if_option: (nil | condition_type)
+    def delete: (_ARLike) -> InnerModelCollection?
   end
 
   class Model
@@ -68,12 +37,11 @@ module ActiveRecordCompose
     include ActiveModel::Validations::Callbacks
     extend ActiveModel::Validations::ClassMethods
     include ActiveModel::Attributes
-    include DelegateAttribute
-    extend DelegateAttribute::ClassMethods
-    include TransactionSupport
-    extend TransactionSupport::ClassMethods
 
-    @__models: InnerModelCollection
+    def self.delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
+    def self.connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+    def self.lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+    def self.with_connection: [T] () { () -> T } -> T
 
     def initialize: (?Hash[attribute_name, untyped]) -> void
     def save: -> bool
@@ -82,6 +50,7 @@ module ActiveRecordCompose
     def create!: (?Hash[attribute_name, untyped]) -> untyped
     def update: (?Hash[attribute_name, untyped]) -> bool
     def update!: (?Hash[attribute_name, untyped]) -> untyped
+    def id: -> untyped
 
     private
     def models: -> InnerModelCollection
@@ -90,20 +59,5 @@ module ActiveRecordCompose
     def raise_validation_error: -> bot
     def raise_on_save_error: -> bot
     def raise_on_save_error_message: -> String
-  end
-
-  module TransactionSupport
-    include ActiveRecord::Transactions
-
-    def id: -> untyped
-
-    module ClassMethods
-      def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
-      def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
-      def with_connection: [T] () { () -> T } -> T
-
-      private
-      def ar_class: -> singleton(ActiveRecord::Base)
-    end
   end
 end

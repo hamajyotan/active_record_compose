@@ -2,6 +2,7 @@
 
 - support ruby 3.4.x
 - refactor: remove some `steep:ignore` by private rbs.
+- refactor: place definitions that you don't want to be used much in private rbs.
 
 ## [0.6.1] - 2024-12-23
 
