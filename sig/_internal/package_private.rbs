@@ -10,6 +10,13 @@ module ActiveRecordCompose
   end
 
   class InnerModelCollection
+    def initialize: (Model) -> void
+
+    private
+    attr_reader owner: Model
+    attr_reader models: Array[InnerModel]
+    def wrap: (_ARLike | InnerModel, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> InnerModel
+
     module PackagePrivate
       def __wrapped_models: () -> Array[InnerModel]
 
@@ -21,6 +28,20 @@ module ActiveRecordCompose
   end
 
   class InnerModel
+    def initialize: (_ARLike, ?destroy: (bool | destroy_context_type), ?if: (nil | condition_type)) -> void
+    def destroy_context?: -> bool
+    def ignore?: -> bool
+    def save: -> bool
+    def save!: -> untyped
+    def invalid?: -> bool
+    def valid?: -> bool
+    def ==: (untyped) -> bool
+
+    private
+    attr_reader model: _ARLike
+    attr_reader destroy_context_type: (bool | destroy_context_type)
+    attr_reader if_option: (nil | condition_type)
+
     module PackagePrivate
       def __raw_model: () -> _ARLike
 
@@ -36,6 +57,8 @@ module ActiveRecordCompose
     extend DelegateAttribute::ClassMethods
     include TransactionSupport
     extend TransactionSupport::ClassMethods
+
+    @__models: InnerModelCollection
   end
 
   module TransactionSupport
