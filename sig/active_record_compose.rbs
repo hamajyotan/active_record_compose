@@ -12,6 +12,7 @@ module ActiveRecordCompose
     def invalid?: -> bool
     def valid?: -> bool
     def errors: -> untyped
+    def is_a?: (untyped) -> bool
     def ==: (untyped) -> bool
   end
 

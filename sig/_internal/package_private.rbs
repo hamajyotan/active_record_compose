@@ -35,6 +35,7 @@ module ActiveRecordCompose
     def save!: -> untyped
     def invalid?: -> bool
     def valid?: -> bool
+    def is_a?: (untyped) -> bool
     def ==: (untyped) -> bool
 
     private
