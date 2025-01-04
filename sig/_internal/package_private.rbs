@@ -1,4 +1,14 @@
 module ActiveRecordCompose
+  module DelegateAttribute
+    extend ActiveSupport::Concern
+
+    def attributes: -> Hash[String, untyped]
+
+    module ClassMethods
+      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
+    end
+  end
+
   class InnerModelCollection
     module PackagePrivate
       def __wrapped_models: () -> Array[InnerModel]
@@ -19,5 +29,27 @@ module ActiveRecordCompose
     end
 
     include PackagePrivate
+  end
+
+  class Model
+    include DelegateAttribute
+    extend DelegateAttribute::ClassMethods
+    include TransactionSupport
+    extend TransactionSupport::ClassMethods
+  end
+
+  module TransactionSupport
+    include ActiveRecord::Transactions
+
+    def id: -> untyped
+
+    module ClassMethods
+      def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+      def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+      def with_connection: [T] () { () -> T } -> T
+
+      private
+      def ar_class: -> singleton(ActiveRecord::Base)
+    end
   end
 end

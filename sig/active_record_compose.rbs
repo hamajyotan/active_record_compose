@@ -19,16 +19,6 @@ module ActiveRecordCompose
   type destroy_context_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
   type condition_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
 
-  module DelegateAttribute
-    extend ActiveSupport::Concern
-
-    def attributes: -> Hash[String, untyped]
-
-    module ClassMethods
-      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
-    end
-  end
-
   class InnerModelCollection
     include ::Enumerable[_ARLike]
 
@@ -68,12 +58,13 @@ module ActiveRecordCompose
     include ActiveModel::Validations::Callbacks
     extend ActiveModel::Validations::ClassMethods
     include ActiveModel::Attributes
-    include DelegateAttribute
-    extend DelegateAttribute::ClassMethods
-    include TransactionSupport
-    extend TransactionSupport::ClassMethods
 
     @__models: InnerModelCollection
+
+    def self.delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
+    def self.connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+    def self.lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+    def self.with_connection: [T] () { () -> T } -> T
 
     def initialize: (?Hash[attribute_name, untyped]) -> void
     def save: -> bool
@@ -82,6 +73,7 @@ module ActiveRecordCompose
     def create!: (?Hash[attribute_name, untyped]) -> untyped
     def update: (?Hash[attribute_name, untyped]) -> bool
     def update!: (?Hash[attribute_name, untyped]) -> untyped
+    def id: -> untyped
 
     private
     def models: -> InnerModelCollection
@@ -90,20 +82,5 @@ module ActiveRecordCompose
     def raise_validation_error: -> bot
     def raise_on_save_error: -> bot
     def raise_on_save_error_message: -> String
-  end
-
-  module TransactionSupport
-    include ActiveRecord::Transactions
-
-    def id: -> untyped
-
-    module ClassMethods
-      def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
-      def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
-      def with_connection: [T] () { () -> T } -> T
-
-      private
-      def ar_class: -> singleton(ActiveRecord::Base)
-    end
   end
 end
