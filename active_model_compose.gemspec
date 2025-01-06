@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['hamajyotan']
   spec.email = ['hamajyotan@gmail.com']
 
-  spec.description = 'activemodel form object pattern'
+  spec.description = 'activemodel form object pattern. it embraces multiple AR models and provides a transparent interface as if they were a single model.'
   spec.summary = 'activemodel form object pattern'
   spec.homepage = 'https://github.com/hamajyotan/active_record_compose'
   spec.license = 'MIT'
