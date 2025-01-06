@@ -22,7 +22,7 @@ class ActiveRecordCompose::InnerModelTest < ActiveSupport::TestCase
     assert_equal inner_model, ActiveRecordCompose::InnerModel.new(account, if: -> { false })
   end
 
-  test 'save given false to destroy' do
+  test 'when `destroy` option is false, save model by `#save`' do
     already_persisted_account = Account.create(name: 'foo', email: 'foo@example.com')
     inner_model = ActiveRecordCompose::InnerModel.new(already_persisted_account, destroy: false)
 
@@ -30,7 +30,7 @@ class ActiveRecordCompose::InnerModelTest < ActiveSupport::TestCase
     assert already_persisted_account.persisted?
   end
 
-  test 'save given true to destroy' do
+  test 'when `destroy` option is true, delete model by `#save`' do
     already_persisted_account = Account.create(name: 'foo', email: 'foo@example.com')
     inner_model = ActiveRecordCompose::InnerModel.new(already_persisted_account, destroy: true)
 

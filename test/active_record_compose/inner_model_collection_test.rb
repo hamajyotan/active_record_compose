@@ -4,7 +4,7 @@ require 'test_helper'
 require 'active_record_compose/inner_model_collection'
 
 class ActiveRecordCompose::InnerModelCollectionTest < ActiveSupport::TestCase
-  test '#empty?' do
+  test '#empty should return true if the element is absent and false if the element is present' do
     collection = ActiveRecordCompose::InnerModelCollection.new(nil)
 
     assert collection.empty?
