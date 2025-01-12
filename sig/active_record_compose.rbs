@@ -16,6 +16,10 @@ module ActiveRecordCompose
     def ==: (untyped) -> bool
   end
 
+  type condition[T] = Symbol | ^(T) [self: T] -> boolish
+  type callback[T] = Symbol | ^(T) [self: T] -> void
+  type around_callback[T] = Symbol | ^(T, Proc) [self: T] -> void
+
   type attribute_name = (String | Symbol)
   type destroy_context_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
   type condition_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
@@ -32,11 +36,28 @@ module ActiveRecordCompose
   end
 
   class Model
-    extend ActiveModel::Callbacks
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
-    extend ActiveModel::Validations::ClassMethods
     include ActiveModel::Attributes
+    extend ActiveModel::Callbacks
+    extend ActiveModel::Validations::ClassMethods
+    extend ActiveModel::Validations::Callbacks::ClassMethods
+    extend ActiveModel::Attributes::ClassMethods
+
+    def self.before_save: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+    def self.around_save: (*around_callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+    def self.after_save: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+
+    def self.before_create: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+    def self.around_create: (*around_callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+    def self.after_create: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+
+    def self.before_update: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+    def self.around_update: (*around_callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+    def self.after_update: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+
+    def self.after_commit: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
+    def self.after_rollback: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
 
     def self.delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
     def self.connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
