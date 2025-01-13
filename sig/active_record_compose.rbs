@@ -7,6 +7,15 @@ module ActiveRecordCompose
   interface _ARLike
     def save: -> bool
     def save!: -> untyped
+    def invalid?: -> bool
+    def valid?: -> bool
+    def errors: -> untyped
+    def is_a?: (untyped) -> bool
+    def ==: (untyped) -> bool
+  end
+  interface _ARLikeWithDestroy
+    def save: -> bool
+    def save!: -> untyped
     def destroy: -> bool
     def destroy!: -> untyped
     def invalid?: -> bool
@@ -15,24 +24,25 @@ module ActiveRecordCompose
     def is_a?: (untyped) -> bool
     def ==: (untyped) -> bool
   end
+  type ar_like = (_ARLike | _ARLikeWithDestroy)
 
   type condition[T] = Symbol | ^(T) [self: T] -> boolish
   type callback[T] = Symbol | ^(T) [self: T] -> void
   type around_callback[T] = Symbol | ^(T, Proc) [self: T] -> void
 
   type attribute_name = (String | Symbol)
-  type destroy_context_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
-  type condition_type = ((^() -> boolish) | (^(_ARLike) -> boolish))
+  type destroy_context_type = ((^() -> boolish) | (^(ar_like) -> boolish))
+  type condition_type = ((^() -> boolish) | (^(ar_like) -> boolish))
 
   class InnerModelCollection
-    include ::Enumerable[_ARLike]
+    include ::Enumerable[ar_like]
 
-    def each: () { (_ARLike) -> void } -> InnerModelCollection | () -> Enumerator[_ARLike, self]
-    def <<: (_ARLike) -> self
-    def push: (_ARLike, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> self
+    def each: () { (ar_like) -> void } -> InnerModelCollection | () -> Enumerator[ar_like, self]
+    def <<: (ar_like) -> self
+    def push: (ar_like, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> self
     def empty?: -> bool
     def clear: -> self
-    def delete: (_ARLike) -> InnerModelCollection?
+    def delete: (ar_like) -> InnerModelCollection?
   end
 
   class Model

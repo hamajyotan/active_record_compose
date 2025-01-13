@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- fix: type error in `ActiveRecordCompose::Model` subclass definitions.
+
 ## [0.6.2] - 2025-01-04
 
 - fix: `delegate_attribute` defined in a subclass had an unintended side effect on the superclass.
