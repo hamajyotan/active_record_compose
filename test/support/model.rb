@@ -8,9 +8,9 @@ end
 
 class Profile < ActiveRecord::Base
   belongs_to :account
-  validates :firstname, length: { maximum: 32 }
-  validates :lastname, length: { maximum: 32 }
-  validates :age, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :firstname, presence: true, length: { maximum: 32 }
+  validates :lastname, presence: true, length: { maximum: 32 }
+  validates :age, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 end
 
 class OperationLog < ActiveRecord::Base
