@@ -1,8 +1,34 @@
 # ActiveRecordCompose
 
-activermodel (activerecord) form object pattern.
+activemodel (activerecord) form object pattern. it embraces multiple AR models and provides a transparent interface as if they were a single model.
 
 ![CI](https://github.com/hamajyotan/active_record_compose/workflows/CI/badge.svg)
+
+## Table of Contents
+
+- [Motivation](#motivation)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Basic usage](#basic-usage)
+    - [`delegate_attribute`](#delegate_attribute)
+    - [Promotion to model from AR-model errors](#promotion-to-model-from-ar-model-errors)
+  - [I18n](#i18n)
+- [Advanced Usage](#advanced-usage)
+  - [`destroy` option](#destroy-option)
+  - [Callback ordering by `#save`, `#create` and `#update`](#callback-ordering-by-save-create-and-update)
+- [Links](#links)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+- [Code of Conduct](#code-of-conduct)
+
+## Motivation
+
+`ActiveRecord::Base` is responsible for persisting data to the database, and by defining validations and callbacks, it allows you to structure your use cases effectively. This is a crucial component of Rails. However, when a specific model starts being updated by multiple different use cases, validations and callbacks may require conditions such as `on: :context` or `save(validate: false)`. As a result, the model needs to account for multiple dependent use cases, leading to increased complexity.
+
+In such cases, `ActiveModel::Model` becomes useful. It provides the same interfaces as `ActiveRecord::Base`, such as `attribute` and `errors`, allowing it to be used similarly to an ActiveRecord model. Additionally, it enables you to define validations and callbacks within a limited context, preventing conditions related to multiple contexts from being embedded in `ActiveRecord::Base` validations and callbacks. This results in simpler, more maintainable code.
+
+This gem is built on `ActiveModel::Model` and acts as a first-class model within the Rails context. It provides methods for performing batch and safe updates on 0..N encapsulated models, enables transparent attribute access, and facilitates access to error information.
 
 ## Installation
 
@@ -20,149 +46,186 @@ $ bundle
 
 ## Usage
 
-### ActiveRecordCompose::Model basic
+### Basic usage
 
-It wraps AR objects or equivalent models to provide unified operation.
-For example, the following cases are supported
-
-#### Context-specific callbacks.
-
-A callback is useful to define some processing before or after a save in a particular model.
-However, if a callback is written directly in the AR model, it is necessary to consider the case where the model is updated in other contexts.
-In particular, if you frequently create with test data, previously unnecessary processing will be called at every point of creation.
-In addition to cost, the more complicated the callbacks you write, the more difficult it will be to create even a single test data.
-If the callbacks are written in a class that inherits from `ActiveRecordCompose::Model`, the AR model itself will not be polluted, and the context can be limited.
+(Below, it is assumed that there are two AR model definitions, `Account` and `Profile`, for the sake of explanation.)
 
 ```ruby
-class AccountRegistration < ActiveRecordCompose::Model
-  def initialize(account = Account.new, attributes = {})
-    @account = account
-    super(attributes) # When overrides `#initialize`, be sure to call `super`.
+class Account < ApplicationRecord
+  has_one :profile  # can work without `autosave:true`
+  validates :name, :email, presence: true
+end
 
-    # By including AR instance in models, AR instance itself is saved when this model is saved.
-    models.push(account)
-  end
-
-  # By delegating these to the AR instance,
-  # For example, this model itself can be given directly as an argument to form_with, and it will behave as if it were an instance of the model.
-  delegate :id, :persisted?, to: :account
-
-  # Defines an attribute of the same name that delegates to account#name and account#email
-  delegate_attribute :name, :email, to: :account
-
-  # You can only define post-processing if you update through this model.
-  # If this is written directly into the AR model, for example, it would be necessary to consider a callback control for each test data generation.
-  after_commit :try_send_email_message
-
-  private
-
-  attr_reader :account
-
-  def try_send_email_message
-    SendEmailConfirmationJob.perform_later(account)
-  end
+class Profile < ApplicationRecord
+  belongs_to :account
+  validates :firstname, :lastname, :age, presence: true
 end
 ```
 
-#### Validation limited to a specific context.
-
-Validates are basically fired in all cases where the model is manipulated. To avoid this, use `on: :create`, etc. to make it work only in specific cases.
-and so on to work only in specific cases. This allows you to create context-sensitive validations for the same model operation.
-However, this is the first step in making the model more and more complex. You will have to go around with `update(context: :foo)`
-In some cases, you may have to go around with the context option, such as `update(context: :foo)` everywhere.
-By writing validates in a class that extends `ActiveRecordCompose::Model`, you can define context-specific validation without polluting the AR model itself.
+Here is an example of designing a model that updates both Account and Profile at the same time, using `ActiveRecordCompose::Model`.
 
 ```ruby
-class AccountRegistration < ActiveRecordCompose::Model
-  def initialize(account = Account.new, attributes = {})
-    @account = account
-    super(attributes)
-    models.push(account)
-  end
+class UserRegistration < ActiveRecordCompose::Model
+  def initialize
+    @account = Account.new
+    @profile = @account.build_profile
 
-  delegate :id, :persisted?, to: :account
-  delegate_attribute :name, :email, to: :account
+    super()  # Don't forget to call `super()`
+             # RuboCop's Lint/MissingSuper cop assists in addressing this.
 
-  # Only if this model is used, also check the validity of the domain
-  before_validation :require_valid_domain
-
-  private
-
-  attr_reader :account
-
-  # Validity of the domain part of the e-mail address is also checked only when registering an account.
-  def require_valid_domain
-    e = ValidEmail2::Address.new(email.to_s)
-    unless e.valid?
-      errors.add(:email, :invalid_format)
-      return
-    end
-    unless e.valid_mx?
-      errors.add(:email, :invalid_domain)
-    end
-  end
-end
-```
-
-```ruby
-account = Account.new(name: 'new account', email: 'foo@example.com')
-account.valid?  #=> true
-
-account_registration = AccountRegistration.new(name: 'new account', email: 'foo@example.com')
-account_registration.valid?  #=> false
-```
-
-#### updating multiple models at the same time.
-
-In an AR model, you can add, for example, `autosave: true` or `accepts_nested_attributes_for` to an association to update the related models at the same time.
-There are ways to update related models at the same time. The operation is safe because it is transactional.
-`ActiveRecordCompose::Model` has an internal array called models. By adding an AR object to this models array
-By adding an AR object to the models, the object stored in the models provides an atomic update operation via #save.
-
-```ruby
-class AccountRegistration < ActiveRecordCompose::Model
-  def initialize(account = Account.new, profile = account.build_profile, attributes = {})
-    @account = account
-    @profile = profile
-    super(attributes)
     models << account << profile
+    # Alternatively, it can also be written as follows:
+    #     models.push(account)
+    #     models.push(profile)
   end
 
-  delegate :id, :persisted?, to: :account
+  # Attribute declarations using ActiveModel::Attributes are supported.
+  attribute :terms_of_service, :boolean
+
+  # You can provide validation definitions limited to UserRegistration.
+  # Instead of directly defining validations for Account or Profile, such
+  # as `on: :create` in the context, the model itself explains the context.
+  validates :terms_of_service, presence: true
+  validates :email, confirmation: true
+
+  # You can provide callback definitions limited to UserRegistration.
+  # For example, if this is written directly in the AR model, you need to consider
+  # callback control for data generation during tests and other situations.
+  after_commit :send_email_message
+
+  # UserRegistration behaves as if it has attributes like email, name, and age
+  # For example, `email` is delegated to `account.email`,
+  # and `email=` is delegated to `account.email=`.
   delegate_attribute :name, :email, to: :account
   delegate_attribute :firstname, :lastname, :age, to: :profile
 
   private
 
   attr_reader :account, :profile
+
+  def send_email_message
+    SendEmailConfirmationJob.perform_later(account)
+  end
 end
 ```
 
+The above model is used as follows.
+
 ```ruby
-Account.count  #=> 0
-Profile.count  #=> 0
+registration = UserRegistration.new
 
-account_registration =
-  AccountRegistration.new(
-    name: 'foo',
-    email: 'foo@example.com',
-    firstname: 'bar',
-    lastname: 'baz',
-    age: 36,
-  )
-account_registration.save!
-
-Account.count  #=> 1
-Profile.count  #=> 1
+# Atomically update Account and Profile.
+registration.update!(
+  name: "foo",
+  email: "bar@example.com",
+  firstname: "taro",
+  lastname: "yamada",
+  age: 18,
+  email_confirmation: "bar@example.com",
+  terms_of_service: true,
+)
 ```
 
-By adding to the `models` array while specifying `destroy: true`, you can perform a delete instead of a save on the model at `#save` time.
+By executing `save`, you can simultaneously update multiple models added to `models`. Furthermore, the save operation is performed within a database transaction, ensuring atomic processing.
+
+```ruby
+user_registration.save  # Atomically update Account and Profile.
+                        # In case of failure, a false value is returned.
+user_registration.save! # With the bang method,
+                        # an exception is raised in case of failure.
+```
+
+### `delegate_attribute`
+
+In many cases, the composed models have attributes that need to be assigned before saving. `ActiveRecordCompose::Model` provides `delegate_attribute`, allowing transparent access to those attributes."
+
+```ruby
+  # UserRegistration behaves as if it has attributes like email, name, and age
+  # For example, `email` is delegated to `account.email`,
+  # and `email=` is delegated to `account.email=`.
+  delegate_attribute :name, :email, to: :account
+  delegate_attribute :firstname, :lastname, :age, to: :profile
+```
+
+Attributes defined with `.delegate_attribute` can be accessed through `#attributes` in the same way as the original attributes defined with `.attribute`.
+
+```ruby
+registration = UserRegistration.new
+registration.name = "foo"
+registration.terms_of_service = true
+
+# Not only the email_confirmation defined with attribute,
+# but also the attributes defined with delegate_attribute are included.
+registration.attributes
+# => {
+#   "terms_of_service" => true,
+#   "email" => nil,
+#   "name" => "foo",
+#   "age" => nil,
+#   "firstname" => nil,
+#   "lastname" => nil
+# }
+```
+
+### Promotion to model from AR-model errors
+
+When saving a composed model with `#save`, models that are not valid with `#valid?` will obviously not be saved. As a result, the #errors information can be accessed from `ActiveRecordCompose::Model`.
+
+```ruby
+user_registration = UserRegistration.new
+user_registration.email = "foo@example.com"
+user_registration.email_confirmation = "BAZ@example.com"
+user_registration.age = 18
+user_registration.terms_of_service = true
+
+user_registration.save
+#=> false
+
+user_registration.errors.to_a
+# => [
+#   "Name can't be blank",
+#   "Firstname can't be blank",
+#   "Lastname can't be blank",
+#   "Email confirmation doesn't match Email"
+# ]
+```
+
+### I18n
+
+When the `#save!` operation raises an `ActiveRecord::RecordInvalid` exception, it is necessary to have pre-existing locale definitions in order to construct i18n information correctly.
+The specific keys required are `activemodel.errors.messages.record_invalid` or `errors.messages.record_invalid`.
+
+(Replace `en` as appropriate in the context.)
+
+```yaml
+en:
+  activemodel:
+    errors:
+      messages:
+        record_invalid: 'Validation failed: %{errors}'
+```
+
+Alternatively, the following definition is also acceptable:
+
+```yaml
+en:
+  errors:
+    messages:
+      record_invalid: 'Validation failed: %{errors}'
+```
+
+## Advanced Usage
+
+### `destroy` option
+
+By adding to the models array while specifying destroy: true, you can perform a delete instead of a save on the model at #save time.
 
 ```ruby
 class AccountResignation < ActiveRecordCompose::Model
   def initialize(account)
     @account = account
-    @profile = account.profile  # Suppose that Account has_one Profile.
+    @profile = account.profile || account.build_profile
+    super()
     models.push(account)
     models.push(profile, destroy: true)
   end
@@ -178,7 +241,6 @@ class AccountResignation < ActiveRecordCompose::Model
   end
 end
 ```
-
 ```ruby
 account = Account.last
 
@@ -197,61 +259,29 @@ Conditional destroy (or save) can be written like this.
 
 ```ruby
 class AccountRegistration < ActiveRecordCompose::Model
-  def initialize(account, attributes = {})
+  def initialize(account)
     @account = account
     @profile = account.profile || account.build_profile
-    super(attributes)
+    super()
     models.push(account)
-    models.push(profile, destroy: :all_blank?) # destroy if all blank, otherwise save.
+
+    # destroy if all blank, otherwise save.
+    models.push(profile, destroy: :profile_field_is_blank?)
+    # Alternatively, it can also be written as follows:
+    #     models.push(profile, destroy: -> { profile_field_is_blank? })
   end
 
-  delegate_attribute :name, :email, to: :account
-  delegate_attribute :firstname, :lastname, :age, to: :profile
+  delegate_attribute :email, to: :account
+  delegate_attribute :name, :age, to: :profile
 
   private
 
   attr_reader :account, :profile
 
-  def all_blank? = firstname.blank && lastname.blank? && age.blank?
-end
-```
-
-### `delegate_attribute`
-
-It provides a macro description that expresses access to the attributes of the AR model through delegation.
-
-```ruby
-class AccountRegistration < ActiveRecordCompose::Model
-  def initialize(account, attributes = {})
-    @account = account
-    super(attributes)
-    models.push(account)
+  def profile_field_is_blank?
+    firstname.blank? && lastname.blank? && age.blank?
   end
-
-  attribute :original_attribute, :string, default: 'qux'
-  delegate_attribute :name, to: :account
-
-  private
-
-  attr_reader :account
 end
-```
-
-```ruby
-account = Account.new
-account.name = 'foo'
-
-registration = AccountRegistration.new(account)
-registration.name  #=> 'foo'
-
-registration.name = 'bar'
-account.name  #=> 'bar'
-```
-
-Overrides `#attributes`, merging attributes defined with `delegate_attribute` in addition to the original attributes.
-
-```
-account.attributes  #=> {'original_attribute' => 'qux', 'name' => 'bar'}
 ```
 
 ### Callback ordering by `#save`, `#create` and `#update`.
@@ -294,29 +324,9 @@ model.update
 # after_save called!
 ```
 
-### I18n
+## Links
 
-When the `#save!` operation raises an `ActiveRecord::RecordInvalid` exception, it is necessary to have pre-existing locale definitions in order to construct i18n information correctly.
-The specific keys required are `activemodel.errors.messages.record_invalid` or `errors.messages.record_invalid`.
-
-(Replace `en` as appropriate in the context.)
-
-```yaml
-en:
-  activemodel:
-    errors:
-      messages:
-        record_invalid: 'Validation failed: %{errors}'
-```
-
-Alternatively, the following definition is also acceptable:
-
-```yaml
-en:
-  errors:
-    messages:
-      record_invalid: 'Validation failed: %{errors}'
-```
+- [Smart way to update multiple models simultaneously in Rails](https://dev.to/hamajyotan/smart-way-to-update-multiple-models-simultaneously-in-rails-51b6)
 
 ## Development
 
@@ -335,3 +345,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 ## Code of Conduct
 
 Everyone interacting in the ActiveRecord::Compose project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/hamajyotan/active_record_compose/blob/main/CODE_OF_CONDUCT.md).
+

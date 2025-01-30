@@ -3,6 +3,7 @@
 - fix: type error in `ActiveRecordCompose::Model` subclass definitions.
 - fixed type errors in subclass callback definitions, etc.
 - doc: more detailed gem desciption.
+- rewrite readme.
 
 ## [0.6.2] - 2025-01-04
 
