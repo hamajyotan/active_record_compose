@@ -3,7 +3,7 @@
 require 'test_helper'
 require 'active_record_compose/delegate_attribute'
 
-class ActiveRecordCompose::InnerModelTest < ActiveSupport::TestCase
+class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
   class Dummy
     include ActiveModel::Attributes
     include ActiveRecordCompose::DelegateAttribute
