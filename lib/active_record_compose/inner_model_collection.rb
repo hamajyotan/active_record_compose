@@ -79,21 +79,16 @@ module ActiveRecordCompose
     attr_reader :owner, :models
 
     def wrap(model, destroy: false, if: nil)
-      if model.is_a?(ActiveRecordCompose::InnerModel)
-        # @type var model: ActiveRecordCompose::InnerModel
-        model
-      else
-        if destroy.is_a?(Symbol)
-          method = destroy
-          destroy = -> { owner.__send__(method) }
-        end
-        if_option = binding.local_variable_get(:if)
-        if if_option.is_a?(Symbol)
-          method = if_option
-          if_option = -> { owner.__send__(method) }
-        end
-        ActiveRecordCompose::InnerModel.new(model, destroy:, if: if_option)
+      if destroy.is_a?(Symbol)
+        method = destroy
+        destroy = -> { owner.__send__(method) }
       end
+      if_option = binding.local_variable_get(:if)
+      if if_option.is_a?(Symbol)
+        method = if_option
+        if_option = -> { owner.__send__(method) }
+      end
+      ActiveRecordCompose::InnerModel.new(model, destroy:, if: if_option)
     end
 
     # @private
