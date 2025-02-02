@@ -153,13 +153,11 @@ module ActiveRecordCompose
     def models = @__models ||= ActiveRecordCompose::InnerModelCollection.new(self)
 
     def validate_models
-      wms = models.__wrapped_models
-      wms.select { _1.invalid? }.each { errors.merge!(_1) }
+      models.__wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
     end
 
     def save_models(bang:)
-      wms = models.__wrapped_models
-      wms.all? { bang ? _1.save! : _1.save }
+      models.__wrapped_models.all? { bang ? _1.save! : _1.save }
     end
 
     def raise_validation_error = raise ActiveRecord::RecordInvalid, self

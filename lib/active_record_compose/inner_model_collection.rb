@@ -97,7 +97,7 @@ module ActiveRecordCompose
         # Returns array of wrapped model instance.
         #
         # @private
-        # @return [Array[InnerModel] array of wrapped model instance.
+        # @return [Array[InnerModel]] array of wrapped model instance.
         def __wrapped_models = models.reject { _1.ignore? }.select { _1.__raw_model }
       end
     end
