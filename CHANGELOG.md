@@ -1,6 +1,6 @@
 ## [Unreleased]
 
-## [0.6.2] - 2025-01-31
+## [0.6.3] - 2025-01-31
 
 - fix: type error in `ActiveRecordCompose::Model` subclass definitions.
 - fixed type errors in subclass callback definitions, etc.
