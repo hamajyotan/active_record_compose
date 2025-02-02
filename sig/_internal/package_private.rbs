@@ -18,7 +18,7 @@ module ActiveRecordCompose
     private
     attr_reader owner: Model
     attr_reader models: Array[InnerModel]
-    def wrap: (ar_like | InnerModel, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> InnerModel
+    def wrap: (ar_like, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> InnerModel
 
     module PackagePrivate
       def __wrapped_models: () -> Array[InnerModel]
