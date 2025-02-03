@@ -84,7 +84,7 @@ module ActiveRecordCompose
       return false if invalid?
 
       with_transaction_returning_status do
-        run_callbacks(:save) { run_callbacks(:create) { save_models(bang: false) } }
+        with_callbacks(context: :create) { save_models(bang: false) }
       rescue ActiveRecord::RecordInvalid
         false
       end
@@ -97,7 +97,7 @@ module ActiveRecordCompose
       valid? || raise_validation_error
 
       with_transaction_returning_status do
-        run_callbacks(:save) { run_callbacks(:create) { save_models(bang: true) } }
+        with_callbacks(context: :create) { save_models(bang: true) }
       end || raise_on_save_error
     end
 
@@ -131,7 +131,7 @@ module ActiveRecordCompose
       return false if invalid?
 
       with_transaction_returning_status do
-        run_callbacks(:save) { run_callbacks(:update) { save_models(bang: false) } }
+        with_callbacks(context: :update) { save_models(bang: false) }
       rescue ActiveRecord::RecordInvalid
         false
       end
@@ -144,7 +144,7 @@ module ActiveRecordCompose
       valid? || raise_validation_error
 
       with_transaction_returning_status do
-        run_callbacks(:save) { run_callbacks(:update) { save_models(bang: true) } }
+        with_callbacks(context: :update) { save_models(bang: true) }
       end || raise_on_save_error
     end
 
@@ -154,6 +154,10 @@ module ActiveRecordCompose
 
     def validate_models
       models.__wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
+    end
+
+    def with_callbacks(context:, &block)
+      run_callbacks(:save) { run_callbacks(context, &block) }
     end
 
     def save_models(bang:)
