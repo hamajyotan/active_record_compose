@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'active_record_compose/inner_model_collection'
+require 'active_record_compose/composed_collection'
 
-class ActiveRecordCompose::InnerModelCollectionTest < ActiveSupport::TestCase
+class ActiveRecordCompose::ComposedCollectionTest < ActiveSupport::TestCase
   test '#empty should return true if the element is absent and false if the element is present' do
-    collection = ActiveRecordCompose::InnerModelCollection.new(nil)
+    collection = ActiveRecordCompose::ComposedCollection.new(nil)
 
     assert collection.empty?
 
@@ -15,7 +15,7 @@ class ActiveRecordCompose::InnerModelCollectionTest < ActiveSupport::TestCase
   end
 
   test 'can be made empty by #clear' do
-    collection = ActiveRecordCompose::InnerModelCollection.new(nil)
+    collection = ActiveRecordCompose::ComposedCollection.new(nil)
     collection << Account.new
     collection.clear
 
@@ -23,7 +23,7 @@ class ActiveRecordCompose::InnerModelCollectionTest < ActiveSupport::TestCase
   end
 
   test '#delete to exclude specific elements' do
-    collection = ActiveRecordCompose::InnerModelCollection.new(nil)
+    collection = ActiveRecordCompose::ComposedCollection.new(nil)
     account = Account.new
     profile = Profile.new
     collection << account << profile

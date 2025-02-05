@@ -5,7 +5,7 @@ require 'active_record_compose/wrapped_model'
 module ActiveRecordCompose
   using WrappedModel::PackagePrivate
 
-  class InnerModelCollection
+  class ComposedCollection
     include Enumerable
 
     def initialize(owner)
@@ -93,7 +93,7 @@ module ActiveRecordCompose
 
     # @private
     module PackagePrivate
-      refine InnerModelCollection do
+      refine ComposedCollection do
         # Returns array of wrapped model instance.
         #
         # @private

@@ -1,18 +1,5 @@
 module ActiveRecordCompose
-  module DelegateAttribute : ActiveModel::Attributes
-    extend ActiveSupport::Concern
-
-    def attributes: -> Hash[String, untyped]
-    def delegated_attributes: () -> Array[String]
-
-    module ClassMethods : Module
-      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
-      def delegated_attributes: () -> Array[String]
-      def delegated_attributes=: (Array[String]) -> untyped
-    end
-  end
-
-  class InnerModelCollection
+  class ComposedCollection
     def initialize: (Model) -> void
 
     private
@@ -30,13 +17,26 @@ module ActiveRecordCompose
     include PackagePrivate
   end
 
+  module DelegateAttribute : ActiveModel::Attributes
+    extend ActiveSupport::Concern
+
+    def attributes: -> Hash[String, untyped]
+    def delegated_attributes: () -> Array[String]
+
+    module ClassMethods : Module
+      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
+      def delegated_attributes: () -> Array[String]
+      def delegated_attributes=: (Array[String]) -> untyped
+    end
+  end
+
   class Model
     include DelegateAttribute
     extend DelegateAttribute::ClassMethods
     include TransactionSupport
     extend TransactionSupport::ClassMethods
 
-    @__models: InnerModelCollection
+    @__models: ComposedCollection
   end
 
   module TransactionSupport
