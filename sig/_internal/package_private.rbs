@@ -17,40 +17,14 @@ module ActiveRecordCompose
 
     private
     attr_reader owner: Model
-    attr_reader models: Array[InnerModel]
-    def wrap: (ar_like, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> InnerModel
+    attr_reader models: Array[WrappedModel]
+    def wrap: (ar_like, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> WrappedModel
 
     module PackagePrivate
-      def __wrapped_models: () -> Array[InnerModel]
+      def __wrapped_models: () -> Array[WrappedModel]
 
       private
-      def models: () -> Array[InnerModel]
-    end
-
-    include PackagePrivate
-  end
-
-  class InnerModel
-    def initialize: (ar_like, ?destroy: (bool | destroy_context_type), ?if: (nil | condition_type)) -> void
-    def destroy_context?: -> bool
-    def ignore?: -> bool
-    def save: -> bool
-    def save!: -> untyped
-    def invalid?: -> bool
-    def valid?: -> bool
-    def is_a?: (untyped) -> bool
-    def ==: (untyped) -> bool
-
-    private
-    attr_reader model: ar_like
-    attr_reader destroy_context_type: (bool | destroy_context_type)
-    attr_reader if_option: (nil | condition_type)
-
-    module PackagePrivate
-      def __raw_model: () -> ar_like
-
-      private
-      def model: () -> ar_like
+      def models: () -> Array[WrappedModel]
     end
 
     include PackagePrivate
@@ -78,5 +52,31 @@ module ActiveRecordCompose
       private
       def ar_class: -> singleton(ActiveRecord::Base)
     end
+  end
+
+  class WrappedModel
+    def initialize: (ar_like, ?destroy: (bool | destroy_context_type), ?if: (nil | condition_type)) -> void
+    def destroy_context?: -> bool
+    def ignore?: -> bool
+    def save: -> bool
+    def save!: -> untyped
+    def invalid?: -> bool
+    def valid?: -> bool
+    def is_a?: (untyped) -> bool
+    def ==: (untyped) -> bool
+
+    private
+    attr_reader model: ar_like
+    attr_reader destroy_context_type: (bool | destroy_context_type)
+    attr_reader if_option: (nil | condition_type)
+
+    module PackagePrivate
+      def __raw_model: () -> ar_like
+
+      private
+      def model: () -> ar_like
+    end
+
+    include PackagePrivate
   end
 end

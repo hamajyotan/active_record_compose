@@ -3,7 +3,7 @@
 require 'active_support/core_ext/object'
 
 module ActiveRecordCompose
-  class InnerModel
+  class WrappedModel
     # @param model [Object] the model instance.
     # @param destroy [Boolean] given true, destroy model.
     # @param destroy [Proc] when proc returning true, destroy model.
@@ -17,7 +17,7 @@ module ActiveRecordCompose
     delegate :errors, to: :model
 
     # Determines whether to save or delete the target object.
-    # Depends on the `destroy` value of the InnerModel object initialization option.
+    # Depends on the `destroy` value of the WrappedModel object initialization option.
     #
     # On the other hand, there are values `mark_for_destruction` and `marked_for_destruction?` in ActiveRecord.
     # However, these values are not substituted here.
@@ -118,7 +118,7 @@ module ActiveRecordCompose
 
     # @private
     module PackagePrivate
-      refine InnerModel do
+      refine WrappedModel do
         # @private
         # Returns a model instance of raw, but it should
         # be noted that application developers are not expected to use this interface.
