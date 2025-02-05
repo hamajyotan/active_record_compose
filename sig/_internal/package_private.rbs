@@ -1,4 +1,22 @@
 module ActiveRecordCompose
+  class ComposedCollection
+    def initialize: (Model) -> void
+
+    private
+    attr_reader owner: Model
+    attr_reader models: Array[WrappedModel]
+    def wrap: (ar_like, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> WrappedModel
+
+    module PackagePrivate
+      def __wrapped_models: () -> Array[WrappedModel]
+
+      private
+      def models: () -> Array[WrappedModel]
+    end
+
+    include PackagePrivate
+  end
+
   module DelegateAttribute : ActiveModel::Attributes
     extend ActiveSupport::Concern
 
@@ -12,25 +30,31 @@ module ActiveRecordCompose
     end
   end
 
-  class InnerModelCollection
-    def initialize: (Model) -> void
+  class Model
+    include DelegateAttribute
+    extend DelegateAttribute::ClassMethods
+    include TransactionSupport
+    extend TransactionSupport::ClassMethods
 
-    private
-    attr_reader owner: Model
-    attr_reader models: Array[InnerModel]
-    def wrap: (ar_like, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> InnerModel
-
-    module PackagePrivate
-      def __wrapped_models: () -> Array[InnerModel]
-
-      private
-      def models: () -> Array[InnerModel]
-    end
-
-    include PackagePrivate
+    @__models: ComposedCollection
   end
 
-  class InnerModel
+  module TransactionSupport
+    include ActiveRecord::Transactions
+
+    def id: -> untyped
+
+    module ClassMethods
+      def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+      def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
+      def with_connection: [T] () { () -> T } -> T
+
+      private
+      def ar_class: -> singleton(ActiveRecord::Base)
+    end
+  end
+
+  class WrappedModel
     def initialize: (ar_like, ?destroy: (bool | destroy_context_type), ?if: (nil | condition_type)) -> void
     def destroy_context?: -> bool
     def ignore?: -> bool
@@ -54,29 +78,5 @@ module ActiveRecordCompose
     end
 
     include PackagePrivate
-  end
-
-  class Model
-    include DelegateAttribute
-    extend DelegateAttribute::ClassMethods
-    include TransactionSupport
-    extend TransactionSupport::ClassMethods
-
-    @__models: InnerModelCollection
-  end
-
-  module TransactionSupport
-    include ActiveRecord::Transactions
-
-    def id: -> untyped
-
-    module ClassMethods
-      def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
-      def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
-      def with_connection: [T] () { () -> T } -> T
-
-      private
-      def ar_class: -> singleton(ActiveRecord::Base)
-    end
   end
 end

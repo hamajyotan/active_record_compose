@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- rename ActiveRecordCompose::InnerModel to ActiveRecordCompose::WrappedModel
+- rename ActiveRecordCompose::InnerModelCollection to ActiveRecordCompose::ComposedCollection
+
 ## [0.6.3] - 2025-01-31
 
 - fix: type error in `ActiveRecordCompose::Model` subclass definitions.

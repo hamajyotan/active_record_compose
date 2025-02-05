@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'active_record_compose/inner_model'
+require 'active_record_compose/wrapped_model'
 
 module ActiveRecordCompose
-  using InnerModel::PackagePrivate
+  using WrappedModel::PackagePrivate
 
-  class InnerModelCollection
+  class ComposedCollection
     include Enumerable
 
     def initialize(owner)
@@ -88,16 +88,16 @@ module ActiveRecordCompose
         method = if_option
         if_option = -> { owner.__send__(method) }
       end
-      ActiveRecordCompose::InnerModel.new(model, destroy:, if: if_option)
+      ActiveRecordCompose::WrappedModel.new(model, destroy:, if: if_option)
     end
 
     # @private
     module PackagePrivate
-      refine InnerModelCollection do
+      refine ComposedCollection do
         # Returns array of wrapped model instance.
         #
         # @private
-        # @return [Array[InnerModel]] array of wrapped model instance.
+        # @return [Array[WrappedModel]] array of wrapped model instance.
         def __wrapped_models = models.reject { _1.ignore? }.select { _1.__raw_model }
       end
     end

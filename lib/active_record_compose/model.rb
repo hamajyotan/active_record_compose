@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
+require 'active_record_compose/composed_collection'
 require 'active_record_compose/delegate_attribute'
-require 'active_record_compose/inner_model_collection'
 require 'active_record_compose/transaction_support'
 
 module ActiveRecordCompose
-  using InnerModelCollection::PackagePrivate
+  using ComposedCollection::PackagePrivate
 
   class Model
     include ActiveModel::Model
@@ -150,7 +150,7 @@ module ActiveRecordCompose
 
     private
 
-    def models = @__models ||= ActiveRecordCompose::InnerModelCollection.new(self)
+    def models = @__models ||= ActiveRecordCompose::ComposedCollection.new(self)
 
     def validate_models
       models.__wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
