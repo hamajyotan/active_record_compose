@@ -36,6 +36,7 @@ end
 
 gem 'debug'
 gem 'minitest'
+gem 'minitest-reporters'
 gem 'rake'
 gem 'rubocop'
 gem 'rubocop-minitest'

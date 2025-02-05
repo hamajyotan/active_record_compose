@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'minitest/reporters'
+Minitest::Reporters.use!
+
 # Since Rails 7.1, test_case implicitly depends on deprecator.
 # Also, deprecator does not exist before 7.0
 begin
