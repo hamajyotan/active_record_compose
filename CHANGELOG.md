@@ -2,6 +2,10 @@
 
 - rename ActiveRecordCompose::InnerModel to ActiveRecordCompose::WrappedModel
 - rename ActiveRecordCompose::InnerModelCollection to ActiveRecordCompose::ComposedCollection
+- A new callback control flag, `persisted_flag_callback_control`, has been defined.
+  Currently, the default value is false, which does not change the existing behavior, but it will be deprecated in the future.
+  When the flag is set to true, the behavior will be almost the same as the callback sequence in ActiveRecord.
+  (https://github.com/hamajyotan/active_record_compose/issues/11)
 
 ## [0.6.3] - 2025-01-31
 

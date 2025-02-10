@@ -286,13 +286,17 @@ end
 
 ### Callback ordering by `#save`, `#create` and `#update`.
 
-Sometimes, multiple AR objects are passed to the models in the arguments.
-It is not strictly possible to distinguish between create and update operations, regardless of the state of `#persisted?`.
-Therefore, control measures such as separating callbacks with `after_create` and `after_update` based on the `#persisted?` of AR objects are left to the discretion of the user,
-rather than being determined by the state of the AR objects themselves.
+The behavior of `(before|after|around)_create` and `(before|after|around)_update` hooks depends on
+the state of the `persisted_flag_callback_control` setting.
+
+When `persisted_flag_callback_control` is set to false,
+the execution of `#create`, `#update`, or `#save` determines which callbacks will be triggered.
+Currently, the default value is `false`, but it will no longer be supported in the future.
 
 ```ruby
 class ComposedModel < ActiveRecordCompose::Model
+  self.persisted_flag_callback_control = false # Currently defaults to false, but will no longer be supported in the future.
+
   # ...
 
   before_save { puts 'before_save called!' }
@@ -322,6 +326,66 @@ model.update
 # before_update called!
 # after_update called!
 # after_save called!
+```
+
+When `persisted_flag_callback_control` is set to `true`, it behaves almost like callback control in ActiveRecord.
+This behavior will be the default in the future.
+
+```ruby
+class ComposedModel < ActiveRecordCompose::Model
+  self.persisted_flag_callback_control = true # In the future, true will be the default and false will no longer be supported.
+
+  # ...
+
+  before_save { puts 'before_save called!' }
+  before_create { puts 'before_create called!' }
+  before_update { puts 'before_update called!' }
+  after_save { puts 'after_save called!' }
+  after_create { puts 'after_create called!' }
+  after_update { puts 'after_update called!' }
+
+  def persisted?
+    # Override and return a boolish value depending on the state of the inner model.
+    # For example, it could be transferred to the primary model to be manipulated.
+    #
+    #       # ex.)
+    #       def persisted? = the_model.persisted?
+    #
+    true
+  end
+end
+```
+
+```ruby
+# when `model.persisted?` returns `true`
+
+model = ComposedModel.new
+
+model.save # or `model.update` (the same callbacks will be triggered in all cases).
+
+# before_save called!
+# before_update called! # when persisted? is false, before_create hook is fired here instead.
+# after_update called! # when persisted? is false, after_create hook is fired here instead.
+# after_save called!
+```
+
+```ruby
+# when `model.persisted?` returns `false`
+
+model = ComposedModel.new
+
+model.save # or `model.update` (the same callbacks will be triggered in all cases).
+
+# before_save called!
+# before_create called!
+# after_create called!
+# after_save called!
+```
+
+When `persisted_flag_callback_control` is `true`, `#create` is not supported.
+
+```ruby
+model.create  # => raises RuntimeError
 ```
 
 ## Links

@@ -15,6 +15,46 @@ module ActiveRecordCompose
     include ActiveRecordCompose::DelegateAttribute
     include ActiveRecordCompose::TransactionSupport
 
+    # This flag controls the callback sequence for models.
+    # The current default value is `false`, but support for `false` is planned to be discontinued in the future.
+    #
+    # When `persisted_flag_callback_control` is set to `true`,
+    # the occurrence of callbacks depends on the evaluation result of `#persisted?`.
+    # Additionally, the definition of `#persisted?` itself can be appropriately overridden in subclasses.
+    #
+    # if `#persisted?` returns `false`:
+    # * before_save
+    # * before_create
+    # * after_create
+    # * after_save
+    #
+    # if `#persisted?` returns `true`:
+    # * before_save
+    # * before_update
+    # * after_update
+    # * after_save
+    #
+    # On the other hand, when `persisted_flag_callback_control` is set to `false`,
+    # the invoked methods during saving operations vary depending on the method used.
+    #
+    # when performing `#save` or `#save!`:
+    # * before_save
+    # * after_save
+    #
+    # when performing `#update` or `#update!`:
+    # * before_save
+    # * before_update
+    # * after_update
+    # * after_save
+    #
+    # when performing `#create` or `#create!`:
+    # * before_save
+    # * before_create
+    # * after_create
+    # * after_save
+    #
+    class_attribute :persisted_flag_callback_control, instance_accessor: false, default: false
+
     define_model_callbacks :save
     define_model_callbacks :create
     define_model_callbacks :update
@@ -35,7 +75,11 @@ module ActiveRecordCompose
       return false if invalid?
 
       with_transaction_returning_status do
-        run_callbacks(:save) { save_models(bang: false) }
+        if self.class.persisted_flag_callback_control
+          with_callbacks { save_models(bang: false) }
+        else
+          run_callbacks(:save) { save_models(bang: false) }
+        end
       rescue ActiveRecord::RecordInvalid
         false
       end
@@ -50,7 +94,11 @@ module ActiveRecordCompose
       valid? || raise_validation_error
 
       with_transaction_returning_status do
-        run_callbacks(:save) { save_models(bang: true) }
+        if self.class.persisted_flag_callback_control
+          with_callbacks { save_models(bang: true) }
+        else
+          run_callbacks(:save) { save_models(bang: true) }
+        end
       end || raise_on_save_error
     end
 
@@ -80,6 +128,10 @@ module ActiveRecordCompose
     #   # after_save called!
     #
     def create(attributes = {})
+      if self.class.persisted_flag_callback_control
+        raise '`#create` cannot be called. The context for creation or update is determined by the `#persisted` flag.'
+      end
+
       assign_attributes(attributes)
       return false if invalid?
 
@@ -93,6 +145,10 @@ module ActiveRecordCompose
     # Behavior is same to `#create`, but raises an exception prematurely on failure.
     #
     def create!(attributes = {})
+      if self.class.persisted_flag_callback_control
+        raise '`#create` cannot be called. The context for creation or update is determined by the `#persisted` flag.'
+      end
+
       assign_attributes(attributes)
       valid? || raise_validation_error
 
@@ -131,7 +187,11 @@ module ActiveRecordCompose
       return false if invalid?
 
       with_transaction_returning_status do
-        with_callbacks(context: :update) { save_models(bang: false) }
+        if self.class.persisted_flag_callback_control
+          with_callbacks { save_models(bang: false) }
+        else
+          with_callbacks(context: :update) { save_models(bang: false) }
+        end
       rescue ActiveRecord::RecordInvalid
         false
       end
@@ -144,7 +204,11 @@ module ActiveRecordCompose
       valid? || raise_validation_error
 
       with_transaction_returning_status do
-        with_callbacks(context: :update) { save_models(bang: true) }
+        if self.class.persisted_flag_callback_control
+          with_callbacks { save_models(bang: true) }
+        else
+          with_callbacks(context: :update) { save_models(bang: true) }
+        end
       end || raise_on_save_error
     end
 
@@ -156,7 +220,8 @@ module ActiveRecordCompose
       models.__wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
     end
 
-    def with_callbacks(context:, &block)
+    def with_callbacks(context: nil, &block)
+      context ||= persisted? ? :update : :create
       run_callbacks(:save) { run_callbacks(context, &block) }
     end
 
