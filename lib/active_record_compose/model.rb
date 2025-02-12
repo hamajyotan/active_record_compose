@@ -53,7 +53,7 @@ module ActiveRecordCompose
     # * after_create
     # * after_save
     #
-    class_attribute :persisted_flag_callback_control, instance_accessor: false, default: false
+    class_attribute :persisted_flag_callback_control, instance_accessor: false, default: true
 
     define_model_callbacks :save
     define_model_callbacks :create

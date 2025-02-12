@@ -3,13 +3,12 @@
 require 'test_helper'
 require 'active_record_compose/model'
 
-class ActiveRecordCompose::ModelPersistedFlagCallbackTest < ActiveSupport::TestCase
+class ActiveRecordCompose::ModelLegacyCallbackOrderTest < ActiveSupport::TestCase
   class CallbackOrder < ActiveRecordCompose::Model
-    self.persisted_flag_callback_control = true
+    self.persisted_flag_callback_control = false
 
-    def initialize(tracer, persisted: false)
+    def initialize(tracer)
       @tracer = tracer
-      @persisted = persisted
       super()
     end
 
@@ -23,33 +22,29 @@ class ActiveRecordCompose::ModelPersistedFlagCallbackTest < ActiveSupport::TestC
     after_rollback { tracer << 'after_rollback called' }
     after_commit { tracer << 'after_commit called' }
 
-    def persisted? = !!@persisted
-
     private
 
     attr_reader :tracer
   end
 
-  test 'when persisted, #save causes (before|after)_(save|update) and after_commit callback to work' do
+  test 'when #save, only #before_save, #after_save should work' do
     tracer = []
-    model = CallbackOrder.new(tracer, persisted: true)
+    model = CallbackOrder.new(tracer)
 
     model.save
     assert_equal tracer, [
       'before_save called',
-      'before_update called',
-      'after_update called',
       'after_save called',
       'before_commit called',
       'after_commit called',
     ]
   end
 
-  test 'when not persisted, #save causes (before|after)_(save|create) and after_commit callback to work' do
+  test 'when #create, in addition to #before_save and #after_save, #before_create and #after_create must also work' do
     tracer = []
-    model = CallbackOrder.new(tracer, persisted: false)
+    model = CallbackOrder.new(tracer)
 
-    model.save
+    model.create
     assert_equal tracer, [
       'before_save called',
       'before_create called',
@@ -60,41 +55,15 @@ class ActiveRecordCompose::ModelPersistedFlagCallbackTest < ActiveSupport::TestC
     ]
   end
 
-  test '#create must not be executable' do
-    model = CallbackOrder.new([])
-
-    exception = assert_raises StandardError do
-      model.create
-    end
-    assert_equal exception.message, <<~MESSAGE.chomp
-      `#create` cannot be called. The context for creation or update is determined by the `#persisted` flag.
-    MESSAGE
-  end
-
-  test 'when persisted, #update causes (before|after)_(save|update) and after_commit callback to work' do
+  test 'when #update, in addition to #before_save and #after_save, #before_update and #after_update must also work' do
     tracer = []
-    model = CallbackOrder.new(tracer, persisted: true)
+    model = CallbackOrder.new(tracer)
 
     model.update
     assert_equal tracer, [
       'before_save called',
       'before_update called',
       'after_update called',
-      'after_save called',
-      'before_commit called',
-      'after_commit called',
-    ]
-  end
-
-  test 'when not persisted, #update causes (before|after)_(save|create) and after_commit callback to work' do
-    tracer = []
-    model = CallbackOrder.new(tracer, persisted: false)
-
-    model.update
-    assert_equal tracer, [
-      'before_save called',
-      'before_create called',
-      'after_create called',
       'after_save called',
       'before_commit called',
       'after_commit called',
@@ -119,8 +88,6 @@ class ActiveRecordCompose::ModelPersistedFlagCallbackTest < ActiveSupport::TestC
       'outer transsaction starts',
       'inner transsaction starts',
       'before_save called',
-      'before_create called',
-      'after_create called',
       'after_save called',
       'inner transsaction ends',
       'outer transsaction ends',
@@ -148,8 +115,6 @@ class ActiveRecordCompose::ModelPersistedFlagCallbackTest < ActiveSupport::TestC
       'outer transsaction starts',
       'inner transsaction starts',
       'before_save called',
-      'before_create called',
-      'after_create called',
       'after_save called',
       'inner transsaction ends',
       'outer transsaction ends',
