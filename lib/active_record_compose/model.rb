@@ -78,6 +78,13 @@ module ActiveRecordCompose
         if self.class.persisted_flag_callback_control
           with_callbacks { save_models(bang: false) }
         else
+          # steep:ignore:start
+          deprecator.warn(
+            'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
+            'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
+            '(Alternatively, exclude statements that set `false`)',
+          )
+          # steep:ignore:end
           run_callbacks(:save) { save_models(bang: false) }
         end
       rescue ActiveRecord::RecordInvalid
@@ -97,6 +104,13 @@ module ActiveRecordCompose
         if self.class.persisted_flag_callback_control
           with_callbacks { save_models(bang: true) }
         else
+          # steep:ignore:start
+          deprecator.warn(
+            'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
+            'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
+            '(Alternatively, exclude statements that set `false`)',
+          )
+          # steep:ignore:end
           run_callbacks(:save) { save_models(bang: true) }
         end
       end || raise_on_save_error
@@ -132,6 +146,14 @@ module ActiveRecordCompose
         raise '`#create` cannot be called. The context for creation or update is determined by the `#persisted` flag.'
       end
 
+      # steep:ignore:start
+      deprecator.warn(
+        'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
+        'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
+        '(Alternatively, exclude statements that set `false`)',
+      )
+      # steep:ignore:end
+
       assign_attributes(attributes)
       return false if invalid?
 
@@ -148,6 +170,14 @@ module ActiveRecordCompose
       if self.class.persisted_flag_callback_control
         raise '`#create` cannot be called. The context for creation or update is determined by the `#persisted` flag.'
       end
+
+      # steep:ignore:start
+      deprecator.warn(
+        'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
+        'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
+        '(Alternatively, exclude statements that set `false`)',
+      )
+      # steep:ignore:end
 
       assign_attributes(attributes)
       valid? || raise_validation_error
@@ -190,6 +220,13 @@ module ActiveRecordCompose
         if self.class.persisted_flag_callback_control
           with_callbacks { save_models(bang: false) }
         else
+          # steep:ignore:start
+          deprecator.warn(
+            'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
+            'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
+            '(Alternatively, exclude statements that set `false`)',
+          )
+          # steep:ignore:end
           with_callbacks(context: :update) { save_models(bang: false) }
         end
       rescue ActiveRecord::RecordInvalid
@@ -207,6 +244,13 @@ module ActiveRecordCompose
         if self.class.persisted_flag_callback_control
           with_callbacks { save_models(bang: true) }
         else
+          # steep:ignore:start
+          deprecator.warn(
+            'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
+            'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
+            '(Alternatively, exclude statements that set `false`)',
+          )
+          # steep:ignore:end
           with_callbacks(context: :update) { save_models(bang: true) }
         end
       end || raise_on_save_error
@@ -237,5 +281,13 @@ module ActiveRecordCompose
     def raise_on_save_error = raise ActiveRecord::RecordNotSaved.new(raise_on_save_error_message, self)
 
     def raise_on_save_error_message = 'Failed to save the model.'
+
+    def deprecator
+      if ActiveRecord.respond_to?(:deprecator)
+        ActiveRecord.deprecator # steep:ignore
+      else # for rails 7.0.x or lower
+        ActiveSupport::Deprecation
+      end
+    end
   end
 end
