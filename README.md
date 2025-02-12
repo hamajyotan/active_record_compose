@@ -284,52 +284,15 @@ class AccountRegistration < ActiveRecordCompose::Model
 end
 ```
 
-### Callback ordering by `#save`, `#create` and `#update`.
+### Callback ordering by `#persisted?`.
 
 The behavior of `(before|after|around)_create` and `(before|after|around)_update` hooks depends on
 the state of the `persisted_flag_callback_control` setting.
-
-When `persisted_flag_callback_control` is set to false,
-the execution of `#create`, `#update`, or `#save` determines which callbacks will be triggered.
-Currently, the default value is `false`, but it will no longer be supported in the future.
-
-```ruby
-class ComposedModel < ActiveRecordCompose::Model
-  self.persisted_flag_callback_control = false # Currently defaults to false, but will no longer be supported in the future.
-
-  # ...
-
-  before_save { puts 'before_save called!' }
-  before_create { puts 'before_create called!' }
-  before_update { puts 'before_update called!' }
-  after_save { puts 'after_save called!' }
-  after_create { puts 'after_create called!' }
-  after_update { puts 'after_update called!' }
-end
-```
-
-```ruby
-model = ComposedModel.new
-
-model.save
-# before_save called!
-# after_save called!
-
-model.create
-# before_save called!
-# before_create called!
-# after_create called!
-# after_save called!
-
-model.update
-# before_save called!
-# before_update called!
-# after_update called!
-# after_save called!
-```
+default value is `true`, behavior when set to `false` will be removed in the next release.
 
 When `persisted_flag_callback_control` is set to `true`, it behaves almost like callback control in ActiveRecord.
-This behavior will be the default in the future.
+Depending on the evaluation result of `#persisted?`,
+either the create-related callbacks or the update-related callbacks will be triggered.
 
 ```ruby
 class ComposedModel < ActiveRecordCompose::Model
@@ -382,10 +345,43 @@ model.save # or `model.update` (the same callbacks will be triggered in all case
 # after_save called!
 ```
 
-When `persisted_flag_callback_control` is `true`, `#create` is not supported.
+When `persisted_flag_callback_control` is set to false,
+the execution of `#create`, `#update`, or `#save` determines which callbacks will be triggered.
+This behavior will no longer be supported in the next release.
 
 ```ruby
-model.create  # => raises RuntimeError
+class ComposedModel < ActiveRecordCompose::Model
+  self.persisted_flag_callback_control = false # Currently defaults to false, but will no longer be supported in the future.
+
+  # ...
+
+  before_save { puts 'before_save called!' }
+  before_create { puts 'before_create called!' }
+  before_update { puts 'before_update called!' }
+  after_save { puts 'after_save called!' }
+  after_create { puts 'after_create called!' }
+  after_update { puts 'after_update called!' }
+end
+```
+
+```ruby
+model = ComposedModel.new
+
+model.save
+# before_save called!
+# after_save called!
+
+model.create
+# before_save called!
+# before_create called!
+# after_create called!
+# after_save called!
+
+model.update
+# before_save called!
+# before_update called!
+# after_update called!
+# after_save called!
 ```
 
 ## Links

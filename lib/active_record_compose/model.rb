@@ -16,7 +16,7 @@ module ActiveRecordCompose
     include ActiveRecordCompose::TransactionSupport
 
     # This flag controls the callback sequence for models.
-    # The current default value is `false`, but support for `false` is planned to be discontinued in the future.
+    # The current default value is `true`, behavior when set to `false` will be removed in the next release.
     #
     # When `persisted_flag_callback_control` is set to `true`,
     # the occurrence of callbacks depends on the evaluation result of `#persisted?`.
