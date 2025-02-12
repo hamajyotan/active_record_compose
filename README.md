@@ -286,18 +286,11 @@ end
 
 ### Callback ordering by `#persisted?`
 
-The behavior of `(before|after|around)_create` and `(before|after|around)_update` hooks depends on
-the state of the `persisted_flag_callback_control` setting.
-default value is `true`, behavior when set to `false` will be removed in the next release.
-
-When `persisted_flag_callback_control` is set to `true`, it behaves almost like callback control in ActiveRecord.
-Depending on the evaluation result of `#persisted?`,
+The behavior of `(before|after|around)_create` and `(before|after|around)_update` hooks depending on the evaluation result of `#persisted?`,
 either the create-related callbacks or the update-related callbacks will be triggered.
 
 ```ruby
 class ComposedModel < ActiveRecordCompose::Model
-  self.persisted_flag_callback_control = true # In the future, true will be the default and false will no longer be supported.
-
   # ...
 
   before_save { puts 'before_save called!' }
@@ -342,45 +335,6 @@ model.save # or `model.update` (the same callbacks will be triggered in all case
 # before_save called!
 # before_create called!
 # after_create called!
-# after_save called!
-```
-
-When `persisted_flag_callback_control` is set to false,
-the execution of `#create`, `#update`, or `#save` determines which callbacks will be triggered.
-This behavior will no longer be supported in the next release.
-
-```ruby
-class ComposedModel < ActiveRecordCompose::Model
-  self.persisted_flag_callback_control = false # Currently defaults to false, but will no longer be supported in the future.
-
-  # ...
-
-  before_save { puts 'before_save called!' }
-  before_create { puts 'before_create called!' }
-  before_update { puts 'before_update called!' }
-  after_save { puts 'after_save called!' }
-  after_create { puts 'after_create called!' }
-  after_update { puts 'after_update called!' }
-end
-```
-
-```ruby
-model = ComposedModel.new
-
-model.save
-# before_save called!
-# after_save called!
-
-model.create
-# before_save called!
-# before_create called!
-# after_create called!
-# after_save called!
-
-model.update
-# before_save called!
-# before_update called!
-# after_update called!
 # after_save called!
 ```
 

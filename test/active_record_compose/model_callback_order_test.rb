@@ -58,17 +58,6 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     ]
   end
 
-  test '#create must not be executable' do
-    model = CallbackOrder.new([])
-
-    exception = assert_raises StandardError do
-      model.create
-    end
-    assert_equal exception.message, <<~MESSAGE.chomp
-      `#create` cannot be called. The context for creation or update is determined by the `#persisted` flag.
-    MESSAGE
-  end
-
   test 'when persisted, #update causes (before|after)_(save|update) and after_commit callback to work' do
     tracer = []
     model = CallbackOrder.new(tracer, persisted: true)

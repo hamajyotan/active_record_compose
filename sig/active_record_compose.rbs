@@ -69,9 +69,6 @@ module ActiveRecordCompose
     def self.after_commit: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
     def self.after_rollback: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
 
-    def self.persisted_flag_callback_control: () -> boolish
-    def self.persisted_flag_callback_control=: (boolish) -> untyped
-
     def self.delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
     def self.connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
     def self.lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
@@ -88,8 +85,8 @@ module ActiveRecordCompose
 
     private
     def models: -> ComposedCollection
-    def with_callbacks: (?context: (nil | :create | :update)) { () -> bool } -> bool
-    def callback_context: (?context: (nil | :create | :update)) -> (:create | :update)
+    def with_callbacks: { () -> bool } -> bool
+    def callback_context: -> (:create | :update)
     def validate_models: -> void
     def save_models: (bang: bool) -> bool
     def raise_validation_error: -> bot

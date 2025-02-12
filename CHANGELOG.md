@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- removed `persisted_flag_callback_control` support.
+
 ## [0.8.0] - 2025-02-22
 
 - changed `persisted_flag_callback_control` default from `false` to `true`.
