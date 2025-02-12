@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.7.0] - 2025-02-12
+
 - rename ActiveRecordCompose::InnerModel to ActiveRecordCompose::WrappedModel
 - rename ActiveRecordCompose::InnerModelCollection to ActiveRecordCompose::ComposedCollection
 - A new callback control flag, `persisted_flag_callback_control`, has been defined.
