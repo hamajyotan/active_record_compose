@@ -217,7 +217,7 @@ module ActiveRecordCompose
     def models = @__models ||= ActiveRecordCompose::ComposedCollection.new(self)
 
     def validate_models
-      models.__wrapped_models.select { _1.invalid? }.each { errors.merge!(_1) }
+      models.__wrapped_models.lazy.select { _1.invalid? }.each { errors.merge!(_1) }
     end
 
     def with_callbacks(context: nil, &block)

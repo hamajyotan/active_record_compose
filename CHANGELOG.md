@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- adjusted to save errors as soon as an invalid is found.
+
 ## [0.7.0] - 2025-02-12
 
 - rename ActiveRecordCompose::InnerModel to ActiveRecordCompose::WrappedModel
