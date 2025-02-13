@@ -221,8 +221,11 @@ module ActiveRecordCompose
     end
 
     def with_callbacks(context: nil, &block)
-      context ||= persisted? ? :update : :create
-      run_callbacks(:save) { run_callbacks(context, &block) }
+      run_callbacks(:save) { run_callbacks(callback_context(context:), &block) }
+    end
+
+    def callback_context(context: nil)
+      context || (persisted? ? :update : :create)
     end
 
     def save_models(bang:)
