@@ -16,7 +16,7 @@ when 'head'
   gem 'activerecord', github: 'rails/rails'
   gem 'activesupport', github: 'rails/rails'
   gem 'sqlite3', '~> 2.1'
-when '~> 6.1.0', '~> 7.0.0'
+when '~> 7.0.0'
   # HACK: Explicitly load logger for dependency resolution
   # gem activesupport implicitly depends on gem logger.
   # For versions 7.1 or later, this is not a problem since it is listed in add_dependency,

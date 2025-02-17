@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - adjusted to save errors as soon as an invalid is found.
+- drop support rails 6.1.x.
 
 ## [0.7.0] - 2025-02-12
 
