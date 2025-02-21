@@ -51,6 +51,9 @@ Layout/LeadingCommentSpace:
 Layout/LineLength:
   Max: 120
 
+Lint/UselessMethodDefinition:
+  Enabled: false
+
 Metrics/AbcSize:
   Enabled: false
 
