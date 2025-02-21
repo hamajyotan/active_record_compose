@@ -141,6 +141,7 @@ module ActiveRecordCompose
     #   # after_create called!
     #   # after_save called!
     #
+    # @deprecated
     def create(attributes = {})
       if self.class.persisted_flag_callback_control
         raise '`#create` cannot be called. The context for creation or update is determined by the `#persisted` flag.'
@@ -166,6 +167,7 @@ module ActiveRecordCompose
 
     # Behavior is same to `#create`, but raises an exception prematurely on failure.
     #
+    # @deprecated
     def create!(attributes = {})
       if self.class.persisted_flag_callback_control
         raise '`#create` cannot be called. The context for creation or update is determined by the `#persisted` flag.'
