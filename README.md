@@ -15,7 +15,7 @@ activemodel (activerecord) form object pattern. it embraces multiple AR models a
   - [I18n](#i18n)
 - [Advanced Usage](#advanced-usage)
   - [`destroy` option](#destroy-option)
-  - [Callback ordering by `#save`, `#create` and `#update`](#callback-ordering-by-save-create-and-update)
+  - [Callback ordering by `#persisted?`](#callback-ordering-by-persisted)
 - [Links](#links)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -284,7 +284,7 @@ class AccountRegistration < ActiveRecordCompose::Model
 end
 ```
 
-### Callback ordering by `#persisted?`.
+### Callback ordering by `#persisted?`
 
 The behavior of `(before|after|around)_create` and `(before|after|around)_update` hooks depends on
 the state of the `persisted_flag_callback_control` setting.
