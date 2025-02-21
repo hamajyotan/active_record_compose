@@ -28,6 +28,6 @@ module ActiveRecordCompose
     def id = nil
 
     def trigger_transactional_callbacks? = true
-    def restore_transaction_record_state(_force_restore_state = false) = nil # rubocop:disable Style/OptionalBooleanParameter
+    def restore_transaction_record_state(_force_restore_state = false) = nil
   end
 end

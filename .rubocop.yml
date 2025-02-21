@@ -21,6 +21,9 @@ Style/DoubleNegation:
 Style/NumericPredicate:
   Enabled: false
 
+Style/OptionalBooleanParameter:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: true
 
