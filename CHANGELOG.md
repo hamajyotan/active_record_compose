@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.8.0] - 2025-02-22
+
 - changed `persisted_flag_callback_control` default from `false` to `true`.
 - adjusted to save errors as soon as an invalid is found.
 - drop support rails 6.1.x.
