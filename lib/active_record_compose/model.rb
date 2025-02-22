@@ -70,6 +70,10 @@ module ActiveRecordCompose
     #
     # The save is performed within a single transaction.
     #
+    # Options like `:validate` and `:context` are not accepted as arguments.
+    # The need for such values indicates that operations from multiple contexts are being handled.
+    # However, if the contexts are different, it is recommended to separate them into different model definitions.
+    #
     # @return [Boolean] returns true on success, false on failure.
     def save
       return false if invalid?
@@ -96,6 +100,10 @@ module ActiveRecordCompose
     # Unlike #save, an exception is raises on failure.
     #
     # Saving, like `#save`, is performed within a single transaction.
+    #
+    # Options like `:validate` and `:context` are not accepted as arguments.
+    # The need for such values indicates that operations from multiple contexts are being handled.
+    # However, if the contexts are different, it is recommended to separate them into different model definitions.
     #
     def save!
       valid? || raise_validation_error
