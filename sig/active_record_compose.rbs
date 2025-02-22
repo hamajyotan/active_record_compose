@@ -69,7 +69,7 @@ module ActiveRecordCompose
     def self.after_commit: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
     def self.after_rollback: (*callback[instance], ?if: condition[instance], ?unless: condition[instance], **untyped) ?{ () [self: instance] -> void } -> void
 
-    def self.delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?, ?private: untyped?) -> untyped
+    def self.delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?) -> untyped
     def self.connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
     def self.lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
     def self.with_connection: [T] () { () -> T } -> T

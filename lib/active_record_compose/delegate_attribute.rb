@@ -45,7 +45,7 @@ module ActiveRecordCompose
     module ClassMethods
       # Defines the reader and writer for the specified attribute.
       #
-      def delegate_attribute(*attributes, to:, allow_nil: nil, private: nil)
+      def delegate_attribute(*attributes, to:, allow_nil: nil)
         delegates = attributes.flat_map do |attribute|
           reader = attribute.to_s
           writer = "#{attribute}="
@@ -53,7 +53,7 @@ module ActiveRecordCompose
           [reader, writer]
         end
 
-        delegate(*delegates, to:, allow_nil:, private:)
+        delegate(*delegates, to:, allow_nil:)
         self.delegated_attributes = delegated_attributes.to_a + attributes.map { _1.to_s }
       end
     end

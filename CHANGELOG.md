@@ -1,6 +1,8 @@
 ## [Unreleased]
 
 - removed `persisted_flag_callback_control` support.
+- Omitted `:private` option from `delegate_attribute` because, assuming the
+  behavior and use cases of `ActiveModel::Attributes.attribute`, making it private is unnecessary.
 
 ## [0.8.0] - 2025-02-22
 
