@@ -214,6 +214,7 @@ module ActiveRecordCompose
     #   # after_update called!
     #   # after_save called!
     #
+    # @return [Boolean] returns true on success, false on failure.
     def update(attributes = {})
       assign_attributes(attributes)
       return false if invalid?
