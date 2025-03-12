@@ -341,6 +341,7 @@ model.save # or `model.update` (the same callbacks will be triggered in all case
 ## Links
 
 - [Smart way to update multiple models simultaneously in Rails](https://dev.to/hamajyotan/smart-way-to-update-multiple-models-simultaneously-in-rails-51b6)
+- [Sample application as an example](https://github.com/hamajyotan/active_record_compose-example)
 
 ## Development
 
