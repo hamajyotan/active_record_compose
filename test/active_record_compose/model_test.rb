@@ -29,7 +29,7 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     assert model.errors.of_kind?(:firstname, :too_long)
     assert model.errors.of_kind?(:lastname, :too_long)
     assert model.errors.of_kind?(:age, :greater_than_or_equal_to)
-    assert model.errors.to_a.sort, [
+    assert_equal model.errors.to_a.sort, [
       "Name can't be blank",
       "Email can't be blank",
       'Firstname is too long (maximum is 32 characters)',
