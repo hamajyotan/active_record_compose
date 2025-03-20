@@ -28,10 +28,10 @@ class ActiveRecordCompose::ComposedCollectionTest < ActiveSupport::TestCase
     profile = Profile.new
     collection << account << profile
 
-    assert_equal collection.first, account
+    assert { collection.first == account }
 
     collection.delete(account)
 
-    assert_equal collection.first, profile
+    assert { collection.first == profile }
   end
 end

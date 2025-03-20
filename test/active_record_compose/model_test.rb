@@ -29,13 +29,15 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     assert model.errors.of_kind?(:firstname, :too_long)
     assert model.errors.of_kind?(:lastname, :too_long)
     assert model.errors.of_kind?(:age, :greater_than_or_equal_to)
-    assert_equal model.errors.to_a.sort, [
-      "Name can't be blank",
-      "Email can't be blank",
-      'Firstname is too long (maximum is 32 characters)',
-      'Lastname is too long (maximum is 32 characters)',
-      'Age must be greater than or equal to 0',
-    ].sort
+    expected_error_messasges =
+      [
+        "Name can't be blank",
+        "Email can't be blank",
+        'Firstname is too long (maximum is 32 characters)',
+        'Lastname is too long (maximum is 32 characters)',
+        'Age must be greater than or equal to 0',
+      ]
+    assert { model.errors.to_a.sort == expected_error_messasges.sort }
   end
 
   test 'when invalid, models are not saved.' do
@@ -44,7 +46,7 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
 
     assert_not model.save
     e = assert_raises(ActiveRecord::RecordInvalid) { model.save! }
-    assert_equal model, e.record
+    assert { model == e.record }
   end
 
   test 'when valid assign, #save is performed for each model entered in models by save.' do
@@ -102,7 +104,7 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     model.assign_attributes(valid_attributes)
     model.foo = 'foobar'
 
-    assert_equal model.attributes, { 'foo' => 'foobar', **valid_attributes.stringify_keys }
+    assert { model.attributes == { 'foo' => 'foobar', **valid_attributes.stringify_keys } }
   end
 
   private

@@ -9,17 +9,17 @@ class ActiveRecordCompose::WrappedModelTest < ActiveSupport::TestCase
     profile = Profile.new
     wrapped_model = ActiveRecordCompose::WrappedModel.new(account)
 
-    assert_not_equal wrapped_model, ActiveRecordCompose::WrappedModel.new(profile)
-    assert_equal wrapped_model, ActiveRecordCompose::WrappedModel.new(account)
+    assert { wrapped_model != ActiveRecordCompose::WrappedModel.new(profile) }
+    assert { wrapped_model == ActiveRecordCompose::WrappedModel.new(account) }
   end
 
   test 'the states of other elements are not taken into account' do
     account = Account.new
     wrapped_model = ActiveRecordCompose::WrappedModel.new(account)
 
-    assert_equal wrapped_model, ActiveRecordCompose::WrappedModel.new(account, destroy: true)
-    assert_equal wrapped_model, ActiveRecordCompose::WrappedModel.new(account, destroy: false)
-    assert_equal wrapped_model, ActiveRecordCompose::WrappedModel.new(account, if: -> { false })
+    assert { wrapped_model == ActiveRecordCompose::WrappedModel.new(account, destroy: true) }
+    assert { wrapped_model == ActiveRecordCompose::WrappedModel.new(account, destroy: false) }
+    assert { wrapped_model == ActiveRecordCompose::WrappedModel.new(account, if: -> { false }) }
   end
 
   test 'when `destroy` option is false, save model by `#save`' do

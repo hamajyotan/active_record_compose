@@ -33,14 +33,16 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model = CallbackOrder.new(tracer, persisted: true)
 
     model.save
-    assert_equal tracer, [
-      'before_save called',
-      'before_update called',
-      'after_update called',
-      'after_save called',
-      'before_commit called',
-      'after_commit called',
-    ]
+    expected =
+      [
+        'before_save called',
+        'before_update called',
+        'after_update called',
+        'after_save called',
+        'before_commit called',
+        'after_commit called',
+      ]
+    assert { tracer == expected }
   end
 
   test 'when not persisted, #save causes (before|after)_(save|create) and after_commit callback to work' do
@@ -48,14 +50,16 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model = CallbackOrder.new(tracer, persisted: false)
 
     model.save
-    assert_equal tracer, [
-      'before_save called',
-      'before_create called',
-      'after_create called',
-      'after_save called',
-      'before_commit called',
-      'after_commit called',
-    ]
+    expected =
+      [
+        'before_save called',
+        'before_create called',
+        'after_create called',
+        'after_save called',
+        'before_commit called',
+        'after_commit called',
+      ]
+    assert { tracer == expected }
   end
 
   test 'when persisted, #update causes (before|after)_(save|update) and after_commit callback to work' do
@@ -63,14 +67,16 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model = CallbackOrder.new(tracer, persisted: true)
 
     model.update
-    assert_equal tracer, [
-      'before_save called',
-      'before_update called',
-      'after_update called',
-      'after_save called',
-      'before_commit called',
-      'after_commit called',
-    ]
+    expected =
+      [
+        'before_save called',
+        'before_update called',
+        'after_update called',
+        'after_save called',
+        'before_commit called',
+        'after_commit called',
+      ]
+    assert { tracer == expected }
   end
 
   test 'when not persisted, #update causes (before|after)_(save|create) and after_commit callback to work' do
@@ -78,14 +84,16 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model = CallbackOrder.new(tracer, persisted: false)
 
     model.update
-    assert_equal tracer, [
-      'before_save called',
-      'before_create called',
-      'after_create called',
-      'after_save called',
-      'before_commit called',
-      'after_commit called',
-    ]
+    expected =
+      [
+        'before_save called',
+        'before_create called',
+        'after_create called',
+        'after_save called',
+        'before_commit called',
+        'after_commit called',
+      ]
+    assert { tracer == expected }
   end
 
   test 'execution of (before|after)_commit hook is delayed until after the database commit.' do
@@ -102,18 +110,20 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
       tracer << 'outer transsaction ends'
     end
 
-    assert_equal tracer, [
-      'outer transsaction starts',
-      'inner transsaction starts',
-      'before_save called',
-      'before_create called',
-      'after_create called',
-      'after_save called',
-      'inner transsaction ends',
-      'outer transsaction ends',
-      'before_commit called',
-      'after_commit called',
-    ]
+    expected =
+      [
+        'outer transsaction starts',
+        'inner transsaction starts',
+        'before_save called',
+        'before_create called',
+        'after_create called',
+        'after_save called',
+        'inner transsaction ends',
+        'outer transsaction ends',
+        'before_commit called',
+        'after_commit called',
+      ]
+    assert { tracer == expected }
   end
 
   test 'execution of after_rollback hook is delayed until after the database rollback.' do
@@ -131,16 +141,18 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
       raise ActiveRecord::Rollback
     end
 
-    assert_equal tracer, [
-      'outer transsaction starts',
-      'inner transsaction starts',
-      'before_save called',
-      'before_create called',
-      'after_create called',
-      'after_save called',
-      'inner transsaction ends',
-      'outer transsaction ends',
-      'after_rollback called',
-    ]
+    expected =
+      [
+        'outer transsaction starts',
+        'inner transsaction starts',
+        'before_save called',
+        'before_create called',
+        'after_create called',
+        'after_save called',
+        'inner transsaction ends',
+        'outer transsaction ends',
+        'after_rollback called',
+      ]
+    assert { tracer == expected }
   end
 end

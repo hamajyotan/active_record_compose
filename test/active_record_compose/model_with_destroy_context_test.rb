@@ -62,8 +62,8 @@ class ActiveRecordCompose::ModelWithDestroyContextTest < ActiveSupport::TestCase
     end
 
     account.reload
-    assert_equal account.name, 'bar'
-    assert_equal account.email, 'bar@example.com'
+    assert { account.name == 'bar' }
+    assert { account.email == 'bar@example.com' }
   end
 
   test 'proc with arguments is passed to destroy, save and destroy can be controlled by result of that evaluation.' do
@@ -83,9 +83,9 @@ class ActiveRecordCompose::ModelWithDestroyContextTest < ActiveSupport::TestCase
       model.save!
     end
     account.profile.reload
-    assert_equal account.profile.firstname, 'qux'
-    assert_equal account.profile.lastname, 'quux'
-    assert_equal account.profile.age, 36
+    assert { account.profile.firstname == 'qux' }
+    assert { account.profile.lastname == 'quux' }
+    assert { account.profile.age == 36 }
 
     model.assign_attributes(firstname: nil, lastname: nil, age: nil)
     assert_difference -> { Profile.count } => -1 do
@@ -109,9 +109,9 @@ class ActiveRecordCompose::ModelWithDestroyContextTest < ActiveSupport::TestCase
       model.save!
     end
     account.profile.reload
-    assert_equal account.profile.firstname, 'qux'
-    assert_equal account.profile.lastname, 'quux'
-    assert_equal account.profile.age, 36
+    assert { account.profile.firstname == 'qux' }
+    assert { account.profile.lastname == 'quux' }
+    assert { account.profile.age == 36 }
 
     model.assign_attributes(firstname: nil, lastname: nil, age: nil)
     assert_difference -> { Profile.count } => -1 do
@@ -135,9 +135,9 @@ class ActiveRecordCompose::ModelWithDestroyContextTest < ActiveSupport::TestCase
       model.save!
     end
     account.profile.reload
-    assert_equal account.profile.firstname, 'qux'
-    assert_equal account.profile.lastname, 'quux'
-    assert_equal account.profile.age, 36
+    assert { account.profile.firstname == 'qux' }
+    assert { account.profile.lastname == 'quux' }
+    assert { account.profile.age == 36 }
 
     model.assign_attributes(firstname: nil, lastname: nil, age: nil)
     assert_difference -> { Profile.count } => -1 do

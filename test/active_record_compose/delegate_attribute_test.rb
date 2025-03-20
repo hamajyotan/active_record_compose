@@ -25,13 +25,13 @@ class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
     data.x = 'foo'
     object = Dummy.new(data)
 
-    assert_equal data.x, 'foo'
-    assert_equal object.x, 'foo'
+    assert { data.x == 'foo' }
+    assert { object.x == 'foo' }
 
     object.y = 'bar'
 
-    assert_equal data.y, 'bar'
-    assert_equal object.y, 'bar'
+    assert { data.y == 'bar' }
+    assert { object.y == 'bar' }
   end
 
   test 'definition declared in delegate must be included in attributes' do
@@ -40,7 +40,7 @@ class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
     object.x = 'foo'
     object.y = 'bar'
 
-    assert_equal object.attributes, { 'x' => 'foo', 'y' => 'bar' }
+    assert { object.attributes == { 'x' => 'foo', 'y' => 'bar' } }
   end
 
   test 'attributes to be transferred must be independent, even if there is an inheritance relationship' do
@@ -50,12 +50,12 @@ class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
     data.z = 'baz'
 
     o1 = Dummy.new(data)
-    assert_equal o1.attributes, { 'x' => 'foo', 'y' => 'bar' }
+    assert { o1.attributes == { 'x' => 'foo', 'y' => 'bar' } }
 
     subclass = Class.new(Dummy) do
       delegate_attribute :z, to: :data
     end
     o2 = subclass.new(data)
-    assert_equal o2.attributes, { 'x' => 'foo', 'y' => 'bar', 'z' => 'baz' }
+    assert { o2.attributes == { 'x' => 'foo', 'y' => 'bar', 'z' => 'baz' } }
   end
 end
