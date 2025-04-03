@@ -70,7 +70,7 @@ module ActiveRecordCompose
         m.destroy
       else
         # @type var m: ActiveRecordCompose::_ARLike
-        m.save
+        m.save(validate: false)
       end
     end
 
@@ -87,7 +87,7 @@ module ActiveRecordCompose
         m.destroy!
       else
         # @type var model: ActiveRecordCompose::_ARLike
-        m.save!
+        m.save!(validate: false)
       end
     end
 

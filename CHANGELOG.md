@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- avoid twice validation. As a side effect, save must accept argument `#save(**options)`
+
 ## [0.9.0] - 2025-03-16
 
 - removed `persisted_flag_callback_control` support.
