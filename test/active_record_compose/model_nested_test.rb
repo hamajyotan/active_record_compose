@@ -11,7 +11,7 @@ class ActiveRecordCompose::ModelNestedTest < ActiveSupport::TestCase
       models << account
     end
 
-    validates :name, length: { in: ..10 }
+    validates :name, length: { maximum: 10 }
 
     delegate_attribute :name, :email, to: :account
 
