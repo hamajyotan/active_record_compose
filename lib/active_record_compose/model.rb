@@ -30,13 +30,15 @@ module ActiveRecordCompose
     #
     # The save is performed within a single transaction.
     #
-    # Options like `:validate` and `:context` are not accepted as arguments.
-    # The need for such values indicates that operations from multiple contexts are being handled.
-    # However, if the contexts are different, it is recommended to separate them into different model definitions.
+    # Only the `:validate` option takes effect as it is required internally.
+    # However, we do not recommend explicitly specifying `validate: false` to skip validation.
+    # Additionally, the `:context` option is not accepted.
+    # The need for such a value indicates that operations from multiple contexts are being processed.
+    # If the contexts differ, we recommend separating them into different model definitions.
     #
     # @return [Boolean] returns true on success, false on failure.
-    def save
-      return false if invalid?
+    def save(**options)
+      return false unless perform_validations(**options)
 
       with_transaction_returning_status do
         with_callbacks { save_models(bang: false) }
@@ -50,12 +52,14 @@ module ActiveRecordCompose
     #
     # Saving, like `#save`, is performed within a single transaction.
     #
-    # Options like `:validate` and `:context` are not accepted as arguments.
-    # The need for such values indicates that operations from multiple contexts are being handled.
-    # However, if the contexts are different, it is recommended to separate them into different model definitions.
+    # Only the `:validate` option takes effect as it is required internally.
+    # However, we do not recommend explicitly specifying `validate: false` to skip validation.
+    # Additionally, the `:context` option is not accepted.
+    # The need for such a value indicates that operations from multiple contexts are being processed.
+    # If the contexts differ, we recommend separating them into different model definitions.
     #
-    def save!
-      valid? || raise_validation_error
+    def save!(**options)
+      perform_validations(**options) || raise_validation_error
 
       with_transaction_returning_status do
         with_callbacks { save_models(bang: true) }
@@ -100,6 +104,10 @@ module ActiveRecordCompose
 
     def save_models(bang:)
       models.__wrapped_models.all? { bang ? _1.save! : _1.save }
+    end
+
+    def perform_validations(**options)
+      options[:validate] == false || valid?
     end
 
     def raise_validation_error = raise ActiveRecord::RecordInvalid, self

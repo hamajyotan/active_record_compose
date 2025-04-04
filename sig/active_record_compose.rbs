@@ -5,8 +5,8 @@ module ActiveRecordCompose
   VERSION: String
 
   interface _ARLike
-    def save: -> bool
-    def save!: -> untyped
+    def save: (**untyped options) -> bool
+    def save!: (**untyped options) -> untyped
     def invalid?: -> bool
     def valid?: -> bool
     def errors: -> untyped
@@ -14,8 +14,8 @@ module ActiveRecordCompose
     def ==: (untyped) -> bool
   end
   interface _ARLikeWithDestroy
-    def save: -> bool
-    def save!: -> untyped
+    def save: (**untyped options) -> bool
+    def save!: (**untyped options) -> untyped
     def destroy: -> bool
     def destroy!: -> untyped
     def invalid?: -> bool
@@ -75,8 +75,8 @@ module ActiveRecordCompose
     def self.with_connection: [T] () { () -> T } -> T
 
     def initialize: (?Hash[attribute_name, untyped]) -> void
-    def save: -> bool
-    def save!: -> untyped
+    def save: (**untyped options) -> bool
+    def save!: (**untyped options) -> untyped
     def create: (?Hash[attribute_name, untyped]) -> bool
     def create!: (?Hash[attribute_name, untyped]) -> untyped
     def update: (?Hash[attribute_name, untyped]) -> bool
@@ -89,6 +89,7 @@ module ActiveRecordCompose
     def callback_context: -> (:create | :update)
     def validate_models: -> void
     def save_models: (bang: bool) -> bool
+    def perform_validations: (**untyped options) -> bool
     def raise_validation_error: -> bot
     def raise_on_save_error: -> bot
     def raise_on_save_error_message: -> String
