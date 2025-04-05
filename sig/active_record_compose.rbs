@@ -88,7 +88,7 @@ module ActiveRecordCompose
     def with_callbacks: { () -> bool } -> bool
     def callback_context: -> (:create | :update)
     def validate_models: -> void
-    def save_models: (bang: bool) -> bool
+    def save_models: (bang: bool, **untyped options) -> bool
     def perform_validations: (**untyped options) -> bool
     def raise_validation_error: -> bot
     def raise_on_save_error: -> bot

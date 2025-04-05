@@ -58,8 +58,8 @@ module ActiveRecordCompose
     def initialize: (ar_like, ?destroy: (bool | destroy_context_type), ?if: (nil | condition_type)) -> void
     def destroy_context?: -> bool
     def ignore?: -> bool
-    def save: -> bool
-    def save!: -> untyped
+    def save: (**untyped options) -> bool
+    def save!: (**untyped options) -> untyped
     def invalid?: -> bool
     def valid?: -> bool
     def is_a?: (untyped) -> bool

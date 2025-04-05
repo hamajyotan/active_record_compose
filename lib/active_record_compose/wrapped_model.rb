@@ -60,7 +60,7 @@ module ActiveRecordCompose
     # Whether save or destroy is executed depends on the value of `#destroy_context?`.
     #
     # @return [Boolean] returns true on success, false on failure.
-    def save
+    def save(**options)
       # While errors caused by the type check are avoided,
       # it is important to note that an error can still occur
       # if `#destroy_context?` returns true but ar_like does not implement `#destroy`.
@@ -70,14 +70,14 @@ module ActiveRecordCompose
         m.destroy
       else
         # @type var m: ActiveRecordCompose::_ARLike
-        m.save(validate: false)
+        m.save(**options)
       end
     end
 
     # Execute save or destroy. Unlike #save, an exception is raises on failure.
     # Whether save or destroy is executed depends on the value of `#destroy_context?`.
     #
-    def save!
+    def save!(**options)
       # While errors caused by the type check are avoided,
       # it is important to note that an error can still occur
       # if `#destroy_context?` returns true but ar_like does not implement `#destroy`.
@@ -87,7 +87,7 @@ module ActiveRecordCompose
         m.destroy!
       else
         # @type var model: ActiveRecordCompose::_ARLike
-        m.save!(validate: false)
+        m.save!(**options)
       end
     end
 

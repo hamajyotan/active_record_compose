@@ -41,7 +41,7 @@ module ActiveRecordCompose
       return false unless perform_validations(**options)
 
       with_transaction_returning_status do
-        with_callbacks { save_models(bang: false) }
+        with_callbacks { save_models(**options, bang: false) }
       rescue ActiveRecord::RecordInvalid
         false
       end
@@ -62,7 +62,7 @@ module ActiveRecordCompose
       perform_validations(**options) || raise_validation_error
 
       with_transaction_returning_status do
-        with_callbacks { save_models(bang: true) }
+        with_callbacks { save_models(**options, bang: true) }
       end || raise_on_save_error
     end
 
@@ -102,8 +102,8 @@ module ActiveRecordCompose
 
     def callback_context = persisted? ? :update : :create
 
-    def save_models(bang:)
-      models.__wrapped_models.all? { bang ? _1.save! : _1.save }
+    def save_models(bang:, **options)
+      models.__wrapped_models.all? { bang ? _1.save!(**options, validate: false) : _1.save(**options, validate: false) }
     end
 
     def perform_validations(**options)
