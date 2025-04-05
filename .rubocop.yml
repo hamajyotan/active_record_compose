@@ -24,6 +24,9 @@ Style/NumericPredicate:
 Style/OptionalBooleanParameter:
   Enabled: false
 
+Style/ParallelAssignment:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: true
 
