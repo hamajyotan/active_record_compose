@@ -85,12 +85,7 @@ module ActiveRecordCompose
 
     private
     def models: -> ComposedCollection
-    def with_callbacks: { () -> bool } -> bool
-    def callback_context: -> (:create | :update)
-    def validate_models: -> void
     def save_models: (bang: bool, **untyped options) -> bool
-    def perform_validations: (::Hash[untyped, untyped]) -> bool
-    def raise_validation_error: -> bot
     def raise_on_save_error: -> bot
     def raise_on_save_error_message: -> String
   end

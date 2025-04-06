@@ -1,4 +1,15 @@
 module ActiveRecordCompose
+  module Callbacks
+    include ActiveModel::Model
+    include ActiveModel::Validations::Callbacks
+    extend ActiveSupport::Concern
+    extend ActiveModel::Callbacks
+
+    private
+    def with_callbacks: { () -> bool } -> bool
+    def callback_context: -> (:create | :update)
+  end
+
   class ComposedCollection
     def initialize: (Model) -> void
 
@@ -35,11 +46,13 @@ module ActiveRecordCompose
     extend DelegateAttribute::ClassMethods
     include TransactionSupport
     extend TransactionSupport::ClassMethods
+    include ActiveRecordCompose::Callbacks
 
     @__models: ComposedCollection
 
     private
-    def override_validation_context: -> (validation_context)
+    def validate_models: -> void
+    def override_validation_context: -> validation_context
   end
 
   module TransactionSupport
