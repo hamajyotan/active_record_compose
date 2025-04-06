@@ -38,7 +38,7 @@ module ActiveRecordCompose
     #
     # @return [Boolean] returns true on success, false on failure.
     def save(**options)
-      return false unless perform_validations(**options)
+      return false unless perform_validations(options)
 
       with_transaction_returning_status do
         with_callbacks { save_models(**options, bang: false) }
@@ -59,7 +59,7 @@ module ActiveRecordCompose
     # If the contexts differ, we recommend separating them into different model definitions.
     #
     def save!(**options)
-      perform_validations(**options) || raise_validation_error
+      perform_validations(options) || raise_validation_error
 
       with_transaction_returning_status do
         with_callbacks { save_models(**options, bang: true) }
@@ -70,15 +70,19 @@ module ActiveRecordCompose
     #
     # @return [Boolean] returns true on success, false on failure.
     def update(attributes = {})
-      assign_attributes(attributes)
-      save
+      with_transaction_returning_status do
+        assign_attributes(attributes)
+        save
+      end
     end
 
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
     #
     def update!(attributes = {})
-      assign_attributes(attributes)
-      save!
+      with_transaction_returning_status do
+        assign_attributes(attributes)
+        save!
+      end
     end
 
     # Returns true if model is persisted.
@@ -106,7 +110,7 @@ module ActiveRecordCompose
       models.__wrapped_models.all? { bang ? _1.save!(**options, validate: false) : _1.save(**options, validate: false) }
     end
 
-    def perform_validations(**options)
+    def perform_validations(options)
       options[:validate] == false || valid?
     end
 

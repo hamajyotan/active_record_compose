@@ -7,8 +7,8 @@ module ActiveRecordCompose
   interface _ARLike
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped
-    def invalid?: -> bool
-    def valid?: -> bool
+    def invalid?: (?nil | Symbol | Array[Symbol] context) -> bool
+    def valid?: (?nil | Symbol | Array[Symbol] context) -> bool
     def errors: -> untyped
     def is_a?: (untyped) -> bool
     def ==: (untyped) -> bool
@@ -18,8 +18,8 @@ module ActiveRecordCompose
     def save!: (**untyped options) -> untyped
     def destroy: -> bool
     def destroy!: -> untyped
-    def invalid?: -> bool
-    def valid?: -> bool
+    def invalid?: (?nil | Symbol | Array[Symbol] context) -> bool
+    def valid?: (?nil | Symbol | Array[Symbol] context) -> bool
     def errors: -> untyped
     def is_a?: (untyped) -> bool
     def ==: (untyped) -> bool
@@ -87,7 +87,7 @@ module ActiveRecordCompose
     def callback_context: -> (:create | :update)
     def validate_models: -> void
     def save_models: (bang: bool, **untyped options) -> bool
-    def perform_validations: (**untyped options) -> bool
+    def perform_validations: (::Hash[untyped, untyped]) -> bool
     def raise_validation_error: -> bot
     def raise_on_save_error: -> bot
     def raise_on_save_error_message: -> String
