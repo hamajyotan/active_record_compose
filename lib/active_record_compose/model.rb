@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_record_compose/callbacks'
 require 'active_record_compose/composed_collection'
 require 'active_record_compose/delegate_attribute'
 require 'active_record_compose/transaction_support'
@@ -13,13 +14,10 @@ module ActiveRecordCompose
     include ActiveModel::Validations::Callbacks
     include ActiveModel::Attributes
 
+    include ActiveRecordCompose::Callbacks
     include ActiveRecordCompose::DelegateAttribute
     include ActiveRecordCompose::TransactionSupport
     prepend ActiveRecordCompose::Validations
-
-    define_model_callbacks :save
-    define_model_callbacks :create
-    define_model_callbacks :update
 
     validate :validate_models
 
@@ -95,15 +93,6 @@ module ActiveRecordCompose
     private
 
     def models = @__models ||= ActiveRecordCompose::ComposedCollection.new(self)
-
-    def validate_models
-      context = override_validation_context
-      models.__wrapped_models.lazy.select { _1.invalid?(context) }.each { errors.merge!(_1) }
-    end
-
-    def with_callbacks(&block) = run_callbacks(:save) { run_callbacks(callback_context, &block) }
-
-    def callback_context = persisted? ? :update : :create
 
     def save_models(bang:, **options)
       models.__wrapped_models.all? { bang ? _1.save!(**options, validate: false) : _1.save(**options, validate: false) }

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module ActiveRecordCompose
+  using ComposedCollection::PackagePrivate
+
   module Validations
     def save(**options)
       perform_validations(options) ? super : false
@@ -13,6 +15,11 @@ module ActiveRecordCompose
     def valid?(context = nil) = context_for_override_validation.with_override(context) { super }
 
     private
+
+    def validate_models
+      context = override_validation_context
+      models.__wrapped_models.lazy.select { _1.invalid?(context) }.each { errors.merge!(_1) }
+    end
 
     def perform_validations(options)
       options[:validate] == false || valid?(options[:context])
