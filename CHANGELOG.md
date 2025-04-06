@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - avoid twice validation. As a side effect, save must accept argument `#save(**options)`
+- '#valid?(:custom_context)`, `#save(context: :custom_context)` option support.
 
 ## [0.9.0] - 2025-03-16
 

@@ -37,6 +37,9 @@ module ActiveRecordCompose
     extend TransactionSupport::ClassMethods
 
     @__models: ComposedCollection
+
+    private
+    def override_validation_context: -> (validation_context)
   end
 
   module TransactionSupport
@@ -54,14 +57,37 @@ module ActiveRecordCompose
     end
   end
 
+  module Validations : Model
+    def save: (**untyped options) -> bool
+    def save!: (**untyped options) -> untyped
+    def valid?: (?validation_context context) -> bool
+
+    @context_for_override_validation: OverrideValidationContext
+
+    private
+
+    def perform_validations: (::Hash[untyped, untyped]) -> bool
+    def raise_validation_error: -> bot
+    def context_for_override_validation: -> OverrideValidationContext
+    def override_validation_context: -> validation_context
+
+    class OverrideValidationContext
+      @context: validation_context
+
+      attr_reader context: validation_context
+
+      def with_override: [T] (validation_context) { () -> T } -> T
+    end
+  end
+
   class WrappedModel
     def initialize: (ar_like, ?destroy: (bool | destroy_context_type), ?if: (nil | condition_type)) -> void
     def destroy_context?: -> bool
     def ignore?: -> bool
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped
-    def invalid?: -> bool
-    def valid?: -> bool
+    def invalid?: (?validation_context context) -> bool
+    def valid?: (?validation_context context) -> bool
     def is_a?: (untyped) -> bool
     def ==: (untyped) -> bool
 

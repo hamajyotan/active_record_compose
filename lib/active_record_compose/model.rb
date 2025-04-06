@@ -3,6 +3,7 @@
 require 'active_record_compose/composed_collection'
 require 'active_record_compose/delegate_attribute'
 require 'active_record_compose/transaction_support'
+require 'active_record_compose/validations'
 
 module ActiveRecordCompose
   using ComposedCollection::PackagePrivate
@@ -14,6 +15,7 @@ module ActiveRecordCompose
 
     include ActiveRecordCompose::DelegateAttribute
     include ActiveRecordCompose::TransactionSupport
+    prepend ActiveRecordCompose::Validations
 
     define_model_callbacks :save
     define_model_callbacks :create
@@ -38,8 +40,6 @@ module ActiveRecordCompose
     #
     # @return [Boolean] returns true on success, false on failure.
     def save(**options)
-      return false unless perform_validations(**options)
-
       with_transaction_returning_status do
         with_callbacks { save_models(**options, bang: false) }
       rescue ActiveRecord::RecordInvalid
@@ -59,8 +59,6 @@ module ActiveRecordCompose
     # If the contexts differ, we recommend separating them into different model definitions.
     #
     def save!(**options)
-      perform_validations(**options) || raise_validation_error
-
       with_transaction_returning_status do
         with_callbacks { save_models(**options, bang: true) }
       end || raise_on_save_error
@@ -70,15 +68,19 @@ module ActiveRecordCompose
     #
     # @return [Boolean] returns true on success, false on failure.
     def update(attributes = {})
-      assign_attributes(attributes)
-      save
+      with_transaction_returning_status do
+        assign_attributes(attributes)
+        save
+      end
     end
 
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
     #
     def update!(attributes = {})
-      assign_attributes(attributes)
-      save!
+      with_transaction_returning_status do
+        assign_attributes(attributes)
+        save!
+      end
     end
 
     # Returns true if model is persisted.
@@ -95,7 +97,8 @@ module ActiveRecordCompose
     def models = @__models ||= ActiveRecordCompose::ComposedCollection.new(self)
 
     def validate_models
-      models.__wrapped_models.lazy.select { _1.invalid? }.each { errors.merge!(_1) }
+      context = override_validation_context
+      models.__wrapped_models.lazy.select { _1.invalid?(context) }.each { errors.merge!(_1) }
     end
 
     def with_callbacks(&block) = run_callbacks(:save) { run_callbacks(callback_context, &block) }
@@ -105,12 +108,6 @@ module ActiveRecordCompose
     def save_models(bang:, **options)
       models.__wrapped_models.all? { bang ? _1.save!(**options, validate: false) : _1.save(**options, validate: false) }
     end
-
-    def perform_validations(**options)
-      options[:validate] == false || valid?
-    end
-
-    def raise_validation_error = raise ActiveRecord::RecordInvalid, self
 
     def raise_on_save_error = raise ActiveRecord::RecordNotSaved.new(raise_on_save_error_message, self)
 

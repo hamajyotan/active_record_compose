@@ -92,10 +92,10 @@ module ActiveRecordCompose
     end
 
     # @return [Boolean]
-    def invalid? = destroy_context? ? false : model.invalid?
+    def invalid?(context = nil) = !valid?(context)
 
     # @return [Boolean]
-    def valid? = !invalid?
+    def valid?(context = nil) = destroy_context? || model.valid?(context)
 
     # Returns true if equivalent.
     #

@@ -16,6 +16,7 @@ activemodel (activerecord) form object pattern. it embraces multiple AR models a
 - [Advanced Usage](#advanced-usage)
   - [`destroy` option](#destroy-option)
   - [Callback ordering by `#persisted?`](#callback-ordering-by-persisted)
+  - [`#save` with custom context option](#save-with-custom-context-option)
 - [Links](#links)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -336,6 +337,61 @@ model.save # or `model.update` (the same callbacks will be triggered in all case
 # before_create called!
 # after_create called!
 # after_save called!
+```
+
+### `#save` with custom context option
+
+The interface remains consistent with standard ActiveModel and ActiveRecord models, so the :context option works with #save.
+
+```ruby
+composed_model.valid?(:custom_context)
+
+composed_model.save(context: :custom_context)
+```
+
+However, this may not be ideal from a design perspective.
+If your application requires complex context-specific validations, consider separating models by context.
+
+```ruby
+class Account < ActiveRecord::Base
+  validates :name, presence: true
+  validates :email, presence: true
+  validates :email, format: { with: /\.edu\z/ }, on: :education
+end
+
+class Registration < ActiveRecordCompose::Model
+  def initialize(attributes = {})
+    models.push(@account = Account.new)
+    super(attributes)
+  end
+
+  attribute :accept, :boolean
+  validates :accept, presence: true, on: :education
+
+  delegate_attribute :name, :email, to: :account
+
+  private
+
+  attr_reader :account
+end
+```
+```ruby
+r = Registration.new(name: 'foo', email: 'example@example.com', accept: false)
+r.valid?
+=> true
+
+r.valid?(:education)
+=> false
+r.errors.map { [_1.attribute, _1.type] }
+=> [[:email, :invalid], [:accept, :blank]]
+
+r.email = 'example@example.edu'
+r.accept = true
+
+r.valid?(:education)
+=> true
+r.save(context: :education)
+=> true
 ```
 
 ## Links
