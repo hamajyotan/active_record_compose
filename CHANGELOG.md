@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.10.0] - 2025-04-07
+
 - avoid twice validation. As a side effect, save must accept argument `#save(**options)`.
   In line with this, the model to be put into models must be
   at least responsive to `model.valid? && model.save(validate: false)`, not `model.save()` (no arguments).
