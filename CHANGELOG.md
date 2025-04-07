@@ -1,7 +1,11 @@
 ## [Unreleased]
 
-- avoid twice validation. As a side effect, save must accept argument `#save(**options)`
-- '#valid?(:custom_context)`, `#save(context: :custom_context)` option support.
+- avoid twice validation. As a side effect, save must accept argument `#save(**options)`.
+  In line with this, the model to be put into models must be
+  at least responsive to `model.valid? && model.save(validate: false)`, not `model.save()` (no arguments).
+- supports context as the first argument of `#valid?`, for example `model.valid(:custom_context)`.
+  At the same time, it accepts `options[:context]` in `#save(**options)`, such as `model.save(context: :custom_context)`.
+  However, this is a convenience support to unify the interface, not a positive one.
 
 ## [0.9.0] - 2025-03-16
 
