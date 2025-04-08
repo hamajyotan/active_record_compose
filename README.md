@@ -17,6 +17,7 @@ activemodel (activerecord) form object pattern. it embraces multiple AR models a
   - [`destroy` option](#destroy-option)
   - [Callback ordering by `#persisted?`](#callback-ordering-by-persisted)
   - [`#save` with custom context option](#save-with-custom-context-option)
+- [Sample application as an example](#sample-application-as-an-example)
 - [Links](#links)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -394,10 +395,15 @@ r.save(context: :education)
 => true
 ```
 
+## Sample application as an example
+
+With Github Codespaces, it can also be run directly in the browser. Naturally, a local environment is also possible.
+
+- https://github.com/hamajyotan/active_record_compose-example
+
 ## Links
 
 - [Smart way to update multiple models simultaneously in Rails](https://dev.to/hamajyotan/smart-way-to-update-multiple-models-simultaneously-in-rails-51b6)
-- [Sample application as an example](https://github.com/hamajyotan/active_record_compose-example)
 
 ## Development
 
