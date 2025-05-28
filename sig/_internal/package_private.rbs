@@ -1,4 +1,9 @@
 module ActiveRecordCompose
+  module AttributeQuerying
+    extend ActiveSupport::Concern
+    extend ActiveModel::AttributeMethods::ClassMethods
+  end
+
   module Callbacks
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
