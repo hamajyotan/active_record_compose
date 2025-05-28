@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- `#attribute_names` now takes into account attributes declared in `.delegate_attribute`
+
 ## [0.10.0] - 2025-04-07
 
 - avoid twice validation. As a side effect, save must accept argument `#save(**options)`.

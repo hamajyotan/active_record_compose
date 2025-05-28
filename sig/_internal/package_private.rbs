@@ -31,7 +31,6 @@ module ActiveRecordCompose
   module DelegateAttribute : ActiveModel::Attributes
     extend ActiveSupport::Concern
 
-    def attributes: -> Hash[String, untyped]
     def delegated_attributes: () -> Array[String]
 
     module ClassMethods : Module

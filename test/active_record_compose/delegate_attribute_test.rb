@@ -41,6 +41,7 @@ class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
     object.y = 'bar'
 
     assert { object.attributes == { 'x' => 'foo', 'y' => 'bar' } }
+    assert { object.attribute_names == %w[x y] }
   end
 
   test 'attributes to be transferred must be independent, even if there is an inheritance relationship' do
@@ -51,11 +52,13 @@ class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
 
     o1 = Dummy.new(data)
     assert { o1.attributes == { 'x' => 'foo', 'y' => 'bar' } }
+    assert { o1.attribute_names == %w[x y] }
 
     subclass = Class.new(Dummy) do
       delegate_attribute :z, to: :data
     end
     o2 = subclass.new(data)
     assert { o2.attributes == { 'x' => 'foo', 'y' => 'bar', 'z' => 'baz' } }
+    assert { o2.attribute_names == %w[x y z] }
   end
 end

@@ -58,6 +58,12 @@ module ActiveRecordCompose
       end
     end
 
+    # Returns a array of attribute name.
+    # Attributes declared with `delegate_attribute` are also merged.
+    #
+    # @return [Array<String>] array of attribute name.
+    def attribute_names = super + delegated_attributes
+
     # Returns a hash with the attribute name as key and the attribute value as value.
     # Attributes declared with `delegate_attribute` are also merged.
     #
