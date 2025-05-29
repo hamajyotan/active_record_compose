@@ -2,6 +2,9 @@ module ActiveRecordCompose
   module AttributeQuerying
     extend ActiveSupport::Concern
     extend ActiveModel::AttributeMethods::ClassMethods
+
+    private
+    def attribute?: (attribute_name) -> untyped
   end
 
   module Callbacks
