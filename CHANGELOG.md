@@ -1,6 +1,11 @@
 ## [Unreleased]
 
 - `#attribute_names` now takes into account attributes declared in `.delegate_attribute`
+- Implemented query methods with a `?` suffix for each attribute.
+  Their evaluation behavior is consistent with ActiveRecord.
+  For example:
+  - Defining `attribute :foo` allows calling `model.foo?`.
+  - Defining `delegate_attribute :bar, to: :other` allows calling `model.bar?`.
 
 ## [0.10.0] - 2025-04-07
 
