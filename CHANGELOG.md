@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- fix: Because `define_attribute_methods` was not executed, `#attributes` was evaluated each time `attribute?` was called.
+
 ## [0.11.0] - 2025-05-30
 
 - `#attribute_names` now takes into account attributes declared in `.delegate_attribute`

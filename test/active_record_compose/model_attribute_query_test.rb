@@ -10,6 +10,7 @@ class ActiveRecordCompose::ModelAttributeQueryTest < ActiveSupport::TestCase
       @profile = account.build_profile
       super(attributes)
       models << account << profile
+      self.attributes_method_calls = 0
     end
 
     attribute :foo
@@ -19,7 +20,12 @@ class ActiveRecordCompose::ModelAttributeQueryTest < ActiveSupport::TestCase
     delegate_attribute :name, :email, to: :account
     delegate_attribute :firstname, :lastname, :age, to: :profile
 
-    attr_accessor :without_attribute
+    attr_accessor :without_attribute, :attributes_method_calls
+
+    def attributes
+      self.attributes_method_calls += 1
+      super
+    end
 
     private
 
@@ -74,5 +80,17 @@ class ActiveRecordCompose::ModelAttributeQueryTest < ActiveSupport::TestCase
     assert_not model.bar?
     assert model.baz?
     assert_not model.qux?
+  end
+
+  test 'attribute method is defined so that `#attributes` are not evaluated each time the query method is executed' do
+    model = ComposedModel.new(foo: 123, bar: 0, baz: 456.7, qux: 0.0)
+
+    assert_no_changes -> { model.attributes_method_calls } do
+      model.foo?
+      model.bar?
+      model.qux?
+      model.name?
+      model.email?
+    end
   end
 end
