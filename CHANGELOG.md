@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.11.1] - 2025-06-10
+
 - fix: Because `define_attribute_methods` was not executed, `#attributes` was evaluated each time `attribute?` was called.
 
 ## [0.11.0] - 2025-05-30
