@@ -55,7 +55,7 @@ module ActiveRecordCompose
 
         delegate(*delegates, to:, allow_nil:)
         attributes.each { define_attribute_methods _1 }
-        self.delegated_attributes = delegated_attributes.to_a + attributes.map { _1.to_s }
+        self.delegated_attributes = (delegated_attributes.to_a + attributes.map { _1.to_s }).uniq
       end
     end
 
