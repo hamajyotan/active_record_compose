@@ -12,7 +12,6 @@ module ActiveRecordCompose
 
   class Model
     include ActiveModel::Model
-    include ActiveModel::Validations::Callbacks
     include ActiveModel::Attributes
 
     include ActiveRecordCompose::AttributeQuerying

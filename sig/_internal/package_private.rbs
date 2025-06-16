@@ -1,5 +1,6 @@
 module ActiveRecordCompose
   module AttributeQuerying
+    include ActiveModel::AttributeMethods
     extend ActiveSupport::Concern
     extend ActiveModel::AttributeMethods::ClassMethods
 
@@ -36,7 +37,8 @@ module ActiveRecordCompose
     include PackagePrivate
   end
 
-  module DelegateAttribute : ActiveModel::Attributes
+  module DelegateAttribute
+    include ActiveModel::Attributes
     extend ActiveSupport::Concern
 
     def delegated_attributes: () -> Array[String]

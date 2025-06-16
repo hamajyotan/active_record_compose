@@ -5,6 +5,8 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
 
     included do
+      include ActiveModel::Validations::Callbacks
+
       define_model_callbacks :save
       define_model_callbacks :create
       define_model_callbacks :update

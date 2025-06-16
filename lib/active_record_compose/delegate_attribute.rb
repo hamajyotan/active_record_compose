@@ -38,6 +38,8 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
 
     included do
+      include ActiveModel::Attributes
+
       # @type self: Class
       class_attribute :delegated_attributes, instance_writer: false
     end
