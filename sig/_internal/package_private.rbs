@@ -44,6 +44,7 @@ module ActiveRecordCompose
     def delegated_attributes: () -> Array[String]
 
     module ClassMethods : Module
+      include ActiveModel::Attributes::ClassMethods
       include ActiveModel::AttributeMethods::ClassMethods
 
       def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?) -> untyped

@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- `ActiveModel::Attributes.attribute_names` now takes into account attributes declared in `.delegate_attribute`
+
 ## [0.11.1] - 2025-06-10
 
 - fix: Because `define_attribute_methods` was not executed, `#attributes` was evaluated each time `attribute?` was called.

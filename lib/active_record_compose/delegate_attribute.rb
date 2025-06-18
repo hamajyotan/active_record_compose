@@ -59,6 +59,12 @@ module ActiveRecordCompose
         attributes.each { define_attribute_methods _1 }
         self.delegated_attributes = (delegated_attributes.to_a + attributes.map { _1.to_s }).uniq
       end
+
+      # Returns a array of attribute name.
+      # Attributes declared with `delegate_attribute` are also merged.
+      #
+      # @return [Array<String>] array of attribute name.
+      def attribute_names = super + delegated_attributes
     end
 
     # Returns a array of attribute name.
