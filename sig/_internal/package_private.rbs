@@ -58,7 +58,7 @@ module ActiveRecordCompose
     extend DelegateAttribute::ClassMethods
     include TransactionSupport
     extend TransactionSupport::ClassMethods
-    include ActiveRecordCompose::Callbacks
+    include Callbacks
 
     @__models: ComposedCollection
 
@@ -82,7 +82,27 @@ module ActiveRecordCompose
     end
   end
 
+  module Persistence
+    include Callbacks
+    include TransactionSupport
+    extend TransactionSupport::ClassMethods
+
+    def save: (**untyped options) -> bool
+    def save!: (**untyped options) -> untyped
+    def update: (?Hash[attribute_name, untyped]) -> bool
+    def update!: (?Hash[attribute_name, untyped]) -> untyped
+
+    private
+    def models: -> ComposedCollection
+    def save_models: (bang: bool, **untyped options) -> bool
+    def raise_on_save_error: -> bot
+    def raise_on_save_error_message: -> String
+  end
+
   module Validations : Model
+    extend ActiveSupport::Concern
+    extend ActiveModel::Validations::ClassMethods
+
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped
     def valid?: (?validation_context context) -> bool
@@ -90,7 +110,6 @@ module ActiveRecordCompose
     @context_for_override_validation: OverrideValidationContext
 
     private
-
     def perform_validations: (::Hash[untyped, untyped]) -> bool
     def raise_validation_error: -> bot
     def context_for_override_validation: -> OverrideValidationContext

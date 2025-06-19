@@ -4,6 +4,12 @@ module ActiveRecordCompose
   using ComposedCollection::PackagePrivate
 
   module Validations
+    extend ActiveSupport::Concern
+
+    included do
+      validate :validate_models
+    end
+
     def save(**options)
       perform_validations(options) ? super : false
     end
