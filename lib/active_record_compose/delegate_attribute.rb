@@ -52,7 +52,7 @@ module ActiveRecordCompose
           reader = attribute.to_s
           writer = "#{attribute}="
 
-          [reader, writer]
+          [ reader, writer ]
         end
 
         delegate(*delegates, to:, allow_nil:)
@@ -78,7 +78,7 @@ module ActiveRecordCompose
     #
     # @return [Hash] hash with the attribute name as key and the attribute value as value.
     def attributes
-      super.merge(delegated_attributes.to_h { [_1, public_send(_1)] })
+      super.merge(delegated_attributes.to_h { [ _1, public_send(_1) ] })
     end
   end
 end

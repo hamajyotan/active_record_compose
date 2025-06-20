@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'test_helper'
-require 'active_record_compose/model'
+require "test_helper"
+require "active_record_compose/model"
 
 class ActiveRecordCompose::ModelLintTest < ActiveSupport::TestCase
   include ActiveModel::Lint::Tests

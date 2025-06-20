@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative 'callbacks'
-require_relative 'attribute_querying'
-require_relative 'composed_collection'
-require_relative 'delegate_attribute'
-require_relative 'transaction_support'
-require_relative 'validations'
+require_relative "callbacks"
+require_relative "attribute_querying"
+require_relative "composed_collection"
+require_relative "delegate_attribute"
+require_relative "transaction_support"
+require_relative "validations"
 
 module ActiveRecordCompose
   using ComposedCollection::PackagePrivate
@@ -101,6 +101,6 @@ module ActiveRecordCompose
 
     def raise_on_save_error = raise ActiveRecord::RecordNotSaved.new(raise_on_save_error_message, self)
 
-    def raise_on_save_error_message = 'Failed to save the model.'
+    def raise_on_save_error_message = "Failed to save the model."
   end
 end

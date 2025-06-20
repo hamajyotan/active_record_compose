@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'test_helper'
-require 'active_record_compose/model'
+require "test_helper"
+require "active_record_compose/model"
 
 class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
   class ComposedModel < ActiveRecordCompose::Model
@@ -20,7 +20,7 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     attr_reader :account, :profile
   end
 
-  test 'when invalid, an error object is set' do
+  test "when invalid, an error object is set" do
     model = ComposedModel.new
     model.assign_attributes(invalid_attributes)
 
@@ -33,14 +33,14 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
       [
         "Name can't be blank",
         "Email can't be blank",
-        'Firstname is too long (maximum is 32 characters)',
-        'Lastname is too long (maximum is 32 characters)',
-        'Age must be greater than or equal to 0',
+        "Firstname is too long (maximum is 32 characters)",
+        "Lastname is too long (maximum is 32 characters)",
+        "Age must be greater than or equal to 0"
       ]
     assert { model.errors.to_a.sort == expected_error_messasges.sort }
   end
 
-  test 'when invalid, models are not saved.' do
+  test "when invalid, models are not saved." do
     model = ComposedModel.new
     model.assign_attributes(invalid_attributes)
 
@@ -49,7 +49,7 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     assert { model == e.record }
   end
 
-  test 'when valid assign, #save is performed for each model entered in models by save.' do
+  test "when valid assign, #save is performed for each model entered in models by save." do
     model = ComposedModel.new
     model.assign_attributes(valid_attributes)
 
@@ -59,7 +59,7 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     end
   end
 
-  test 'pushed nil object must be ignored.' do
+  test "pushed nil object must be ignored." do
     model_class = Class.new(ComposedModel) do
       def push_falsy_object_to_models = models << nil
     end
@@ -71,19 +71,19 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     assert model.save
   end
 
-  test 'errors made during internal model storage are propagated externally.' do
+  test "errors made during internal model storage are propagated externally." do
     account_with_bang = Class.new(Account) do
-      after_save { raise 'bang!' }
+      after_save { raise "bang!" }
     end
 
     model = ComposedModel.new(account_with_bang.new)
     model.assign_attributes(valid_attributes)
 
-    assert_raises(RuntimeError, 'bang!!') { model.save }
-    assert_raises(RuntimeError, 'bang!!') { model.save! }
+    assert_raises(RuntimeError, "bang!!") { model.save }
+    assert_raises(RuntimeError, "bang!!") { model.save! }
   end
 
-  test 'RecordInvalid errors that occur during internal saving of the model are propagated externally only if #save!' do
+  test "RecordInvalid errors that occur during internal saving of the model are propagated externally only if #save!" do
     model_class = Class.new(ComposedModel) do
       after_save { Account.create!(name: nil, email: nil) }
     end
@@ -96,26 +96,26 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     end
   end
 
-  test 'attributes defined by .delegate_attributes should be included' do
+  test "attributes defined by .delegate_attributes should be included" do
     model_class = Class.new(ComposedModel) do
       attribute :foo
     end
     model = model_class.new
     model.assign_attributes(valid_attributes)
-    model.foo = 'foobar'
+    model.foo = "foobar"
 
-    assert { model.attributes == { 'foo' => 'foobar', **valid_attributes.stringify_keys } }
+    assert { model.attributes == { "foo" => "foobar", **valid_attributes.stringify_keys } }
   end
 
   private
 
   def valid_attributes
     {
-      name: 'foo',
-      email: 'foo@example.com',
-      firstname: 'bar',
-      lastname: 'baz',
-      age: 45,
+      name: "foo",
+      email: "foo@example.com",
+      firstname: "bar",
+      lastname: "baz",
+      age: 45
     }
   end
 
@@ -123,9 +123,9 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     {
       name: nil,
       email: nil,
-      firstname: '*' * 33,
-      lastname: '*' * 33,
-      age: -1,
+      firstname: "*" * 33,
+      lastname: "*" * 33,
+      age: -1
     }
   end
 end

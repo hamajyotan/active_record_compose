@@ -45,7 +45,7 @@ module ActiveRecordCompose
     included do
       include ActiveModel::AttributeMethods
 
-      attribute_method_suffix '?', parameters: false
+      attribute_method_suffix "?", parameters: false
     end
 
     private

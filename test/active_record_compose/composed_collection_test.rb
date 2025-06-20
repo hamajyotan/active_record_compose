@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'test_helper'
-require 'active_record_compose/composed_collection'
+require "test_helper"
+require "active_record_compose/composed_collection"
 
 class ActiveRecordCompose::ComposedCollectionTest < ActiveSupport::TestCase
-  test '#empty should return true if the element is absent and false if the element is present' do
+  test "#empty should return true if the element is absent and false if the element is present" do
     collection = ActiveRecordCompose::ComposedCollection.new(nil)
 
     assert collection.empty?
@@ -14,7 +14,7 @@ class ActiveRecordCompose::ComposedCollectionTest < ActiveSupport::TestCase
     assert_not collection.empty?
   end
 
-  test 'can be made empty by #clear' do
+  test "can be made empty by #clear" do
     collection = ActiveRecordCompose::ComposedCollection.new(nil)
     collection << Account.new
     collection.clear
@@ -22,7 +22,7 @@ class ActiveRecordCompose::ComposedCollectionTest < ActiveSupport::TestCase
     assert collection.empty?
   end
 
-  test '#delete to exclude specific elements' do
+  test "#delete to exclude specific elements" do
     collection = ActiveRecordCompose::ComposedCollection.new(nil)
     account = Account.new
     profile = Profile.new

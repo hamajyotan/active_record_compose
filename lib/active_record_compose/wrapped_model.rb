@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/object'
+require "active_support/core_ext/object"
 
 module ActiveRecordCompose
   class WrappedModel

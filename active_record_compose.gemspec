@@ -5,8 +5,8 @@ require_relative 'lib/active_record_compose/version'
 Gem::Specification.new do |spec|
   spec.name = 'active_record_compose'
   spec.version = ActiveRecordCompose::VERSION
-  spec.authors = ['hamajyotan']
-  spec.email = ['hamajyotan@gmail.com']
+  spec.authors = [ 'hamajyotan' ]
+  spec.email = [ 'hamajyotan@gmail.com' ]
 
   spec.description = 'activemodel form object pattern. ' \
                      'it embraces multiple AR models and provides ' \
@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
                       ])
     end
   end
-  spec.require_paths = ['lib']
+  spec.require_paths = [ 'lib' ]
 
   spec.add_dependency 'activerecord', '>= 7.0'
 

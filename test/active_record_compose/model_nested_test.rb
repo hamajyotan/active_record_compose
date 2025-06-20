@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'test_helper'
-require 'active_record_compose/model'
+require "test_helper"
+require "active_record_compose/model"
 
 class ActiveRecordCompose::ModelNestedTest < ActiveSupport::TestCase
   class InnerComposedModel < ActiveRecordCompose::Model
@@ -34,20 +34,20 @@ class ActiveRecordCompose::ModelNestedTest < ActiveSupport::TestCase
     attr_reader :inner_model
   end
 
-  test 'Ensure a ComposedModel can be saved correctly even when it contains another ComposedModel' do
+  test "Ensure a ComposedModel can be saved correctly even when it contains another ComposedModel" do
     model = OuterComposedModel.new
-    model.assign_attributes(name: 'foo', email: 'foo@example.com')
+    model.assign_attributes(name: "foo", email: "foo@example.com")
 
     assert_difference -> { Account.count } => 1 do
       model.save!
     end
   end
 
-  test 'Ensure errors propagate correctly even when a ComposedModel contains another ComposedModel and is invalid.' do
+  test "Ensure errors propagate correctly even when a ComposedModel contains another ComposedModel and is invalid." do
     model = OuterComposedModel.new
-    model.assign_attributes(name: 'veryverylongname')
+    model.assign_attributes(name: "veryverylongname")
 
     assert model.invalid?
-    assert { model.errors.to_a == ["Email can't be blank", 'Name is too long (maximum is 10 characters)'] }
+    assert { model.errors.to_a == [ "Email can't be blank", "Name is too long (maximum is 10 characters)" ] }
   end
 end
