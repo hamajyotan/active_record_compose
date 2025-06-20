@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'active_record_compose/callbacks'
-require 'active_record_compose/attribute_querying'
-require 'active_record_compose/composed_collection'
-require 'active_record_compose/delegate_attribute'
-require 'active_record_compose/transaction_support'
-require 'active_record_compose/validations'
+require_relative 'callbacks'
+require_relative 'attribute_querying'
+require_relative 'composed_collection'
+require_relative 'delegate_attribute'
+require_relative 'transaction_support'
+require_relative 'validations'
 
 module ActiveRecordCompose
   using ComposedCollection::PackagePrivate
