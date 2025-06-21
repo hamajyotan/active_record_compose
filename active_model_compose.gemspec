@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activerecord', '>= 7.0'
+  spec.add_dependency 'activerecord', '>= 7.0', '< 8.1'
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = spec.homepage

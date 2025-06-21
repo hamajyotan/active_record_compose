@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 - Add migration guide message.
+- Add upper version.
 
 ## [0.8.0] - 2025-02-22
 
