@@ -45,4 +45,15 @@ Gem::Specification.new do |spec|
   spec.metadata['changelog_uri'] = "#{spec.homepage}/blob/main/CHANGELOG.md"
   spec.metadata['documentation_uri'] = "https://www.rubydoc.info/gems/active_record_compose/#{spec.version}"
   spec.metadata['rubygems_mfa_required'] = 'true'
+
+  spec.post_install_message = <<~MESSAGE
+
+    Notice: This version (#{spec.version}) is deprecated.
+
+    Please upgrade to the latest version of `active_record_compose` as soon as possible.
+    Future releases will not support this version.
+
+    See https://github.com/hamajyotan/active_record_compose/blob/v0.8.1/UPGRADE.md for migration steps.
+
+  MESSAGE
 end

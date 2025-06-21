@@ -82,7 +82,8 @@ module ActiveRecordCompose
           deprecator.warn(
             'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
             'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
-            '(Alternatively, exclude statements that set `false`)',
+            '(Alternatively, exclude statements that set `false`) ' \
+            'cf. https://github.com/hamajyotan/active_record_compose/blob/v0.8.1/UPGRADE.md ',
           )
           # steep:ignore:end
           run_callbacks(:save) { save_models(bang: false) }
@@ -108,7 +109,8 @@ module ActiveRecordCompose
           deprecator.warn(
             'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
             'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
-            '(Alternatively, exclude statements that set `false`)',
+            '(Alternatively, exclude statements that set `false`) ' \
+            'cf. https://github.com/hamajyotan/active_record_compose/blob/v0.8.1/UPGRADE.md ',
           )
           # steep:ignore:end
           run_callbacks(:save) { save_models(bang: true) }
@@ -151,7 +153,8 @@ module ActiveRecordCompose
       deprecator.warn(
         'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
         'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
-        '(Alternatively, exclude statements that set `false`)',
+        '(Alternatively, exclude statements that set `false`) ' \
+        'cf. https://github.com/hamajyotan/active_record_compose/blob/v0.8.1/UPGRADE.md ',
       )
       # steep:ignore:end
 
@@ -177,7 +180,8 @@ module ActiveRecordCompose
       deprecator.warn(
         'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
         'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
-        '(Alternatively, exclude statements that set `false`)',
+        '(Alternatively, exclude statements that set `false`) ' \
+        'cf. https://github.com/hamajyotan/active_record_compose/blob/v0.8.1/UPGRADE.md ',
       )
       # steep:ignore:end
 
@@ -226,7 +230,8 @@ module ActiveRecordCompose
           deprecator.warn(
             'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
             'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
-            '(Alternatively, exclude statements that set `false`)',
+            '(Alternatively, exclude statements that set `false`) ' \
+            'cf. https://github.com/hamajyotan/active_record_compose/blob/v0.8.1/UPGRADE.md ',
           )
           # steep:ignore:end
           with_callbacks(context: :update) { save_models(bang: false) }
@@ -250,7 +255,8 @@ module ActiveRecordCompose
           deprecator.warn(
             'The behavior with `persisted_flag_callback_control` set to `false` will be removed in 0.9.0. ' \
             'Use `self.persisted_flag_callback_control = true` set to `true`. ' \
-            '(Alternatively, exclude statements that set `false`)',
+            '(Alternatively, exclude statements that set `false`) ' \
+            'cf. https://github.com/hamajyotan/active_record_compose/blob/v0.8.1/UPGRADE.md ',
           )
           # steep:ignore:end
           with_callbacks(context: :update) { save_models(bang: true) }
