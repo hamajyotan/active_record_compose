@@ -299,12 +299,14 @@ module ActiveRecordCompose
 
     def raise_on_save_error_message = 'Failed to save the model.'
 
+    # steep:ignore:start
     def deprecator
       if ActiveRecord.respond_to?(:deprecator)
-        ActiveRecord.deprecator # steep:ignore
+        ActiveRecord.deprecator
       else # for rails 7.0.x or lower
         ActiveSupport::Deprecation
       end
     end
+    # steep:ignore:end
   end
 end

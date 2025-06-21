@@ -18,7 +18,7 @@ module ActiveRecordCompose
 
       def with_connection(&) = ar_class.with_connection(&) # steep:ignore
 
-      def composite_primary_key? = false
+      def composite_primary_key? = false # steep:ignore
 
       private
 
