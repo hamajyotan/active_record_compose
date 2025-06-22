@@ -41,15 +41,24 @@ module ActiveRecordCompose
     include ActiveModel::Attributes
     extend ActiveSupport::Concern
 
-    def delegated_attributes: () -> Array[String]
+    class Delegation
+      def initialize: (attribute: String, to: Symbol, allow_nil: boolish) -> void
+      def attribute: () -> String
+      def to: () -> Symbol
+      def allow_nil: () -> boolish
+      def reader: () -> String
+      def writer: () -> String
+    end
+
+    def delegated_attributes: () -> Array[Delegation]
 
     module ClassMethods : Module
       include ActiveModel::Attributes::ClassMethods
       include ActiveModel::AttributeMethods::ClassMethods
 
       def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?) -> untyped
-      def delegated_attributes: () -> Array[String]
-      def delegated_attributes=: (Array[String]) -> untyped
+      def delegated_attributes: () -> Array[Delegation]
+      def delegated_attributes=: (Array[Delegation]) -> untyped
     end
   end
 
