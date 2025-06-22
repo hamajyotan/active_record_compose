@@ -38,9 +38,16 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
 
     # steep:ignore:start
-    Delegation = Data.define(:attribute, :to, :allow_nil) do
-      def reader = attribute.to_s
-      def writer = "#{attribute}="
+    if defined?(Data)
+      Delegation = Data.define(:attribute, :to, :allow_nil) do
+        def reader = attribute.to_s
+        def writer = "#{attribute}="
+      end
+    else
+      Delegation = Struct.new(:attribute, :to, :allow_nil, keyword_init: true) do
+        def reader = attribute.to_s
+        def writer = "#{attribute}="
+      end
     end
     # steep:ignore:end
 
