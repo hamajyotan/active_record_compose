@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "active_record_compose/delegatable_attribute"
+
 module ActiveRecordCompose
   # = Delegate \Attribute
   #
@@ -41,11 +43,29 @@ module ActiveRecordCompose
     # steep:ignore:start
     if defined?(Data)
       Delegation = Data.define(:attribute, :to, :allow_nil) do
+        def read_attribute(owner)
+          return nil if owner.nil? && allow_nil
+          owner.public_send(reader)
+        end
+        def write_attribute(owner, value)
+          return value if owner.nil? && allow_nil
+          owner.public_send(writer, value)
+          value
+        end
         def reader = attribute.to_s
         def writer = "#{attribute}="
       end
     else
       Delegation = Struct.new(:attribute, :to, :allow_nil, keyword_init: true) do
+        def read_attribute(owner)
+          return nil if owner.nil? && allow_nil
+          owner.public_send(reader)
+        end
+        def write_attribute(owner, value)
+          return value if owner.nil? && allow_nil
+          owner.public_send(writer, value)
+          value
+        end
         def reader = attribute.to_s
         def writer = "#{attribute}="
       end
@@ -78,18 +98,22 @@ module ActiveRecordCompose
       def attribute_names = super + delegated_attributes.to_a.map { _1.attribute }
     end
 
-    # Returns a array of attribute name.
-    # Attributes declared with `delegate_attribute` are also merged.
-    #
-    # @return [Array<String>] array of attribute name.
-    def attribute_names = super + delegated_attributes.to_a.map { _1.attribute }
+    private_module = Module.new do
+      refine DelegateAttribute do
+        private
 
-    # Returns a hash with the attribute name as key and the attribute value as value.
-    # Attributes declared with `delegate_attribute` are also merged.
-    #
-    # @return [Hash] hash with the attribute name as key and the attribute value as value.
-    def attributes
-      super.merge(delegated_attributes.to_a.map { _1.attribute }.to_h { [ _1, public_send(_1) ] })
+        def _merge_delegated_attributes
+          delegated_attributes.to_a.each do |delegation|
+            @attributes[delegation.attribute] = DelegatableAttribute.new(delegation, self)
+          end
+        end
+      end
+    end
+    using private_module
+
+    def initialize(...)
+      super # steep:ignore
+      _merge_delegated_attributes
     end
   end
 end
