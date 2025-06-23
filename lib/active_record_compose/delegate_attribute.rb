@@ -36,6 +36,7 @@ module ActiveRecordCompose
   #
   module DelegateAttribute
     extend ActiveSupport::Concern
+    include ActiveModel::Attributes
 
     # steep:ignore:start
     if defined?(Data)
@@ -52,8 +53,6 @@ module ActiveRecordCompose
     # steep:ignore:end
 
     included do
-      include ActiveModel::Attributes
-
       # @type self: Class
       class_attribute :delegated_attributes, instance_writer: false
     end

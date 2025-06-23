@@ -41,10 +41,9 @@ module ActiveRecordCompose
   #
   module AttributeQuerying
     extend ActiveSupport::Concern
+    include ActiveModel::AttributeMethods
 
     included do
-      include ActiveModel::AttributeMethods
-
       attribute_method_suffix "?", parameters: false
     end
 
