@@ -1,6 +1,7 @@
 module ActiveRecordCompose
   module AttributeQuerying
     include ActiveModel::AttributeMethods
+    include ActiveModel::Attributes
     extend ActiveSupport::Concern
     extend ActiveModel::AttributeMethods::ClassMethods
 
@@ -37,6 +38,28 @@ module ActiveRecordCompose
     include PackagePrivate
   end
 
+  class DelegatableAttribute
+    def initialize: (DelegateAttribute::Delegation delegation, ActiveModel::Attributes owner) -> void
+    def value: () -> untyped
+    def with_value_from_user: (untyped value) -> self
+    def initialized?: -> true
+    def dup_or_share: -> self
+    def with_type: (untyped type) -> self
+    def type_cast: (untyped value) -> untyped
+
+    @delegation: DelegateAttribute::Delegation
+    @owner: ActiveModel::Attributes
+    @type: ActiveModel::Type::Value
+
+    private
+    attr_reader delegation: DelegateAttribute::Delegation
+    attr_reader name: String
+    attr_reader owner: ActiveModel::Attributes
+    def type: () -> ActiveModel::Type::Value
+    def _read: () -> untyped
+    def _write: (untyped value) -> untyped
+  end
+
   module DelegateAttribute
     include ActiveModel::Attributes
     extend ActiveSupport::Concern
@@ -48,9 +71,17 @@ module ActiveRecordCompose
       def allow_nil: () -> boolish
       def reader: () -> String
       def writer: () -> String
+      def read_attribute: (ActiveModel::Attributes owner) -> untyped
+      def write_attribute: (ActiveModel::Attributes owner, untyped value) -> untyped
     end
 
+    def initialize: (*untyped args, **untyped kwargs) -> void
     def delegated_attributes: () -> Array[Delegation]
+
+    @attributes: ActiveModel::AttributeSet
+
+    private
+    def _merge_delegated_attributes: () -> void
 
     module ClassMethods : Module
       include ActiveModel::Attributes::ClassMethods

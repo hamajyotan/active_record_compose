@@ -42,6 +42,7 @@ module ActiveRecordCompose
   module AttributeQuerying
     extend ActiveSupport::Concern
     include ActiveModel::AttributeMethods
+    include ActiveModel::Attributes
 
     included do
       attribute_method_suffix "?", parameters: false
@@ -50,7 +51,7 @@ module ActiveRecordCompose
     private
 
     def attribute?(attr_name)
-      value = public_send(attr_name)
+      value = attribute(attr_name)
 
       case value
       when true then true
