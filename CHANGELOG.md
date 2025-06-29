@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.11.2] - 2025-06-29
+
 - `ActiveModel::Attributes.attribute_names` now takes into account attributes declared in `.delegate_attribute`
 - relax rubocop config.
 - refactor: extract persistence module
