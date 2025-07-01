@@ -42,10 +42,19 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
 
     class Delegation
-      def initialize: (attribute: String, to: Symbol, allow_nil: boolish) -> void
-      def attribute: () -> String
+      def initialize: (attribute: String, to: Symbol, ?allow_nil: (bool | nil)) -> void
+      def attribute: () -> Symbol
+      def attribute_name: () -> String
+      def attribute_hash: (Object model) -> Hash[String, untyped]
+      def define_delegated_attribute: ((Module & ActiveModel::AttributeMethods::ClassMethods) klass) -> void
+
+      @attribute: Symbol
+      @to: Symbol
+      @allow_nil: bool
+
+      private
       def to: () -> Symbol
-      def allow_nil: () -> boolish
+      def allow_nil: () -> bool
       def reader: () -> String
       def writer: () -> String
     end
