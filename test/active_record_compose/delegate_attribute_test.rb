@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "active_record_compose/delegate_attribute"
+require "active_record_compose/attributes"
 
 class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
   class Dummy
-    include ActiveModel::Attributes
-    include ActiveRecordCompose::DelegateAttribute
+    include ActiveRecordCompose::Attributes
 
     def initialize(data)
       @data = data

@@ -3,7 +3,17 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
     include ActiveModel::Attributes
     include Querying
-    include DelegateAttribute
+
+    def delegated_attributes: () -> Array[Delegation]
+
+    module ClassMethods : Module
+      include ActiveModel::Attributes::ClassMethods
+      include ActiveModel::AttributeMethods::ClassMethods
+
+      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?) -> untyped
+      def delegated_attributes: () -> Array[Delegation]
+      def delegated_attributes=: (Array[Delegation]) -> untyped
+    end
 
     class Delegation
       def initialize: (attribute: String, to: Symbol, ?allow_nil: (bool | nil)) -> void
@@ -62,25 +72,9 @@ module ActiveRecordCompose
     include PackagePrivate
   end
 
-  module DelegateAttribute
-    include ActiveModel::Attributes
-    extend ActiveSupport::Concern
-
-    def delegated_attributes: () -> Array[Attributes::Delegation]
-
-    module ClassMethods : Module
-      include ActiveModel::Attributes::ClassMethods
-      include ActiveModel::AttributeMethods::ClassMethods
-
-      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?) -> untyped
-      def delegated_attributes: () -> Array[Attributes::Delegation]
-      def delegated_attributes=: (Array[Attributes::Delegation]) -> untyped
-    end
-  end
-
   class Model
-    include DelegateAttribute
-    extend DelegateAttribute::ClassMethods
+    include Attributes
+    extend Attributes::ClassMethods
     include TransactionSupport
     extend TransactionSupport::ClassMethods
     include Callbacks
