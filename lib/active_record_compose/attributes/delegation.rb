@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ActiveRecordCompose
-  module DelegateAttribute
+  module Attributes
     class Delegation
       attr_reader :attribute
 

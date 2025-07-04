@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "active_support/core_ext/class"
-require_relative "delegate_attribute/delegation"
+require_relative "attributes/delegation"
 
 module ActiveRecordCompose
   # = Delegate \Attribute
@@ -50,7 +50,7 @@ module ActiveRecordCompose
       # Defines the reader and writer for the specified attribute.
       #
       def delegate_attribute(*attributes, to:, allow_nil: nil)
-        delegations = attributes.map { Delegation.new(attribute: _1, to:, allow_nil:) }
+        delegations = attributes.map { Attributes::Delegation.new(attribute: _1, to:, allow_nil:) }
         delegations.each { _1.define_delegated_attribute(self) }
 
         self.delegated_attributes = (delegated_attributes.to_a + delegations).reverse.uniq { _1.attribute }.reverse
