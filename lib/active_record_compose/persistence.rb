@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "composed_collection"
+require_relative "transaction_support"
 
 module ActiveRecordCompose
   using ComposedCollection::PackagePrivate

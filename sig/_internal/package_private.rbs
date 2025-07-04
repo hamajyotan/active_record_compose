@@ -1,4 +1,11 @@
 module ActiveRecordCompose
+  module Attributes
+    extend ActiveSupport::Concern
+    include ActiveModel::Attributes
+    include AttributeQuerying
+    include DelegateAttribute
+  end
+
   module AttributeQuerying
     include ActiveModel::AttributeMethods
     extend ActiveSupport::Concern

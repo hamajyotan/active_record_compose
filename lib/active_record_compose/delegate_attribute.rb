@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "active_support/core_ext/class"
 require_relative "delegate_attribute/delegation"
 
 module ActiveRecordCompose
