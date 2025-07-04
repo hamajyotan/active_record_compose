@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "attribute_querying"
+require_relative "attributes/querying"
 require_relative "delegate_attribute"
 
 module ActiveRecordCompose
@@ -9,7 +9,7 @@ module ActiveRecordCompose
 
     included do
       include ActiveModel::Attributes
-      include ActiveRecordCompose::AttributeQuerying
+      include Querying
       include ActiveRecordCompose::DelegateAttribute
     end
   end

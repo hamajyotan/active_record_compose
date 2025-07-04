@@ -2,17 +2,17 @@ module ActiveRecordCompose
   module Attributes
     extend ActiveSupport::Concern
     include ActiveModel::Attributes
-    include AttributeQuerying
+    include Querying
     include DelegateAttribute
-  end
 
-  module AttributeQuerying
-    include ActiveModel::AttributeMethods
-    extend ActiveSupport::Concern
-    extend ActiveModel::AttributeMethods::ClassMethods
+    module Querying
+      include ActiveModel::AttributeMethods
+      extend ActiveSupport::Concern
+      extend ActiveModel::AttributeMethods::ClassMethods
 
-    private
-    def attribute?: (attribute_name) -> untyped
+      private
+      def attribute?: (attribute_name) -> untyped
+    end
   end
 
   module Callbacks
