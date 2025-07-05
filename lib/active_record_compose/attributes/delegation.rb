@@ -13,15 +13,21 @@ module ActiveRecordCompose
         freeze
       end
 
-      def define_delegated_attribute(klass)
-        klass.delegate(reader, writer, to:, allow_nil:)
-        klass.define_attribute_methods(attribute)
-      end
-
       def attribute_name = attribute.to_s
 
-      def attribute_hash(model)
-        { attribute_name => model.public_send(attribute) }
+      def read_attribute(owner)
+        target = owner.send(to)
+        return nil if target.nil? && allow_nil
+
+        target.public_send(reader)
+      end
+
+      def write_attribute(owner, value)
+        target = owner.send(to)
+        return value if target.nil? && allow_nil
+
+        target.public_send(writer, value)
+        value
       end
 
       private
