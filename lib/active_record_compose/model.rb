@@ -4,16 +4,14 @@ require_relative "attributes"
 require_relative "callbacks"
 require_relative "composed_collection"
 require_relative "persistence"
-require_relative "validations"
 
 module ActiveRecordCompose
   class Model
     include ActiveModel::Model
 
     include ActiveRecordCompose::Attributes
-    include ActiveRecordCompose::Callbacks
     include ActiveRecordCompose::Persistence
-    include ActiveRecordCompose::Validations
+    include ActiveRecordCompose::Callbacks
 
     def initialize(attributes = {})
       super

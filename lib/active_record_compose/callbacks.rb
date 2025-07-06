@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
+require_relative "validations"
+
 module ActiveRecordCompose
   module Callbacks
     extend ActiveSupport::Concern
     include ActiveModel::Validations::Callbacks
 
     included do
+      include ActiveRecordCompose::Validations
+
       define_model_callbacks :save
       define_model_callbacks :create
       define_model_callbacks :update
