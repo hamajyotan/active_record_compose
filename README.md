@@ -405,6 +405,7 @@ With Github Codespaces, it can also be run directly in the browser. Naturally, a
 
 ## Links
 
+- [Document from YARD](https://hamajyotan.github.io/active_record_compose/)
 - [Smart way to update multiple models simultaneously in Rails](https://dev.to/hamajyotan/smart-way-to-update-multiple-models-simultaneously-in-rails-51b6)
 
 ## Development
