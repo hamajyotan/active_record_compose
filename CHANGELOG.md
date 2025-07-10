@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+- Omits default arguments for `#update` and `#update!`. It's to align I/F with ActiveRecord.
+  - `#update(attributes = {})` to `#update(attributes)`
+  - `#update!(attributes = {})` to `#update!(attributes)`
+
 ## [0.11.2] - 2025-06-29
 
 - `ActiveModel::Attributes.attribute_names` now takes into account attributes declared in `.delegate_attribute`

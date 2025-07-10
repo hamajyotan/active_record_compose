@@ -66,7 +66,7 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     tracer = []
     model = CallbackOrder.new(tracer, persisted: true)
 
-    model.update
+    model.update({})
     expected =
       [
         "before_save called",
@@ -83,7 +83,7 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     tracer = []
     model = CallbackOrder.new(tracer, persisted: false)
 
-    model.update
+    model.update({})
     expected =
       [
         "before_save called",
