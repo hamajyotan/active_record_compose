@@ -34,10 +34,19 @@ else
   gem "sqlite3", "~> 2.1"
 end
 
+gem "rake"
+
+# test and debug.
 gem "debug"
 gem "minitest"
 gem "minitest-power_assert"
 gem "minitest-reporters"
-gem "rake"
+
+# lint.
 gem "rubocop-rails-omakase"
 gem "steep", require: false
+
+# document.
+gem "yard"
+gem "redcarpet"
+gem "github-markup"

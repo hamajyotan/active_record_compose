@@ -31,7 +31,7 @@ jobs:
           ruby-version: ruby
           bundler-cache: true
 
-      - run: bundle exec yard
+      - run: bundle exec yard --no-private
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

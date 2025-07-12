@@ -1,0 +1,4 @@
+--private
+--markup markdown
+--markup-provider redcarpet
+--default-return void

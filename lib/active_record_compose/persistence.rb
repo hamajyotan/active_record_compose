@@ -6,6 +6,7 @@ require_relative "transaction_support"
 module ActiveRecordCompose
   using ComposedCollection::PackagePrivate
 
+  # @private
   module Persistence
     extend ActiveSupport::Concern
     include ActiveRecordCompose::TransactionSupport

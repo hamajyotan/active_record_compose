@@ -5,6 +5,7 @@ require_relative "composed_collection"
 module ActiveRecordCompose
   using ComposedCollection::PackagePrivate
 
+  # @private
   module Validations
     extend ActiveSupport::Concern
 
