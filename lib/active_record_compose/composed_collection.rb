@@ -5,6 +5,9 @@ require_relative "wrapped_model"
 module ActiveRecordCompose
   using WrappedModel::PackagePrivate
 
+  # Object obtained by {ActiveRecordCompose::Model#models}.
+  #
+  # It functions as a collection that contains the object to be saved.
   class ComposedCollection
     include Enumerable
 
@@ -15,7 +18,7 @@ module ActiveRecordCompose
 
     # Enumerates model objects.
     #
-    # @yieldparam [Object] the model instance
+    # @yieldparam [Object] model model instance
     # @return [Enumerator] when not block given.
     # @return [self] when block given, returns itself.
     def each
@@ -27,7 +30,7 @@ module ActiveRecordCompose
 
     # Appends model to collection.
     #
-    # @param model [Object] the model instance
+    # @param model [Object] model instance
     # @return [self] returns itself.
     def <<(model)
       models << wrap(model, destroy: false)
@@ -36,12 +39,14 @@ module ActiveRecordCompose
 
     # Appends model to collection.
     #
-    # @param model [Object] the model instance
-    # @param destroy [Boolean] given true, destroy model.
-    # @param destroy [Proc] when proc returning true, destroy model.
-    # @param destroy [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
-    # @param if [Proc] evaluation result is false, it will not be included in the renewal.
-    # @param if [Symbol] applies boolean value of result of sending a message to `owner` to evaluation.
+    # @param model [Object] model instance
+    # @param destroy [Boolean, Proc, Symbol] Controls whether the model should be destroyed.
+    #   - Boolean: if `true`, the model will be destroyed.
+    #   - Proc: the model will be destroyed if the proc returns `true`.
+    #   - Symbol: sends the symbol as a method to `owner`; if the result is truthy, the model will be destroyed.
+    # @param if [Proc, Symbol] Controls conditional inclusion in renewal.
+    #   - Proc: the proc is called, and if it returns `false`, the model is excluded.
+    #   - Symbol: sends the symbol as a method to `owner`; if the result is falsy, the model is excluded.
     # @return [self] returns itself.
     def push(model, destroy: false, if: nil)
       models << wrap(model, destroy:, if:)
@@ -64,7 +69,7 @@ module ActiveRecordCompose
     # Removes the specified model from the collection.
     # Returns nil if the deletion fails, self if it succeeds.
     #
-    # @param model [Object] the model instance
+    # @param model [Object] model instance
     # @return [self] Successful deletion
     # @return [nil] If deletion fails
     def delete(model)
@@ -76,8 +81,10 @@ module ActiveRecordCompose
 
     private
 
+    # @private
     attr_reader :owner, :models
 
+    # @private
     def wrap(model, destroy: false, if: nil)
       if destroy.is_a?(Symbol)
         method = destroy

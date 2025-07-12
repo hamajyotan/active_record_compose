@@ -381,20 +381,20 @@ end
 ```ruby
 r = Registration.new(name: 'foo', email: 'example@example.com', accept: false)
 r.valid?
-=> true
+#=> true
 
 r.valid?(:education)
-=> false
+#=> false
 r.errors.map { [_1.attribute, _1.type] }
-=> [[:email, :invalid], [:accept, :blank]]
+#=> [[:email, :invalid], [:accept, :blank]]
 
 r.email = 'example@example.edu'
 r.accept = true
 
 r.valid?(:education)
-=> true
+#=> true
 r.save(context: :education)
-=> true
+#=> true
 ```
 
 ## Sample application as an example

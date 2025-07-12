@@ -3,6 +3,7 @@
 module ActiveRecordCompose
   module Attributes
     class Delegation
+      # @return [Symbol] The attribute name as symbol
       attr_reader :attribute
 
       def initialize(attribute:, to:, allow_nil: nil)
@@ -18,8 +19,10 @@ module ActiveRecordCompose
         klass.define_attribute_methods(attribute)
       end
 
+      # @return [String] The attribute name as string
       def attribute_name = attribute.to_s
 
+      # @return [Hash<String, Object>]
       def attribute_hash(model)
         { attribute_name => model.public_send(attribute) }
       end

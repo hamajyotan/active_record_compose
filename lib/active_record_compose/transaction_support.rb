@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ActiveRecordCompose
+  # @private
   module TransactionSupport
     extend ActiveSupport::Concern
     include ActiveRecord::Transactions

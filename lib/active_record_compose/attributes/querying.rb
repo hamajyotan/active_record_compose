@@ -2,10 +2,9 @@
 
 module ActiveRecordCompose
   module Attributes
-    # = ActiveRecordCompose\ Attributes\ Querying
-    #
     # This provides predicate methods based on the attributes.
     #
+    # @example
     #   class AccountRegistration < ActiveRecordCompose::Model
     #     def initialize
     #       @account = Account.new
@@ -25,7 +24,7 @@ module ActiveRecordCompose
     #
     #   model.name                    #=> nil
     #   model.name?                   #=> false
-    #   model.name = 'Alice'
+    #   model.name = "Alice"
     #   model.name?                   #=> true
     #
     #   model.original_attr = "Bob"

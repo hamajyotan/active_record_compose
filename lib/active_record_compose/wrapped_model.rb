@@ -3,10 +3,12 @@
 require "active_support/core_ext/object"
 
 module ActiveRecordCompose
+  # @private
   class WrappedModel
     # @param model [Object] the model instance.
-    # @param destroy [Boolean] given true, destroy model.
-    # @param destroy [Proc] when proc returning true, destroy model.
+    # @param destroy [Boolean, Proc, Symbol] Controls whether the model should be destroyed.
+    #   - Boolean: if `true`, the model will be destroyed.
+    #   - Proc: the model will be destroyed if the proc returns `true`.
     # @param if [Proc] evaluation result is false, it will not be included in the renewal.
     def initialize(model, destroy: false, if: nil)
       @model = model
