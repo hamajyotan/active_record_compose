@@ -18,7 +18,7 @@ module ActiveRecordCompose
     module ClassMethods
       # Defines the reader and writer for the specified attribute.
       #
-      def delegate_attribute(*attributes, to:, allow_nil: nil)
+      def delegate_attribute(*attributes, to:, allow_nil: false)
         delegations = attributes.map { Delegation.new(attribute: _1, to:, allow_nil:) }
         delegations.each { _1.define_delegated_attribute(self) }
 

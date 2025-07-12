@@ -10,13 +10,13 @@ module ActiveRecordCompose
       include ActiveModel::Attributes::ClassMethods
       include ActiveModel::AttributeMethods::ClassMethods
 
-      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: untyped?) -> untyped
+      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: bool) -> untyped
       def delegated_attributes: () -> Array[Delegation]
       def delegated_attributes=: (Array[Delegation]) -> untyped
     end
 
     class Delegation
-      def initialize: (attribute: String, to: Symbol, ?allow_nil: (bool | nil)) -> void
+      def initialize: (attribute: String, to: Symbol, ?allow_nil: bool) -> void
       def attribute: () -> Symbol
       def attribute_name: () -> String
       def attribute_hash: (Object model) -> Hash[String, untyped]

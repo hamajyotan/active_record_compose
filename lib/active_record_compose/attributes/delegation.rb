@@ -5,7 +5,7 @@ module ActiveRecordCompose
     class Delegation
       attr_reader :attribute
 
-      def initialize(attribute:, to:, allow_nil: nil)
+      def initialize(attribute:, to:, allow_nil: false)
         @attribute = attribute.to_sym
         @to = to.to_sym
         @allow_nil = !!allow_nil
