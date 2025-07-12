@@ -3,6 +3,8 @@
 - Omits default arguments for `#update` and `#update!`. It's to align I/F with ActiveRecord.
   - `#update(attributes = {})` to `#update(attributes)`
   - `#update!(attributes = {})` to `#update!(attributes)`
+- refactor: Aggregation attribute module.
+  (https://github.com/hamajyotan/active_record_compose/pull/24)
 
 ## [0.11.2] - 2025-06-29
 
