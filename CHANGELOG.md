@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- refactor: Aggregation attribute module.
+  (https://github.com/hamajyotan/active_record_compose/pull/24)
+
 ## [0.11.2] - 2025-06-29
 
 - `ActiveModel::Attributes.attribute_names` now takes into account attributes declared in `.delegate_attribute`
