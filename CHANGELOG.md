@@ -2,6 +2,17 @@
 
 - refactor: Aggregation attribute module.
   (https://github.com/hamajyotan/active_record_compose/pull/24)
+- Warn against specifying instance variables, etc. directly in the `:to` option of `delegate_attribute`.
+  - Deprecated:
+    ```ruby
+    delegate_attribute :foo, to: :@model
+    ```
+  - Recommended:
+    ```ruby
+    delegate_attribute :foo, to: :model
+    private
+    attr_reader :model
+    ```
 
 ## [0.11.2] - 2025-06-29
 

@@ -62,6 +62,9 @@ module ActiveRecordCompose
     end
 
     module ClassMethods
+      ALLOW_NIL_DEFAULT = Object.new.freeze # steep:ignore
+      private_constant :ALLOW_NIL_DEFAULT
+
       # Defines the reader and writer for the specified attribute.
       #
       # @example
@@ -94,7 +97,35 @@ module ActiveRecordCompose
       #   registration.attributes
       #   # => { "original_attribute" => "qux", "name" => "bar" }
       #
-      def delegate_attribute(*attributes, to:, allow_nil: false)
+      def delegate_attribute(*attributes, to:, allow_nil: ALLOW_NIL_DEFAULT) # steep:ignore
+        # steep:ignore:start
+        if to.start_with?("@")
+          suggested_reader_name = to.to_s.sub(/^@+/, "")
+          suggested_method =
+            if to.start_with?("@@")
+              "def #{suggested_reader_name} = #{to}"
+            else
+              "attr_reader :#{suggested_reader_name}"
+            end
+
+          message = <<~MSG
+            Direct use of instance or class variables in `to:` will be removed in the next minor version.
+            Please define a reader method (private is fine) and refer to it by name instead.
+
+            For example,
+                delegate_attribute #{attributes.map { ":#{_1}" }.join(", ")}, to: :#{to}#{", allow_nil: #{allow_nil}" if allow_nil != ALLOW_NIL_DEFAULT}
+
+            Instead of the above, use the following
+                delegate_attribute #{attributes.map { ":#{_1}" }.join(", ")}, to: :#{suggested_reader_name}#{", allow_nil: #{allow_nil}" if allow_nil != ALLOW_NIL_DEFAULT}
+                private
+                #{suggested_method}
+
+          MSG
+          (ActiveRecord.respond_to?(:deprecator) ? ActiveRecord.deprecator : ActiveSupport::Deprecation).warn(message)
+        end
+        allow_nil = false if allow_nil == ALLOW_NIL_DEFAULT
+        # steep:ignore:end
+
         delegations = attributes.map { Delegation.new(attribute: _1, to:, allow_nil:) }
         delegations.each { _1.define_delegated_attribute(self) }
 
