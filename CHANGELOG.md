@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.11.3] - 2025-07-13
+
 - refactor: Aggregation attribute module.
   (https://github.com/hamajyotan/active_record_compose/pull/24)
 - Warn against specifying instance variables, etc. directly in the `:to` option of `delegate_attribute`.
