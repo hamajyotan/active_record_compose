@@ -13,6 +13,7 @@
     private
     attr_reader :model
     ```
+- doc: Expansion of yard documentation comments.
 
 ## [0.11.2] - 2025-06-29
 
