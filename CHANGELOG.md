@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Omitted Specify instance variables in the `:to` option of `delegate_attribute`.
+
 ## [0.11.3] - 2025-07-13
 
 - refactor: Aggregation attribute module.
