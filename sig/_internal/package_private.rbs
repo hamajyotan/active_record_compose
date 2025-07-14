@@ -108,8 +108,8 @@ module ActiveRecordCompose
 
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped
-    def update: (?Hash[attribute_name, untyped]) -> bool
-    def update!: (?Hash[attribute_name, untyped]) -> untyped
+    def update: (Hash[attribute_name, untyped]) -> bool
+    def update!: (Hash[attribute_name, untyped]) -> untyped
 
     private
     def models: -> ComposedCollection

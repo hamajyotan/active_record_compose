@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+- Omits default arguments for `#update` and `#update!`. It's to align I/F with ActiveRecord.
+  - `#update(attributes = {})` to `#update(attributes)`
+  - `#update!(attributes = {})` to `#update!(attributes)`
+
 ## [0.11.3] - 2025-07-13
 
 - refactor: Aggregation attribute module.
