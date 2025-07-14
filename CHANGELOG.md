@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- Omits default arguments for `#update` and `#update!`. It's to align I/F with ActiveRecord.
+  - `#update(attributes = {})` to `#update(attributes)`
+  - `#update!(attributes = {})` to `#update!(attributes)`
 - Omitted Specify instance variables in the `:to` option of `delegate_attribute`.
 - refactor: Integrate attributes defined in `delegate_attribute` into an `AttributeSet`.
 

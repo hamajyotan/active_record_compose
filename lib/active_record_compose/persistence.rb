@@ -51,7 +51,7 @@ module ActiveRecordCompose
     # Assign attributes and save.
     #
     # @return [Boolean] returns true on success, false on failure.
-    def update(attributes = {})
+    def update(attributes)
       with_transaction_returning_status do
         assign_attributes(attributes)
         save
@@ -60,7 +60,7 @@ module ActiveRecordCompose
 
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
     #
-    def update!(attributes = {})
+    def update!(attributes)
       with_transaction_returning_status do
         assign_attributes(attributes)
         save!
