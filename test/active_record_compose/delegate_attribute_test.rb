@@ -4,6 +4,15 @@ require "test_helper"
 require "active_record_compose/attributes"
 
 class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
+  class Inner
+    include ActiveModel::Model
+    include ActiveModel::Attributes
+
+    attribute :x
+    attribute :y
+    attribute :z
+  end
+
   class Dummy
     include ActiveRecordCompose::Attributes
 
@@ -62,5 +71,18 @@ class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
     assert { o2.attributes == { "x" => "foo", "y" => "bar", "z" => "baz" } }
     assert { o2.attribute_names == %w[x y z] }
     assert { o2.class.attribute_names == %w[x y z] }
+  end
+
+  test "Raises ArgumentError if instance variable is directly specified in :to option of delegate_attribute" do
+    assert_raises(ArgumentError, "Instance variables cannot be specified in delegate to. (@model)") do
+      Class.new(ActiveRecordCompose::Model) do
+        def initialize(attributes)
+          @model = Inner.new
+          super(attributes)
+        end
+
+        delegate_attribute :x, :y, to: :@model
+      end
+    end
   end
 end

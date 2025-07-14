@@ -18,9 +18,10 @@ module ActiveRecordCompose
     class Delegation
       def initialize: (attribute: String, to: Symbol, ?allow_nil: bool) -> void
       def attribute: () -> Symbol
-      def attribute_name: () -> String
-      def attribute_hash: (Object model) -> Hash[String, untyped]
       def define_delegated_attribute: ((Module & ActiveModel::AttributeMethods::ClassMethods) klass) -> void
+      def attribute_name: () -> String
+      def read_attribute: (ActiveModel::Attributes owner) -> untyped
+      def write_attribute: (ActiveModel::Attributes owner, untyped value) -> untyped
 
       @attribute: Symbol
       @to: Symbol
@@ -31,6 +32,28 @@ module ActiveRecordCompose
       def allow_nil: () -> bool
       def reader: () -> String
       def writer: () -> String
+    end
+
+    class DelegatableAttribute
+      def initialize: (Delegation delegation, ActiveModel::Attributes owner) -> void
+      def value: () -> untyped
+      def with_value_from_user: (untyped value) -> self
+      def initialized?: -> true
+      def dup_or_share: -> self
+      def with_type: (untyped type) -> self
+      def type_cast: (untyped value) -> untyped
+
+      @delegation: Delegation
+      @owner: ActiveModel::Attributes
+      @type: ActiveModel::Type::Value
+
+      private
+      attr_reader delegation: Delegation
+      attr_reader name: String
+      attr_reader owner: ActiveModel::Attributes
+      def type: () -> ActiveModel::Type::Value
+      def _read: () -> untyped
+      def _write: (untyped value) -> self
     end
 
     module Querying
