@@ -5,6 +5,7 @@
   - `#update!(attributes = {})` to `#update!(attributes)`
 - Omitted Specify instance variables in the `:to` option of `delegate_attribute`.
 - refactor: Integrate attributes defined in `delegate_attribute` into an `AttributeSet`.
+  This avoids dependency on `Module#delegate`.
 
 ## [0.11.3] - 2025-07-13
 
