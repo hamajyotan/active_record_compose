@@ -81,12 +81,8 @@ module ActiveRecordCompose
     def save!: (**untyped options) -> untyped
     def update: (Hash[attribute_name, untyped]) -> bool
     def update!: (Hash[attribute_name, untyped]) -> untyped
-    def id: -> untyped
 
     private
     def models: -> ComposedCollection
-    def save_models: (bang: bool, **untyped options) -> bool
-    def raise_on_save_error: -> bot
-    def raise_on_save_error_message: -> String
   end
 end
