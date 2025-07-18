@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "composed_collection"
-require_relative "transaction_support"
 
 module ActiveRecordCompose
   using ComposedCollection::PackagePrivate
@@ -9,7 +8,6 @@ module ActiveRecordCompose
   # @private
   module Persistence
     extend ActiveSupport::Concern
-    include ActiveRecordCompose::TransactionSupport
 
     # Save the models that exist in models.
     # Returns false if any of the targets fail, true if all succeed.
@@ -24,11 +22,9 @@ module ActiveRecordCompose
     #
     # @return [Boolean] returns true on success, false on failure.
     def save(**options)
-      with_transaction_returning_status do
-        with_callbacks { save_models(**options, bang: false) }
-      rescue ActiveRecord::RecordInvalid
-        false
-      end
+      with_callbacks { save_models(**options, bang: false) }
+    rescue ActiveRecord::RecordInvalid
+      false
     end
 
     # Save the models that exist in models.
@@ -43,28 +39,22 @@ module ActiveRecordCompose
     # If the contexts differ, we recommend separating them into different model definitions.
     #
     def save!(**options)
-      with_transaction_returning_status do
-        with_callbacks { save_models(**options, bang: true) }
-      end || raise_on_save_error
+      with_callbacks { save_models(**options, bang: true) } || raise_on_save_error
     end
 
     # Assign attributes and save.
     #
     # @return [Boolean] returns true on success, false on failure.
     def update(attributes)
-      with_transaction_returning_status do
-        assign_attributes(attributes)
-        save
-      end
+      assign_attributes(attributes)
+      save
     end
 
     # Behavior is same to `#update`, but raises an exception prematurely on failure.
     #
     def update!(attributes)
-      with_transaction_returning_status do
-        assign_attributes(attributes)
-        save!
-      end
+      assign_attributes(attributes)
+      save!
     end
 
     private
