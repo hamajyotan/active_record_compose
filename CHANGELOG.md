@@ -6,6 +6,8 @@
 - Omitted Specify instance variables in the `:to` option of `delegate_attribute`.
 - refactor: Integrate attributes defined in `delegate_attribute` into an `AttributeSet`.
   This avoids dependency on `Module#delegate`.
+- Omitted `#destroy` and `#touch` from `ActiveRecordCompose::Model`.
+  These were unintentionally provided by the `ActiveRecord::Transactions` module. The but in fact did not work correctly.
 
 ## [0.11.3] - 2025-07-13
 
