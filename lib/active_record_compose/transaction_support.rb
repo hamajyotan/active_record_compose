@@ -15,17 +15,10 @@ module ActiveRecordCompose
     end
 
     module ClassMethods
-      def lease_connection
-        if ar_class.respond_to?(:lease_connection)
-          ar_class.lease_connection # steep:ignore
-        else
-          ar_class.connection
-        end
-      end
+      delegate :with_connection, :lease_connection, to: :ar_class
 
-      def connection = ar_class.connection
-
-      def with_connection(&) = ar_class.with_connection(&) # steep:ignore
+      # In ActiveRecord, it is soft deprecated.
+      delegate :connection, to: :ar_class
 
       def composite_primary_key? = false # steep:ignore
 
