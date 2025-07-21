@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "errors"
 require_relative "wrapped_model"
 
 module ActiveRecordCompose
@@ -14,6 +15,7 @@ module ActiveRecordCompose
     def initialize(owner)
       @owner = owner
       @models = []
+      @locked = false
     end
 
     # Enumerates model objects.
@@ -33,6 +35,8 @@ module ActiveRecordCompose
     # @param model [Object] model instance
     # @return [self] returns itself.
     def <<(model)
+      raise LockedCollectionError.new("Collection is locked and cannot be changed.", owner) if locked?
+
       models << wrap(model, destroy: false)
       self
     end
@@ -49,6 +53,8 @@ module ActiveRecordCompose
     #   - Symbol: sends the symbol as a method to `owner`; if the result is falsy, the model is excluded.
     # @return [self] returns itself.
     def push(model, destroy: false, if: nil)
+      raise LockedCollectionError.new("Collection is locked and cannot be changed.", owner) if locked?
+
       models << wrap(model, destroy:, if:)
       self
     end
@@ -62,6 +68,8 @@ module ActiveRecordCompose
     #
     # @return [self] returns itself.
     def clear
+      raise LockedCollectionError.new("Collection is locked and cannot be changed.", owner) if locked?
+
       models.clear
       self
     end
@@ -73,10 +81,31 @@ module ActiveRecordCompose
     # @return [self] Successful deletion
     # @return [nil] If deletion fails
     def delete(model)
+      raise LockedCollectionError.new("Collection is locked and cannot be changed.", owner) if locked?
+
       wrapped = wrap(model)
       return nil unless models.delete(wrapped)
 
       self
+    end
+
+    def locked? = !!@locked
+
+    def lock
+      @locked = true
+      self
+    end
+
+    def unlock
+      @locked = false
+      self
+    end
+
+    def with_lock
+      lock
+      yield
+    ensure
+      unlock
     end
 
     private

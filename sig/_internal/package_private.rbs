@@ -57,6 +57,12 @@ module ActiveRecordCompose
 
   class ComposedCollection
     def initialize: (Model) -> void
+    def lock: () -> self
+    def locked?: () -> bool
+    def unlock: () -> self
+    def with_lock: [T] () { () -> T } -> T
+
+    @locked: bool
 
     private
     attr_reader owner: Model
