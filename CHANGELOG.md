@@ -9,6 +9,8 @@
 - Omitted `#destroy` and `#touch` from `ActiveRecordCompose::Model`.
   These were unintentionally provided by the `ActiveRecord::Transactions` module. The but in fact did not work correctly.
   (https://github.com/hamajyotan/active_record_compose/pull/27)
+- `before_save`, `before_create` and `before_update` hooks do not allow update operations on models.
+  (https://github.com/hamajyotan/active_record_compose/pull/28)
 
 ## [0.11.3] - 2025-07-13
 

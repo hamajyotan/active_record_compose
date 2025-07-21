@@ -51,6 +51,7 @@ module ActiveRecordCompose
     extend ActiveModel::Callbacks
 
     private
+    def models: -> ComposedCollection
     def with_callbacks: { () -> bool } -> bool
     def callback_context: -> (:create | :update)
   end
