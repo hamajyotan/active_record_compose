@@ -15,6 +15,11 @@ module ActiveRecordCompose
         freeze
       end
 
+      def define_delegated_attribute(klass)
+        klass.delegate(reader, writer, to:, allow_nil:)
+        klass.define_attribute_methods(attribute)
+      end
+
       # @return [String] The attribute name as string
       def attribute_name = attribute.to_s
 

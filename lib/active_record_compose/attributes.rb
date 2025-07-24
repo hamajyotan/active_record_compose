@@ -111,7 +111,7 @@ module ActiveRecordCompose
         end
 
         delegations = attributes.map { Delegation.new(attribute: _1, to:, allow_nil:) }
-        delegations.each { define_attribute_methods(_1.attribute) }
+        delegations.each { _1.define_delegated_attribute(self) }
 
         self.delegated_attributes = (delegated_attributes.to_a + delegations).reverse.uniq { _1.attribute }.reverse
       end
