@@ -17,7 +17,11 @@ module ActiveRecordCompose
 
       def define_delegated_attribute(klass)
         klass.delegate(reader, writer, to:, allow_nil:)
-        klass.define_attribute_methods(attribute)
+        klass.module_eval <<~RUBY, __FILE__, __LINE__ + 1
+          def #{reader}?
+            query?(#{reader})
+          end
+        RUBY
       end
 
       # @return [String] The attribute name as string

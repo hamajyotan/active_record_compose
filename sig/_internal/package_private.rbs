@@ -40,6 +40,7 @@ module ActiveRecordCompose
 
       private
       def attribute?: (attribute_name) -> untyped
+      def query?: (untyped value) -> bool
     end
   end
 
