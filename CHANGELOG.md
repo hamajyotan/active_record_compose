@@ -4,7 +4,6 @@
   - `#update(attributes = {})` to `#update(attributes)`
   - `#update!(attributes = {})` to `#update!(attributes)`
 - Omitted Specify instance variables in the `:to` option of `delegate_attribute`.
-- refactor: Integrate attributes defined in `delegate_attribute` into an `AttributeSet`.
 - Omitted `#destroy` and `#touch` from `ActiveRecordCompose::Model`.
   These were unintentionally provided by the `ActiveRecord::Transactions` module. The but in fact did not work correctly.
 
