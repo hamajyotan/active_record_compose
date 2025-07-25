@@ -1,13 +1,14 @@
 ## [Unreleased]
 
 - Omits default arguments for `#update` and `#update!`. It's to align I/F with ActiveRecord.
+  (https://github.com/hamajyotan/active_record_compose/pull/25)
   - `#update(attributes = {})` to `#update(attributes)`
   - `#update!(attributes = {})` to `#update!(attributes)`
 - Omitted Specify instance variables in the `:to` option of `delegate_attribute`.
-- refactor: Integrate attributes defined in `delegate_attribute` into an `AttributeSet`.
-  This avoids dependency on `Module#delegate`.
+  (https://github.com/hamajyotan/active_record_compose/pull/29)
 - Omitted `#destroy` and `#touch` from `ActiveRecordCompose::Model`.
   These were unintentionally provided by the `ActiveRecord::Transactions` module. The but in fact did not work correctly.
+  (https://github.com/hamajyotan/active_record_compose/pull/27)
 
 ## [0.11.3] - 2025-07-13
 

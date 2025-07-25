@@ -50,9 +50,9 @@ module ActiveRecordCompose
 
       private
 
-      def attribute?(attr_name)
-        value = public_send(attr_name)
+      def attribute?(attr_name) = query?(public_send(attr_name))
 
+      def query?(value)
         case value
         when true then true
         when false, nil then false
