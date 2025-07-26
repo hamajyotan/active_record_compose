@@ -16,9 +16,9 @@ ActiveRecord::Schema.define do
 
   create_table :profiles, force: true do |t|
     t.references :account, null: false, index: { unique: true }, foreign_key: true
-    t.string :firstname
-    t.string :lastname
-    t.integer :age
+    t.string :firstname, null: false
+    t.string :lastname, null: false
+    t.integer :age, null: false
     t.timestamps
   end
 
