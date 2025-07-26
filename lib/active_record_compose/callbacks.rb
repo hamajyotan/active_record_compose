@@ -35,7 +35,16 @@ module ActiveRecordCompose
     # Evaluate while firing callbacks such as `before_save` `after_save`
     # before and after block evaluation.
     #
-    def with_callbacks(&block) = run_callbacks(:save) { run_callbacks(callback_context, &block) }
+    def with_callbacks(&block)
+      models.with_lock do
+        run_callbacks(:save) do
+          run_callbacks(callback_context) do
+            block.call
+            models.unlock
+          end
+        end
+      end
+    end
 
     # Returns the symbol representing the callback context, which is `:create` if the record
     # is new, or `:update` if it has been persisted.
