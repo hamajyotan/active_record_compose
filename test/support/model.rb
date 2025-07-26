@@ -20,6 +20,11 @@ class Profile < ApplicationRecord
   validates :age, numericality: { less_than_or_equal_to: 18 }, on: :education
 end
 
+class Credential < ApplicationRecord
+  has_secure_password
+  belongs_to :account
+end
+
 class OperationLog < ApplicationRecord
   validates :action, presence: true
 end

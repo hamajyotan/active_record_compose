@@ -42,6 +42,9 @@ gem "minitest"
 gem "minitest-power_assert"
 gem "minitest-reporters"
 
+# model defined in the test is dependent.
+gem "bcrypt"
+
 # lint.
 gem "rubocop-rails-omakase"
 gem "steep", require: false
