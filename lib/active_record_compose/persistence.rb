@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "callbacks"
 require_relative "composed_collection"
 
 module ActiveRecordCompose
@@ -8,6 +9,7 @@ module ActiveRecordCompose
   # @private
   module Persistence
     extend ActiveSupport::Concern
+    include ActiveRecordCompose::Callbacks
 
     # Save the models that exist in models.
     # Returns false if any of the targets fail, true if all succeed.

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require_relative "attributes"
-require_relative "callbacks"
 require_relative "composed_collection"
 require_relative "persistence"
 require_relative "transaction_support"
+require_relative "validations"
 
 module ActiveRecordCompose
   # This is the core class of {ActiveRecordCompose}.
@@ -84,8 +84,8 @@ module ActiveRecordCompose
 
     include ActiveRecordCompose::Attributes
     include ActiveRecordCompose::Persistence
+    include ActiveRecordCompose::Validations
     include ActiveRecordCompose::TransactionSupport
-    include ActiveRecordCompose::Callbacks
 
     begin
       # @group Model Core

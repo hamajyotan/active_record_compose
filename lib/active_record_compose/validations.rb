@@ -8,6 +8,7 @@ module ActiveRecordCompose
   # @private
   module Validations
     extend ActiveSupport::Concern
+    include ActiveModel::Validations::Callbacks
 
     included do
       validate :validate_models

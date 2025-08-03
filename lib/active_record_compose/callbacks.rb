@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "validations"
-
 module ActiveRecordCompose
   # @private
   #
@@ -23,8 +21,6 @@ module ActiveRecordCompose
     include ActiveModel::Validations::Callbacks
 
     included do
-      include ActiveRecordCompose::Validations
-
       define_model_callbacks :save
       define_model_callbacks :create
       define_model_callbacks :update
