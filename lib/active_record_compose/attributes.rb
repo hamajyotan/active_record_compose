@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "attributes/attribute_predicate"
 require_relative "attributes/delegation"
 require_relative "attributes/querying"
 

@@ -15,6 +15,16 @@ module ActiveRecordCompose
       def delegated_attributes=: (Array[Delegation]) -> untyped
     end
 
+    class AttributePredicate
+      def initialize: (untyped value) -> void
+      def call: -> bool
+
+      @value: untyped
+
+      private
+      attr_reader value: untyped
+    end
+
     class Delegation
       def initialize: (attribute: String, to: Symbol, ?allow_nil: bool) -> void
       def attribute: () -> Symbol

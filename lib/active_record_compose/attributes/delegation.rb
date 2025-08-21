@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "attribute_predicate"
+
 module ActiveRecordCompose
   module Attributes
     # @private
@@ -19,7 +21,7 @@ module ActiveRecordCompose
         klass.delegate(reader, writer, to:, allow_nil:)
         klass.module_eval <<~RUBY, __FILE__, __LINE__ + 1
           def #{reader}?
-            query?(#{reader})
+            ActiveRecordCompose::Attributes::AttributePredicate.new(#{reader}).call
           end
         RUBY
       end

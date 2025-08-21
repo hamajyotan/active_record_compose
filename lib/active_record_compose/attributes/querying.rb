@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "attribute_predicate"
+
 module ActiveRecordCompose
   module Attributes
     # @private
@@ -53,16 +55,7 @@ module ActiveRecordCompose
       def attribute?(attr_name) = query?(public_send(attr_name))
 
       def query?(value)
-        case value
-        when true then true
-        when false, nil then false
-        else
-          if value.respond_to?(:zero?)
-            !value.zero?
-          else
-            value.present?
-          end
-        end
+        ActiveRecordCompose::Attributes::AttributePredicate.new(value).call
       end
     end
   end
