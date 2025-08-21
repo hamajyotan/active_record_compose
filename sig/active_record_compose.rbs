@@ -47,6 +47,15 @@ module ActiveRecordCompose
     def delete: (ar_like) -> ComposedCollection?
   end
 
+  class Error < StandardError
+  end
+
+  class LockedCollectionError < Error
+    def initialize: (untyped cause, Model owner) -> void
+    attr_reader owner: Model
+    @owner: Model
+  end
+
   class Model
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
