@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.12.0] - 2025-08-21
+
 - Omits default arguments for `#update` and `#update!`. It's to align I/F with ActiveRecord.
   (https://github.com/hamajyotan/active_record_compose/pull/25)
   - `#update(attributes = {})` to `#update(attributes)`
