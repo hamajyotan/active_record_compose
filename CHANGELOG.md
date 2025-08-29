@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- drop support rails 7.0.x
+
 ## [0.12.0] - 2025-08-21
 
 - Omits default arguments for `#update` and `#update!`. It's to align I/F with ActiveRecord.
