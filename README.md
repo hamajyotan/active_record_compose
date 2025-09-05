@@ -1,7 +1,7 @@
 # ActiveRecordCompose
 
 ActiveRecordCompose lets you build form objects that combine multiple ActiveRecord models into a single, unified interface.
-It makes complex updates - such as user registration forms spanning multiple tables - easier to write, validate, and maintain.
+More than just a simple form object, it is designed as a **business-oriented composed model** that encapsulates complex operations-such as user registration spanning multiple tables-making them easier to write, validate, and maintain.
 
 [![Gem Version](https://badge.fury.io/rb/active_record_compose.svg)](https://badge.fury.io/rb/active_record_compose)
 ![CI](https://github.com/hamajyotan/active_record_compose/workflows/CI/badge.svg)
@@ -37,7 +37,7 @@ This mixes unrelated concerns into one model, leading to unnecessary complexity.
 
 `ActiveModel::Model` helps here — it provides the familiar API (`attribute`, `errors`, validations, callbacks) without persistence, so you can isolate logic per use case.
 
-**ActiveRecordCompose** builds on `ActiveModel::Model` and acts as a first-class model within Rails:
+**ActiveRecordCompose** builds on `ActiveModel::Model` and is a powerful **business object** that acts as a first-class model within Rails.
 - Transparently accesses attributes across multiple models
 - Saves all associated models atomically in a transaction
 - Collects and exposes error information consistently
@@ -80,10 +80,10 @@ You can compose them into one form object:
 
 ```ruby
 class UserRegistration < ActiveRecordCompose::Model
-  def initialize
+  def initialize(attributes = {})
     @account = Account.new
     @profile = @account.build_profile
-    super()
+    super(attributes)
     models << account << profile
   end
 
@@ -109,6 +109,7 @@ end
 Usage:
 
 ```ruby
+# === Standalone script ===
 registration = UserRegistration.new
 registration.update!(
   name: "foo",
@@ -119,6 +120,25 @@ registration.update!(
   email_confirmation: "bar@example.com",
   terms_of_service: true,
 )
+
+# === Or, in a Rails controller with strong parameters ===
+class UserRegistrationsController < ApplicationController
+  def create
+    @registration = UserRegistration.new(user_registration_params)
+    if @registration.save
+      redirect_to root_path, notice: "Registered!"
+    else
+      render :new
+    end
+  end
+
+  private
+  def user_registration_params
+    params.require(:user_registration).permit(
+      :name, :email, :firstname, :lastname, :age, :email_confirmation, :terms_of_service
+    )
+  end
+end
 ```
 
 Both `Account` and `Profile` will be updated **atomically in one transaction**.
@@ -181,6 +201,8 @@ en:
       messages:
         record_invalid: 'Validation failed: %{errors}'
 ```
+
+For more complete usage patterns, see the [Sample Application](#sample-application) below.
 
 ## Advanced Usage
 
@@ -265,6 +287,11 @@ Instead, this behavior is documented here so that developers can make an informe
 
 ## Sample Application
 
+The sample app demonstrates a more complete usage of ActiveRecordCompose
+(e.g., user registration flows involving multiple models).
+It is not meant to cover every possible pattern, but can serve as a reference
+for putting the library into practice.
+
 Try it out in your browser with GitHub Codespaces (or locally):
 
 - https://github.com/hamajyotan/active_record_compose-example
@@ -273,7 +300,6 @@ Try it out in your browser with GitHub Codespaces (or locally):
 
 - [API Documentation (YARD)](https://hamajyotan.github.io/active_record_compose/)
 - [Blog article introducing the concept](https://dev.to/hamajyotan/smart-way-to-update-multiple-models-simultaneously-in-rails-51b6)
-- [Sample Application](https://github.com/hamajyotan/active_record_compose-example)
 
 ## Development
 
