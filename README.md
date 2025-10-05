@@ -120,6 +120,12 @@ registration.update!(
   email_confirmation: "bar@example.com",
   terms_of_service: true,
 )
+# `#update!` SQL log
+#   BEGIN immediate TRANSACTION
+#   INSERT INTO "accounts" ("created_at", "email", "name", "updated_at") VALUES (...
+#   INSERT INTO "profiles" ("account_id", "age", "created_at", "firstname", "lastname", ...
+#   COMMIT TRANSACTION
+
 
 # === Or, in a Rails controller with strong parameters ===
 class UserRegistrationsController < ApplicationController
