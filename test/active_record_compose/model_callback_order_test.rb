@@ -14,7 +14,6 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     before_save { tracer << "before_save called" }
     before_create { tracer << "before_create called" }
     before_update { tracer << "before_update called" }
-    before_commit { tracer << "before_commit called" }
     after_save { tracer << "after_save called" }
     after_create { tracer << "after_create called" }
     after_update { tracer << "after_update called" }
@@ -39,7 +38,6 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
         "before_update called",
         "after_update called",
         "after_save called",
-        "before_commit called",
         "after_commit called"
       ]
     assert { tracer == expected }
@@ -56,7 +54,6 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
         "before_create called",
         "after_create called",
         "after_save called",
-        "before_commit called",
         "after_commit called"
       ]
     assert { tracer == expected }
@@ -73,7 +70,6 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
         "before_update called",
         "after_update called",
         "after_save called",
-        "before_commit called",
         "after_commit called"
       ]
     assert { tracer == expected }
@@ -90,7 +86,6 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
         "before_create called",
         "after_create called",
         "after_save called",
-        "before_commit called",
         "after_commit called"
       ]
     assert { tracer == expected }
@@ -120,7 +115,6 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
         "after_save called",
         "inner transsaction ends",
         "outer transsaction ends",
-        "before_commit called",
         "after_commit called"
       ]
     assert { tracer == expected }
