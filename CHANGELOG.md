@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+- Remove `before_commit` callback on test.
+  Although the `before_commit` callback exists internally and actually works, it is an
+  undocumented definition not described in the ActiveRecord documentation. Accordingly,
+  we will not verify this in the callback tests. Also, this callback may stop working in
+  the future.
+  (https://github.com/hamajyotan/active_record_compose/pull/37)
+
 ## [1.0.0] - 2025-09-23
 
 - drop support rails 7.0.x
