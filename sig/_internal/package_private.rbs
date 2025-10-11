@@ -100,15 +100,35 @@ module ActiveRecordCompose
   module TransactionSupport
     extend ActiveSupport::Concern
     include ActiveRecord::Transactions
+    extend TransactionSupport::ClassMethods
 
     module ClassMethods
+      include ActiveSupport::Callbacks::ClassMethods
+
       def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
       def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
-      def with_connection: [T] () { () -> T } -> T
+      def with_connection: [T] () { (ActiveRecord::ConnectionAdapters::AbstractAdapter) -> T } -> T
+
+      def before_commit: (*untyped) -> untyped
+      def after_commit: (*untyped) -> untyped
+      def after_rollback: (*untyped) -> untyped
 
       private
       def ar_class: -> singleton(ActiveRecord::Base)
+      def prepend_option: -> ({ prepend: true } | {})
+      def set_options_for_callbacks!: (untyped, ?({ prepend: true } | {})) -> untyped
     end
+
+    def save: (**untyped options) -> bool
+    def save!: (**untyped options) -> untyped
+    def _run_before_commit_callbacks: () -> untyped
+    def _run_commit_callbacks: () -> untyped
+    def _run_rollback_callbacks: () -> untyped
+
+    private
+    def default_ar_class: -> singleton(ActiveRecord::Base)
+    def connection_pool: (?ar_class: singleton(ActiveRecord::Base)) -> ActiveRecord::ConnectionAdapters::ConnectionPool
+    def with_pool_transaction_isolation_level: [T] (ActiveRecord::ConnectionAdapters::AbstractAdapter) { () -> T } -> T
   end
 
   module Persistence
