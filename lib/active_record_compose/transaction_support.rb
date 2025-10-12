@@ -20,8 +20,6 @@ module ActiveRecordCompose
       # In ActiveRecord, it is soft deprecated.
       delegate :connection, to: :ar_class
 
-      def composite_primary_key? = false # steep:ignore
-
       private
 
       def ar_class = ActiveRecord::Base
