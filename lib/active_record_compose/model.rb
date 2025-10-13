@@ -359,6 +359,29 @@ module ActiveRecordCompose
       super
     end
 
+    # Returns the ID value. This value is used when passing it to the `:model` option of `form_with`, etc.
+    # Normally it returns nil, but it can be overridden to delegate to the containing model.
+    #
+    # @example Redefine the id method by delegating to the containing model
+    #     class Foo < ActiveRecordCompose::Model
+    #       def initialize(primary_model)
+    #         @primary_model = primary_model
+    #         # ...
+    #       end
+    #
+    #       def id
+    #         primary_model.id
+    #       end
+    #
+    #       private
+    #
+    #       attr_reader :primary_model
+    #     end
+    #
+    # @return [Object] ID value
+    #
+    def id = nil
+
     private
 
     # Returns a collection of model elements to encapsulate.
