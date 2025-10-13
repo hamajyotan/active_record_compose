@@ -82,6 +82,8 @@ module ActiveRecordCompose
     def update: (Hash[attribute_name, untyped]) -> bool
     def update!: (Hash[attribute_name, untyped]) -> untyped
 
+    def id: -> untyped
+
     private
     def models: -> ComposedCollection
   end
