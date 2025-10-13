@@ -101,8 +101,6 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
     include ActiveRecord::Transactions
 
-    def id: -> untyped
-
     module ClassMethods
       def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
       def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
