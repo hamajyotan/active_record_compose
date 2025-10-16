@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## [1.0.1] - 2025-10-17
+
+* Removed the private interface `composite_primary_key?`
+  This was previously an internal ActiveRecord dependency, but was not exposed in the release version.
+  (https://github.com/hamajyotan/active_record_compose/pull/39)
+* Relaxed ActiveRecord dependency upper bound to < 8.2
+  (https://github.com/hamajyotan/active_record_compose/pull/42)
+
 ## [1.0.0] - 2025-09-23
 
 - drop support rails 7.0.x
