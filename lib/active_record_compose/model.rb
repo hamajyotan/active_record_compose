@@ -282,7 +282,7 @@ module ActiveRecordCompose
       #   The need for such a value indicates that operations from multiple contexts are being processed.
       #   If the contexts differ, we recommend separating them into different model definitions.
       #
-      #   @params [Hash] Optional parameters.
+      #   @param options [Hash] parameters.
       #   @option options [Boolean] :validate Whether to run validations.
       #     This option is intended for internal use only.
       #     Users should avoid explicitly passing <tt>validate: false</tt>,
