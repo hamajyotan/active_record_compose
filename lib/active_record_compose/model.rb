@@ -2,6 +2,7 @@
 
 require_relative "attributes"
 require_relative "composed_collection"
+require_relative "inspectable"
 require_relative "persistence"
 require_relative "transaction_support"
 require_relative "validations"
@@ -86,6 +87,7 @@ module ActiveRecordCompose
     include ActiveRecordCompose::Persistence
     include ActiveRecordCompose::Validations
     include ActiveRecordCompose::TransactionSupport
+    include ActiveRecordCompose::Inspectable
 
     begin
       # @group Model Core
@@ -351,9 +353,50 @@ module ActiveRecordCompose
       #   Registers a block to be called after the transaction is rolled back.
 
       # @endgroup
-    end
 
-    # @group Model Core
+      # @!method inspect
+      #   Returns a formatted string representation of the record's attributes.
+      #   It tries to replicate the inspect format provided by ActiveRecord as closely as possible.
+      #
+      #   @example
+      #     class Model < ActiveRecordCompose::Model
+      #       def initialize(ar_model)
+      #         @ar_model = ar_model
+      #         super
+      #       end
+      #
+      #       attribute :foo, :date, default: -> { Date.today }
+      #       delegate_attribute :bar, to: :ar_model
+      #
+      #       private attr_reader :ar_model
+      #     end
+      #
+      #     m = Model.new(ar_model)
+      #     m.inspect  #=> #<Model:0x00007ff0fe75fe58 foo: "2025-11-14", bar: "bar">
+      #
+      #   @example use {.filter_attributes}
+      #     class Model < ActiveRecordCompose::Model
+      #       self.filter_attributes += %i[foo]
+      #
+      #       # ...
+      #     end
+      #
+      #     m = Model.new(ar_model)
+      #     m.inspect  #=> #<Model:0x00007ff0fe75fe58 foo: [FILTERED], bar: "bar">
+      #
+      #   @return [String] formatted string representation of the record's attributes.
+      #   @see .filter_attributes
+
+      # @!method self.filter_attributes
+      #   Returns columns not to expose when invoking {#inspect}.
+      #   @return [Array<Symbol>]
+      #   @see #inspect
+
+      # @!method self.filter_attributes=(value)
+      #   Specify columns not to expose when invoking {#inspect}.
+      #   @param [Array<Symbol>] value
+      #   @see #inspect
+    end
 
     def initialize(attributes = {})
       super
@@ -381,6 +424,8 @@ module ActiveRecordCompose
     # @return [Object] ID value
     #
     def id = nil
+
+    # @group Model Core
 
     private
 
