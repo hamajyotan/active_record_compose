@@ -10,16 +10,20 @@ ar_version = ENV.fetch("AR", "latest")
 case ar_version
 when "latest"
   gem "activerecord"
+  gem "railties"
 when "head"
   gem "activemodel", github: "rails/rails"
   gem "activerecord", github: "rails/rails"
   gem "activesupport", github: "rails/rails"
+  gem "railties", github: "rails/rails"
 when /-stable\z/
   gem "activemodel", github: "rails/rails", branch: ar_version
   gem "activerecord", github: "rails/rails", branch: ar_version
   gem "activesupport", github: "rails/rails", branch: ar_version
+  gem "railties", github: "rails/rails", branch: ar_version
 else
   gem "activerecord", ar_version
+  gem "railties", ar_version
 end
 
 gem "sqlite3", "~> 2.1"

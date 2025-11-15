@@ -153,6 +153,10 @@ module ActiveRecordCompose
     def raise_on_save_error_message: -> String
   end
 
+  class Railtie < Rails::Railtie
+    extend Rails::Initializable::ClassMethods
+  end
+
   module Validations : Model
     extend ActiveSupport::Concern
     extend ActiveModel::Validations::ClassMethods
