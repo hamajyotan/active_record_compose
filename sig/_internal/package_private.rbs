@@ -130,16 +130,11 @@ module ActiveRecordCompose
     module ClassMethods
       include ActiveSupport::Callbacks::ClassMethods
 
-      def connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
-      def lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
-      def with_connection: [T] () { (ActiveRecord::ConnectionAdapters::AbstractAdapter) -> T } -> T
-
       def before_commit: (*untyped) -> untyped
       def after_commit: (*untyped) -> untyped
       def after_rollback: (*untyped) -> untyped
 
       private
-      def ar_class: -> singleton(ActiveRecord::Base)
       def prepend_option: -> ({ prepend: true } | {})
       def set_options_for_callbacks!: (untyped, ?({ prepend: true } | {})) -> untyped
     end

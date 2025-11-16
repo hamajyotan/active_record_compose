@@ -12,10 +12,27 @@ module ActiveRecordCompose
     end
 
     module ClassMethods
-      delegate :with_connection, :lease_connection, to: :ar_class
+      # steep:ignore:start
 
-      # In ActiveRecord, it is soft deprecated.
-      delegate :connection, to: :ar_class
+      # @deprecated
+      def with_connection(...)
+        ActiveRecord.deprecator.warn("`with_connection` is deprecated. Use `ActiveRecord::Base.with_connection` instead.")
+        ActiveRecord::Base.with_connection(...)
+      end
+
+      # @deprecated
+      def lease_connection(...)
+        ActiveRecord.deprecator.warn("`lease_connection` is deprecated. Use `ActiveRecord::Base.lease_connection` instead.")
+        ActiveRecord::Base.lease_connection(...)
+      end
+
+      # @deprecated
+      def connection(...)
+        ActiveRecord.deprecator.warn("`connection` is deprecated. Use `ActiveRecord::Base.connection` instead.")
+        ActiveRecord::Base.connection(...)
+      end
+
+      # steep:ignore:end
 
       def before_commit(*args, &block)
         set_options_for_callbacks!(args)
@@ -33,8 +50,6 @@ module ActiveRecordCompose
       end
 
       private
-
-      def ar_class = ActiveRecord::Base
 
       def prepend_option
         if ActiveRecord.run_after_transaction_callbacks_in_order_defined # steep:ignore
