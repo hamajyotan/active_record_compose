@@ -6,6 +6,8 @@ module ActiveRecordCompose
 
     def delegated_attributes: () -> Array[Delegation]
 
+    @attributes: untyped
+
     module ClassMethods : Module
       include ActiveModel::Attributes::ClassMethods
       include ActiveModel::AttributeMethods::ClassMethods
@@ -83,6 +85,29 @@ module ActiveRecordCompose
     include PackagePrivate
   end
 
+  module Inspectable
+    extend ActiveSupport::Concern
+    include Attributes
+    extend Inspectable::ClassMethods
+
+    def inspect: () -> String
+    def pretty_print: (untyped q) -> void
+
+    private
+    def format_for_inspect: (String name, untyped value) -> String
+
+    module ClassMethods
+      FILTERED_MASK: String
+
+      def inspection_filter: () -> ActiveSupport::ParameterFilter
+      def filter_attributes: () -> Array[untyped]
+      def filter_attributes=: (Array[untyped]) -> void
+
+      @inspection_filter: ActiveSupport::ParameterFilter?
+      @filter_attributes: untyped
+    end
+  end
+
   class Model
     include Attributes
     extend Attributes::ClassMethods
@@ -126,6 +151,10 @@ module ActiveRecordCompose
     def save_models: (bang: bool, **untyped options) -> bool
     def raise_on_save_error: -> bot
     def raise_on_save_error_message: -> String
+  end
+
+  class Railtie < Rails::Railtie
+    extend Rails::Initializable::ClassMethods
   end
 
   module Validations : Model

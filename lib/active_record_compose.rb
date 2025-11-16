@@ -11,3 +11,5 @@ require_relative "active_record_compose/model"
 #
 module ActiveRecordCompose
 end
+
+require "active_record_compose/railtie" if defined?(::Rails::Railtie)

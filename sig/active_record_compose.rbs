@@ -76,6 +76,9 @@ module ActiveRecordCompose
     def self.lease_connection: -> ActiveRecord::ConnectionAdapters::AbstractAdapter
     def self.with_connection: [T] () { () -> T } -> T
 
+    def self.filter_attributes: () -> Array[untyped]
+    def self.filter_attributes=: (Array[untyped]) -> untyped
+
     def initialize: (?Hash[attribute_name, untyped]) -> void
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped
@@ -83,6 +86,9 @@ module ActiveRecordCompose
     def update!: (Hash[attribute_name, untyped]) -> untyped
 
     def id: -> untyped
+
+    def inspect: () -> String
+    def pretty_print: (untyped q) -> void
 
     private
     def models: -> ComposedCollection
