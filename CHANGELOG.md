@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+## [1.1.0] - 2025-11-19
+
+* Implemented ActiveRecord-like #inspect
+  In activerecord's `#inspect`, the string is a list of attributes, and we have reproduced a similar format.
+  (https://github.com/hamajyotan/active_record_compose/pull/45)
+* `.with_connection` `.lease_connection` and `.connection` are deprecated. Use `ActiveRecord::Base.with_connection` etc. instead.
+  (https://github.com/hamajyotan/active_record_compose/pull/46)
+* refactor: Remove `ActiveRecord::Transactions` module dependency
+  (https://github.com/hamajyotan/active_record_compose/pull/44)
+
 ## [1.0.1] - 2025-10-17
 
 * Removed the private interface `composite_primary_key?`
