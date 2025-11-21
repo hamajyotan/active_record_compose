@@ -129,8 +129,10 @@ module ActiveRecordCompose
     def _run_before_commit_callbacks: () -> untyped
     def _run_commit_callbacks: () -> untyped
     def _run_rollback_callbacks: () -> untyped
+    def connection_pools: () -> Array[ActiveRecord::ConnectionAdapters::ConnectionPool]
 
     private
+    def models: -> ComposedCollection
     def default_ar_class: -> singleton(ActiveRecord::Base)
     def connection_pool: (?ar_class: singleton(ActiveRecord::Base)) -> ActiveRecord::ConnectionAdapters::ConnectionPool
     def with_pool_transaction_isolation_level: [T] (ActiveRecord::ConnectionAdapters::AbstractAdapter) { () -> T } -> T

@@ -106,23 +106,44 @@ module ActiveRecordCompose
 
     def save!(**options) = with_transaction_returning_status { super }
 
+    # @private
+    def connection_pools
+      pools =
+        models.compact.flat_map do |model|
+          if model.is_a?(ActiveRecordCompose::TransactionSupport)
+            model.connection_pools
+          elsif model.is_a?(ActiveRecord::Base)
+            connection_pool(ar_class: model.class)
+          else
+            [] # : Array[ActiveRecord::ConnectionAdapters::ConnectionPool]
+          end
+        end
+      pools << connection_pool if pools.blank?
+      pools.uniq
+    end
+
     private
 
     # @private
-    def with_transaction_returning_status
-      connection_pool.with_connection do |connection|
-        with_pool_transaction_isolation_level(connection) do
-          ensure_finalize = !connection.transaction_open?
+    def with_transaction_returning_status(&block)
+      procs = connection_pools.inject(block) do |inner_proc, pool|
+        -> do
+          pool.with_connection do |connection|
+            with_pool_transaction_isolation_level(connection) do
+              ensure_finalize = !connection.transaction_open?
 
-          connection.transaction do |tran|
-            tran ||= ActiveTransaction.new(connection.current_transaction) # steep:ignore
-            transaction_coordinator.add_transaction(tran)
-            connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?)
+              connection.transaction do |tran|
+                tran ||= ActiveTransaction.new(connection.current_transaction) # steep:ignore
+                transaction_coordinator.add_transaction(tran)
+                connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?)
 
-            yield.tap { raise ActiveRecord::Rollback unless _1 }
-          end || false
+                inner_proc.call.tap { raise ActiveRecord::Rollback unless _1 }
+              end
+            end
+          end
         end
       end
+      procs.call || false
     end
 
     # @private
