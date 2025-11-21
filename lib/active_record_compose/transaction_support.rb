@@ -91,11 +91,15 @@ module ActiveRecordCompose
 
       # @private
       def committed!(should_run_callbacks: true)
+        return unless current_transactions.all? { _1.closed? }
+
         _run_commit_callbacks if should_run_callbacks
       end
 
       # @private
       def rolledback!(force_restore_state: false, should_run_callbacks: true)
+        return unless current_transactions.all? { _1.closed? }
+
         _run_rollback_callbacks if should_run_callbacks
       end
     end
@@ -108,11 +112,14 @@ module ActiveRecordCompose
 
     # @private
     def with_transaction_returning_status
+      current_transactions.reject! { _1.closed? }
+
       connection_pool.with_connection do |connection|
         with_pool_transaction_isolation_level(connection) do
           ensure_finalize = !connection.transaction_open?
 
-          connection.transaction do
+          connection.transaction do |tran|
+            current_transactions << tran
             connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?) # steep:ignore
 
             yield.tap { raise ActiveRecord::Rollback unless _1 }
@@ -120,6 +127,9 @@ module ActiveRecordCompose
         end
       end
     end
+
+    # @private
+    def current_transactions = @current_transactions ||= Set.new
 
     # @private
     def default_ar_class = ActiveRecord::Base
