@@ -91,12 +91,16 @@ module ActiveRecordCompose
 
       # @private
       def committed!(should_run_callbacks: true)
-        _run_commit_callbacks if should_run_callbacks
+        return unless should_run_callbacks
+
+        _run_commit_callbacks
       end
 
       # @private
       def rolledback!(force_restore_state: false, should_run_callbacks: true)
-        _run_rollback_callbacks if should_run_callbacks
+        return unless should_run_callbacks
+
+        _run_rollback_callbacks
       end
     end
 
