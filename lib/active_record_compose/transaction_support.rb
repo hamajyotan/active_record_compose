@@ -96,7 +96,7 @@ module ActiveRecordCompose
             connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?) # steep:ignore
 
             yield.tap { raise ActiveRecord::Rollback unless _1 }
-          end
+          end || false
         end
       end
     end
