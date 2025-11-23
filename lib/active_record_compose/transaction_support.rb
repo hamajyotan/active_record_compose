@@ -6,6 +6,26 @@ module ActiveRecordCompose
   module TransactionSupport
     extend ActiveSupport::Concern
 
+    # steep:ignore:start
+
+    # In older versions, the ActiveRecord::Transaction object is not passed to the block argument of #transaction.
+    # So instead, we define a transaction object that can be evaluated equivalently.
+    # This follow-up will no longer be necessary when support for Rails 7.1 is dropped.
+    #
+    class ActiveTransaction
+      def initialize(transaction)
+        @transaction = transaction
+      end
+
+      def open? = !closed?
+
+      def closed? = transaction&.state&.completed?
+
+      attr_reader :transaction
+    end
+
+    # steep:ignore:end
+
     included do
       define_callbacks :commit, :rollback, :before_commit, scope: [ :kind, :name ]
     end
@@ -119,7 +139,7 @@ module ActiveRecordCompose
           ensure_finalize = !connection.transaction_open?
 
           connection.transaction do |tran|
-            current_transactions << tran
+            current_transactions << (tran || ActiveTransaction.new(connection.current_transaction)) # steep:ignore
             connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?) # steep:ignore
 
             yield.tap { raise ActiveRecord::Rollback unless _1 }
