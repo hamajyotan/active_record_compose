@@ -44,7 +44,7 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     model = ComposedModel.new
     model.assign_attributes(invalid_attributes)
 
-    assert_not model.save
+    assert { model.save == false }
     e = assert_raises(ActiveRecord::RecordInvalid) { model.save! }
     assert { model == e.record }
   end
@@ -53,7 +53,7 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     model = ComposedModel.new
     model.assign_attributes(valid_attributes)
 
-    assert model.valid?
+    assert { model.valid? == true }
     assert_difference -> { Account.count } => 1, -> { Profile.count } => 1 do
       model.save!
     end
@@ -67,8 +67,8 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     model.assign_attributes(valid_attributes)
     model.push_falsy_object_to_models
 
-    assert model.valid?
-    assert model.save
+    assert { model.valid? == true }
+    assert { model.save == true }
   end
 
   test "errors made during internal model storage are propagated externally." do
@@ -90,7 +90,7 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     model = model_class.new
     model.assign_attributes(valid_attributes)
 
-    assert_not model.save
+    assert { model.save == false }
     assert_raises(ActiveRecord::RecordInvalid) do
       model.save!
     end
