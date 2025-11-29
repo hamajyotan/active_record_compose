@@ -45,5 +45,7 @@ gem "steep", require: false
 
 # document.
 gem "yard"
+gem "yard-activesupport-concern"
+gem "webrick"
 gem "redcarpet"
 gem "github-markup"
