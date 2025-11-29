@@ -62,7 +62,9 @@ module ActiveRecordCompose
       class_attribute :delegated_attributes, instance_writer: false
     end
 
-    module ClassMethods
+    # steep:ignore:start
+
+    class_methods do
       # Defines the reader and writer for the specified attribute.
       #
       # @example
@@ -112,6 +114,8 @@ module ActiveRecordCompose
       # @return [Array<String>] array of attribute name.
       def attribute_names = super + delegated_attributes.to_a.map { _1.attribute_name }
     end
+
+    # steep:ignore:end
 
     # Returns a array of attribute name.
     # Attributes declared with `delegate_attribute` are also merged.

@@ -4,18 +4,12 @@ module ActiveRecordCompose
     include ActiveModel::Attributes
     include Querying
 
+    def self.delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: bool) -> untyped
+    def self.delegated_attributes: () -> Array[Delegation]
+    def self.delegated_attributes=: (Array[Delegation]) -> untyped
     def delegated_attributes: () -> Array[Delegation]
 
     @attributes: untyped
-
-    module ClassMethods : Module
-      include ActiveModel::Attributes::ClassMethods
-      include ActiveModel::AttributeMethods::ClassMethods
-
-      def delegate_attribute: (*untyped methods, to: untyped, ?allow_nil: bool) -> untyped
-      def delegated_attributes: () -> Array[Delegation]
-      def delegated_attributes=: (Array[Delegation]) -> untyped
-    end
 
     class AttributePredicate
       def initialize: (untyped value) -> void
@@ -88,31 +82,20 @@ module ActiveRecordCompose
   module Inspectable
     extend ActiveSupport::Concern
     include Attributes
-    extend Inspectable::ClassMethods
 
+    def self.inspection_filter: () -> ActiveSupport::ParameterFilter
+    def self.filter_attributes: () -> Array[untyped]
+    def self.filter_attributes=: (Array[untyped]) -> void
     def inspect: () -> String
     def pretty_print: (untyped q) -> void
 
     private
     def format_for_inspect: (String name, untyped value) -> String
-
-    module ClassMethods
-      FILTERED_MASK: String
-
-      def inspection_filter: () -> ActiveSupport::ParameterFilter
-      def filter_attributes: () -> Array[untyped]
-      def filter_attributes=: (Array[untyped]) -> void
-
-      @inspection_filter: ActiveSupport::ParameterFilter?
-      @filter_attributes: untyped
-    end
   end
 
   class Model
     include Attributes
-    extend Attributes::ClassMethods
     include TransactionSupport
-    extend TransactionSupport::ClassMethods
     include Callbacks
 
     @__models: ComposedCollection
@@ -125,19 +108,12 @@ module ActiveRecordCompose
   module TransactionSupport
     extend ActiveSupport::Concern
     include ActiveRecord::Transactions
-    extend TransactionSupport::ClassMethods
+    include ActiveSupport::Callbacks
+    extend ActiveSupport::Callbacks::ClassMethods
 
-    module ClassMethods
-      include ActiveSupport::Callbacks::ClassMethods
-
-      def before_commit: (*untyped) -> untyped
-      def after_commit: (*untyped) -> untyped
-      def after_rollback: (*untyped) -> untyped
-
-      private
-      def prepend_option: -> ({ prepend: true } | {})
-      def set_options_for_callbacks!: (untyped, ?({ prepend: true } | {})) -> untyped
-    end
+    def self.before_commit: (*untyped) -> untyped
+    def self.after_commit: (*untyped) -> untyped
+    def self.after_rollback: (*untyped) -> untyped
 
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped
@@ -154,7 +130,6 @@ module ActiveRecordCompose
   module Persistence
     include Callbacks
     include TransactionSupport
-    extend TransactionSupport::ClassMethods
 
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped

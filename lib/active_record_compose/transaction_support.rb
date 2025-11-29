@@ -11,9 +11,9 @@ module ActiveRecordCompose
       define_callbacks :commit, :rollback, :before_commit, scope: [ :kind, :name ]
     end
 
-    module ClassMethods
-      # steep:ignore:start
+    # steep:ignore:start
 
+    class_methods do
       # @deprecated
       def with_connection(...)
         ActiveRecord.deprecator.warn("`with_connection` is deprecated. Use `ActiveRecord::Base.with_connection` instead.")
@@ -31,28 +31,32 @@ module ActiveRecordCompose
         ActiveRecord.deprecator.warn("`connection` is deprecated. Use `ActiveRecord::Base.connection` instead.")
         ActiveRecord::Base.connection(...)
       end
+    end
 
-      # steep:ignore:end
+    # steep:ignore:end
 
+    # steep:ignore:start
+
+    class_methods do
       def before_commit(*args, &block)
         set_options_for_callbacks!(args)
-        set_callback(:before_commit, :before, *args, &block) # steep:ignore
+        set_callback(:before_commit, :before, *args, &block)
       end
 
       def after_commit(*args, &block)
         set_options_for_callbacks!(args, prepend_option)
-        set_callback(:commit, :after, *args, &block) # steep:ignore
+        set_callback(:commit, :after, *args, &block)
       end
 
       def after_rollback(*args, &block)
         set_options_for_callbacks!(args, prepend_option)
-        set_callback(:rollback, :after, *args, &block) # steep:ignore
+        set_callback(:rollback, :after, *args, &block)
       end
 
       private
 
       def prepend_option
-        if ActiveRecord.run_after_transaction_callbacks_in_order_defined # steep:ignore
+        if ActiveRecord.run_after_transaction_callbacks_in_order_defined
           { prepend: true }
         else
           {}
@@ -64,6 +68,8 @@ module ActiveRecordCompose
         args << options
       end
     end
+
+    # steep:ignore:end
 
     def save(**options) = with_transaction_returning_status { super }
 

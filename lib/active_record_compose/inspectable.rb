@@ -39,14 +39,28 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
     include ActiveRecordCompose::Attributes
 
+    # steep:ignore:start
+
+    FILTERED_MASK =
+      Class.new(DelegateClass(::String)) do
+        def pretty_print(pp)
+          pp.text __getobj__
+        end
+      end.new(ActiveSupport::ParameterFilter::FILTERED).freeze
+    private_constant :FILTERED_MASK
+
+    # steep:ignore:end
+
     included do
       self.filter_attributes = []
     end
 
-    module ClassMethods
+    # steep:ignore:start
+
+    class_methods do
       def filter_attributes
         if @filter_attributes.nil?
-          superclass.filter_attributes # steep:ignore
+          superclass.filter_attributes
         else
           @filter_attributes
         end
@@ -56,8 +70,6 @@ module ActiveRecordCompose
         @inspection_filter = nil
         @filter_attributes = value
       end
-
-      # steep:ignore:start
 
       def inspection_filter
         if @filter_attributes.nil?
@@ -77,17 +89,9 @@ module ActiveRecordCompose
           @filter_attributes ||= nil
         end
       end
-
-      FILTERED_MASK =
-        Class.new(DelegateClass(::String)) do
-          def pretty_print(pp)
-            pp.text __getobj__
-          end
-        end.new(ActiveSupport::ParameterFilter::FILTERED).freeze
-      private_constant :FILTERED_MASK
-
-      # steep:ignore:end
     end
+
+    # steep:ignore:end
 
     # Returns a formatted string representation of the record's attributes.
     #
