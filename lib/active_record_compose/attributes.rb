@@ -5,8 +5,6 @@ require_relative "attributes/delegation"
 require_relative "attributes/querying"
 
 module ActiveRecordCompose
-  # @private
-  #
   # Provides attribute-related functionality for use within ActiveRecordCompose::Model.
   #
   # This module allows you to define attributes on your composed model, including support
@@ -56,45 +54,32 @@ module ActiveRecordCompose
     include ActiveModel::Attributes
 
     included do
+      # @type self: Class
+
       include Querying
 
-      # @type self: Class
       class_attribute :delegated_attributes, instance_writer: false
     end
 
-    module ClassMethods
-      # Defines the reader and writer for the specified attribute.
+    # steep:ignore:start
+
+    class_methods do
+      # Provides a method of attribute access to the encapsulated model.
       #
-      # @example
-      #   class AccountRegistration < ActiveRecordCompose::Model
-      #     def initialize(account, attributes = {})
-      #       @account = account
-      #       super(attributes)
-      #       models.push(account)
-      #     end
+      # It provides a way to access the attributes of the model it encompasses,
+      # allowing transparent access as if it had those attributes itself.
       #
-      #     attribute :original_attribute, :string, default: "qux"
-      #     delegate_attribute :name, to: :account
-      #
-      #     private
-      #
-      #     attr_reader :account
-      #   end
-      #
-      #   account = Account.new
-      #   account.name = "foo"
-      #
-      #   registration = AccountRegistration.new(account)
-      #   registration.name         # => "foo" (delegated)
-      #   registration.name?        # => true  (delegated attribute method + `?`)
-      #
-      #   registration.name = "bar" # => updates account.name
-      #   account.name              # => "bar"
-      #   account.name?             # => true
-      #
-      #   registration.attributes
-      #   # => { "original_attribute" => "qux", "name" => "bar" }
-      #
+      # @param [Array<Symbol, String>] attributes
+      #   attributes A variable-length list of attribute names to delegate.
+      # @param [Symbol, String] to
+      #   The target object to which attributes are delegated (keyword argument).
+      # @param [Boolean] allow_nil
+      #   allow_nil Whether to allow nil values. Defaults to false.
+      # @example Basic usage
+      #   delegate_attribute :name, :email, to: :profile
+      # @example Allowing nil
+      #   delegate_attribute :bio, to: :profile, allow_nil: true
+      # @see Module#delegate for similar behavior in ActiveSupport
       def delegate_attribute(*attributes, to:, allow_nil: false)
         if to.start_with?("@")
           raise ArgumentError, "Instance variables cannot be specified in delegate to. (#{to})"
@@ -107,45 +92,68 @@ module ActiveRecordCompose
       end
 
       # Returns a array of attribute name.
-      # Attributes declared with `delegate_attribute` are also merged.
+      # Attributes declared with {.delegate_attribute} are also merged.
       #
+      # @see #attribute_names
       # @return [Array<String>] array of attribute name.
       def attribute_names = super + delegated_attributes.to_a.map { _1.attribute_name }
     end
 
+    # steep:ignore:end
+
     # Returns a array of attribute name.
-    # Attributes declared with `delegate_attribute` are also merged.
+    # Attributes declared with {.delegate_attribute} are also merged.
     #
+    #     class Foo < ActiveRecordCompose::Base
+    #       def initialize(attributes = {})
+    #         @account = Account.new
+    #         super
+    #       end
+    #
+    #       attribute :confirmation, :boolean, default: false   # plain attribute
+    #       delegate_attribute :name, to: :account              # delegated attribute
+    #
+    #       private
+    #
+    #       attr_reader :account
+    #     end
+    #
+    #     Foo.attribute_names                                   # Returns the merged state of plain and delegated attributes
+    #     # => ["confirmation" ,"name"]
+    #
+    #     foo = Foo.new
+    #     foo.attribute_names                                   # Similar behavior for instance method version
+    #     # => ["confirmation", "name"]
+    #
+    # @see #attributes
     # @return [Array<String>] array of attribute name.
     def attribute_names = super + delegated_attributes.to_a.map { _1.attribute_name }
 
     # Returns a hash with the attribute name as key and the attribute value as value.
-    # Attributes declared with `delegate_attribute` are also merged.
+    # Attributes declared with {.delegate_attribute} are also merged.
     #
-    # @return [Hash] hash with the attribute name as key and the attribute value as value.
-    # @example
-    #   class AccountRegistration < ActiveRecordCompose::Model
-    #     def initialize(account, attributes = {})
-    #       @account = account
-    #       super(attributes)
-    #       models.push(account)
+    #     class Foo < ActiveRecordCompose::Base
+    #       def initialize(attributes = {})
+    #         @account = Account.new
+    #         super
+    #       end
+    #
+    #       attribute :confirmation, :boolean, default: false   # plain attribute
+    #       delegate_attribute :name, to: :account              # delegated attribute
+    #
+    #       private
+    #
+    #       attr_reader :account
     #     end
     #
-    #     attribute :original_attribute, :string, default: "qux"
-    #     delegate_attribute :name, to: :account
+    #     foo = Foo.new
+    #     foo.name = "Alice"
+    #     foo.confirmation = true
     #
-    #     private
+    #     foo.attributes                                        # Returns the merged state of plain and delegated attributes
+    #     # => { "confirmation" => true, "name" => "Alice" }
     #
-    #     attr_reader :account
-    #   end
-    #
-    #   account = Account.new
-    #   account.name = "foo"
-    #
-    #   registration = AccountRegistration.new(account)
-    #
-    #   registration.attributes # => { "original_attribute" => "qux", "name" => "bar" }
-    #
+    # @return [Hash<String, Object>] hash with the attribute name as key and the attribute value as value.
     def attributes
       super.merge(*delegated_attributes.to_a.map { _1.attribute_hash(self) })
     end

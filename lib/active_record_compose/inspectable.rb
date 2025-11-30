@@ -4,8 +4,6 @@ require "active_support/parameter_filter"
 require_relative "attributes"
 
 module ActiveRecordCompose
-  # @private
-  #
   # It provides #inspect behavior.
   # It tries to replicate the inspect format provided by ActiveRecord as closely as possible.
   #
@@ -39,26 +37,48 @@ module ActiveRecordCompose
     extend ActiveSupport::Concern
     include ActiveRecordCompose::Attributes
 
+    # steep:ignore:start
+
+    # @private
+    FILTERED_MASK =
+      Class.new(DelegateClass(::String)) do
+        def pretty_print(pp)
+          pp.text __getobj__
+        end
+      end.new(ActiveSupport::ParameterFilter::FILTERED).freeze
+    private_constant :FILTERED_MASK
+
+    # steep:ignore:end
+
     included do
       self.filter_attributes = []
     end
 
-    module ClassMethods
+    # steep:ignore:start
+
+    class_methods do
+      # Returns columns not to expose when invoking {#inspect}.
+      #
+      # @return [Array<Symbol>]
+      # @see #inspect
       def filter_attributes
         if @filter_attributes.nil?
-          superclass.filter_attributes # steep:ignore
+          superclass.filter_attributes
         else
           @filter_attributes
         end
       end
 
+      # Specify columns not to expose when invoking {#inspect}.
+      #
+      # @param [Array<Symbol>] value
+      # @see #inspect
       def filter_attributes=(value)
         @inspection_filter = nil
         @filter_attributes = value
       end
 
-      # steep:ignore:start
-
+      # @private
       def inspection_filter
         if @filter_attributes.nil?
           superclass.inspection_filter
@@ -77,20 +97,41 @@ module ActiveRecordCompose
           @filter_attributes ||= nil
         end
       end
-
-      FILTERED_MASK =
-        Class.new(DelegateClass(::String)) do
-          def pretty_print(pp)
-            pp.text __getobj__
-          end
-        end.new(ActiveSupport::ParameterFilter::FILTERED).freeze
-      private_constant :FILTERED_MASK
-
-      # steep:ignore:end
     end
 
+    # steep:ignore:end
+
     # Returns a formatted string representation of the record's attributes.
+    # It tries to replicate the inspect format provided by ActiveRecord as closely as possible.
     #
+    # @example
+    #   class Model < ActiveRecordCompose::Model
+    #     def initialize(ar_model)
+    #       @ar_model = ar_model
+    #       super
+    #     end
+    #
+    #     attribute :foo, :date, default: -> { Date.today }
+    #     delegate_attribute :bar, to: :ar_model
+    #
+    #     private attr_reader :ar_model
+    #   end
+    #
+    #   m = Model.new(ar_model)
+    #   m.inspect  #=> #<Model:0x00007ff0fe75fe58 foo: "2025-11-14", bar: "bar">
+    #
+    # @example use {.filter_attributes}
+    #   class Model < ActiveRecordCompose::Model
+    #     self.filter_attributes += %i[foo]
+    #
+    #     # ...
+    #   end
+    #
+    #   m = Model.new(ar_model)
+    #   m.inspect  #=> #<Model:0x00007ff0fe75fe58 foo: [FILTERED], bar: "bar">
+    #
+    # @return [String] formatted string representation of the record's attributes.
+    # @see .filter_attributes
     def inspect
       inspection =
         if @attributes
@@ -126,6 +167,7 @@ module ActiveRecordCompose
 
     private
 
+    # @private
     def format_for_inspect(name, value)
       return value.inspect if value.nil?
 

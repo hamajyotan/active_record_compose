@@ -78,6 +78,17 @@ class ActiveRecordCompose::ModelInspectTest < ActiveSupport::TestCase
 
         attribute :age, :integer
       end
+
+    model = klass.new(email: "alice@example.com", password: "Secret")
+
+    assert { model.inspect == '#<Klass email: "alice@example.com", password: [FILTERED]>' }
+
+    assert_pretty_inspect(model, <<~PRETTY_INSPECT)
+      #{Kernel.instance_method(:to_s).bind_call(model).chop}
+       email: "alice@example.com",
+       password: [FILTERED]>
+    PRETTY_INSPECT
+
     model = subclass.new(email: "alice@example.com", password: "Secret", age: 25)
 
     assert { model.inspect == '#<Subclass email: "alice@example.com", password: [FILTERED], age: 25>' }
@@ -108,6 +119,16 @@ class ActiveRecordCompose::ModelInspectTest < ActiveSupport::TestCase
 
         self.filter_attributes += %i[email]
       end
+
+    model = klass.new(email: "alice@example.com", password: "Secret")
+
+    assert { model.inspect == '#<Klass email: "alice@example.com", password: [FILTERED]>' }
+
+    assert_pretty_inspect(model, <<~PRETTY_INSPECT)
+      #{Kernel.instance_method(:to_s).bind_call(model).chop}
+       email: "alice@example.com",
+       password: [FILTERED]>
+    PRETTY_INSPECT
     model = subclass.new(email: "alice@example.com", password: "Secret", age: 25)
 
     assert { model.inspect == "#<Subclass email: [FILTERED], password: [FILTERED], age: 25>" }
@@ -138,6 +159,17 @@ class ActiveRecordCompose::ModelInspectTest < ActiveSupport::TestCase
 
         self.filter_attributes = []
       end
+
+    model = klass.new(email: "alice@example.com", password: "Secret")
+
+    assert { model.inspect == '#<Klass email: "alice@example.com", password: [FILTERED]>' }
+
+    assert_pretty_inspect(model, <<~PRETTY_INSPECT)
+      #{Kernel.instance_method(:to_s).bind_call(model).chop}
+       email: "alice@example.com",
+       password: [FILTERED]>
+    PRETTY_INSPECT
+
     model = subclass.new(email: "alice@example.com", password: "Secret", age: 25)
 
     assert { model.inspect == '#<Subclass email: "alice@example.com", password: "Secret", age: 25>' }

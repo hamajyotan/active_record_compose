@@ -1,4 +1,6 @@
 --private
+--no-private
 --markup markdown
 --markup-provider redcarpet
+--plugin activesupport-concern
 --default-return void
