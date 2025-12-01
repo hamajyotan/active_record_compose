@@ -13,7 +13,7 @@ module ActiveRecordCompose
 
     def initialize(owner)
       @owner = owner
-      @models = []
+      @models = Set.new
     end
 
     # Enumerates model objects.
