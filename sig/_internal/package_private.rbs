@@ -64,10 +64,13 @@ module ActiveRecordCompose
   class ComposedCollection
     def initialize: (Model) -> void
 
+    @symbol_proc_map: Hash[Symbol, (destroy_context_type | condition_type)]
+
     private
     attr_reader owner: Model
     attr_reader models: Array[WrappedModel]
     def wrap: (ar_like, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> WrappedModel
+    def symbol_proc_map: () -> Hash[Symbol, (destroy_context_type | condition_type)]
 
     module PackagePrivate
       def __wrapped_models: () -> Array[WrappedModel]
