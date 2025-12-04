@@ -110,6 +110,15 @@ module ActiveRecordCompose
       equality_key == other.equality_key
     end
 
+    def eql?(other)
+      return true if equal?(other)
+      return false unless self.class == other.class
+
+      equality_key.eql?(other.equality_key)
+    end
+
+    def hash = equality_key.hash
+
     protected
 
     def equality_key = [ model ]
