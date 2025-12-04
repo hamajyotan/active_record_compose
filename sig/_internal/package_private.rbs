@@ -114,6 +114,8 @@ module ActiveRecordCompose
     include ActiveSupport::Callbacks
     extend ActiveSupport::Callbacks::ClassMethods
 
+    @current_transactions: Set[ActiveRecord::ConnectionAdapters::Transaction]
+
     def self.before_commit: (*untyped) -> untyped
     def self.after_commit: (*untyped) -> untyped
     def self.after_rollback: (*untyped) -> untyped
@@ -128,6 +130,7 @@ module ActiveRecordCompose
     def default_ar_class: -> singleton(ActiveRecord::Base)
     def connection_pool: (?ar_class: singleton(ActiveRecord::Base)) -> ActiveRecord::ConnectionAdapters::ConnectionPool
     def with_pool_transaction_isolation_level: [T] (ActiveRecord::ConnectionAdapters::AbstractAdapter) { () -> T } -> T
+    def current_transactions: () -> Set[ActiveRecord::ConnectionAdapters::Transaction]
   end
 
   module Persistence

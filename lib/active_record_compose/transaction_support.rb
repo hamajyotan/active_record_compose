@@ -6,6 +6,26 @@ module ActiveRecordCompose
   module TransactionSupport
     extend ActiveSupport::Concern
 
+    # steep:ignore:start
+
+    # In older versions, the ActiveRecord::Transaction object is not passed to the block argument of #transaction.
+    # So instead, we define a transaction object that can be evaluated equivalently.
+    # This follow-up will no longer be necessary when support for Rails 7.1 is dropped.
+    #
+    class ActiveTransaction
+      def initialize(transaction)
+        @transaction = transaction
+      end
+
+      def open? = !closed?
+
+      def closed? = transaction&.state&.completed?
+
+      attr_reader :transaction
+    end
+
+    # steep:ignore:end
+
     included do
       define_callbacks :commit, :rollback, :before_commit, scope: [ :kind, :name ]
     end
@@ -91,12 +111,18 @@ module ActiveRecordCompose
 
       # @private
       def committed!(should_run_callbacks: true)
-        _run_commit_callbacks if should_run_callbacks
+        return unless should_run_callbacks
+        return unless current_transactions.all? { _1.closed? }
+
+        _run_commit_callbacks
       end
 
       # @private
       def rolledback!(force_restore_state: false, should_run_callbacks: true)
-        _run_rollback_callbacks if should_run_callbacks
+        return unless should_run_callbacks
+        return unless current_transactions.all? { _1.closed? }
+
+        _run_rollback_callbacks
       end
     end
 
@@ -108,11 +134,14 @@ module ActiveRecordCompose
 
     # @private
     def with_transaction_returning_status
+      current_transactions.reject! { _1.closed? }
+
       connection_pool.with_connection do |connection|
         with_pool_transaction_isolation_level(connection) do
           ensure_finalize = !connection.transaction_open?
 
-          connection.transaction do
+          connection.transaction do |tran|
+            current_transactions << (tran || ActiveTransaction.new(connection.current_transaction)) # steep:ignore
             connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?) # steep:ignore
 
             yield.tap { raise ActiveRecord::Rollback unless _1 }
@@ -120,6 +149,9 @@ module ActiveRecordCompose
         end
       end
     end
+
+    # @private
+    def current_transactions = @current_transactions ||= Set.new
 
     # @private
     def default_ar_class = ActiveRecord::Base
