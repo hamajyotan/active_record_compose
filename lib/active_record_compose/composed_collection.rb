@@ -87,15 +87,23 @@ module ActiveRecordCompose
     # @private
     def wrap(model, destroy: false, if: nil)
       if destroy.is_a?(Symbol)
-        method = destroy
-        destroy = -> { owner.__send__(method) }
+        destroy = symbol_proc_map[destroy]
       end
+
       if_option = binding.local_variable_get(:if)
       if if_option.is_a?(Symbol)
-        method = if_option
-        if_option = -> { owner.__send__(method) }
+        if_option = symbol_proc_map[if_option]
       end
+
       ActiveRecordCompose::WrappedModel.new(model, destroy:, if: if_option)
+    end
+
+    # @private
+    def symbol_proc_map
+      @symbol_proc_map ||=
+        Hash.new do |h, k|
+          h[k] = -> { owner.__send__(k) }
+        end
     end
 
     # @private
