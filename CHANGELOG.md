@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [1.1.1] - 2025-12-04
+
+* fix: the save method would return nil instead of false.
+* doc: We've simplified the documentation comment yard.
+
 ## [1.1.0] - 2025-11-19
 
 * Implemented ActiveRecord-like #inspect
