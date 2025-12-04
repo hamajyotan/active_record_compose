@@ -104,6 +104,7 @@ module ActiveRecordCompose
     # @param [Object] other
     # @return [Boolean]
     def ==(other)
+      return true if equal?(other)
       return false unless self.class == other.class
       return false unless model == other.model
 
