@@ -106,18 +106,17 @@ module ActiveRecordCompose
     def ==(other)
       return true if equal?(other)
       return false unless self.class == other.class
-      return false unless model == other.model
 
-      true
+      equality_key == other.equality_key
     end
 
     protected
 
-    attr_reader :model
+    def equality_key = [ model ]
 
     private
 
-    attr_reader :destroy_context_type, :if_option
+    attr_reader :model, :destroy_context_type, :if_option
 
     # @private
     module PackagePrivate

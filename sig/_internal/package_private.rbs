@@ -190,6 +190,7 @@ module ActiveRecordCompose
     attr_reader model: ar_like
     attr_reader destroy_context_type: (bool | destroy_context_type)
     attr_reader if_option: (nil | condition_type)
+    def equality_key: () -> [ar_like]
 
     module PackagePrivate
       def __raw_model: () -> ar_like
