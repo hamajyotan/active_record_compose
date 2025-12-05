@@ -121,7 +121,7 @@ module ActiveRecordCompose
 
     protected
 
-    def equality_key = [ model ]
+    def equality_key = [ model, destroy_context_type, if_option ]
 
     private
 

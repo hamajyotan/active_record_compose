@@ -34,4 +34,21 @@ class ActiveRecordCompose::ComposedCollectionTest < ActiveSupport::TestCase
 
     assert { collection.first == profile }
   end
+
+  test "#delete will delete the specified model regardless of the options used when adding it" do
+    collection = ActiveRecordCompose::ComposedCollection.new(nil)
+    account = Account.new
+    profile = Profile.new
+    collection.push(account, destroy: false)
+    collection.push(profile)
+    collection.push(account, destroy: true)
+
+    assert { collection.first == account }
+    assert { collection.count == 3 }
+
+    collection.delete(account)
+
+    assert { collection.first == profile }
+    assert { collection.count == 1 }
+  end
 end
