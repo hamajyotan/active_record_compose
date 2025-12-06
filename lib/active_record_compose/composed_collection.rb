@@ -113,7 +113,9 @@ module ActiveRecordCompose
         #
         # @private
         # @return [Array[WrappedModel]] array of wrapped model instance.
-        def __wrapped_models = models.reject { _1.ignore? }.select { _1.__raw_model }
+        def __wrapped_models
+          models.reject { _1.ignore? }.uniq { [ _1.__raw_model, !!_1.destroy_context? ] }.select { _1.__raw_model }
+        end
       end
     end
   end
