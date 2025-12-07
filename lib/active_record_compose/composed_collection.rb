@@ -13,7 +13,7 @@ module ActiveRecordCompose
 
     def initialize(owner)
       @owner = owner
-      @models = []
+      @models = Set.new
     end
 
     # Enumerates model objects.
@@ -69,13 +69,28 @@ module ActiveRecordCompose
     # Removes the specified model from the collection.
     # Returns nil if the deletion fails, self if it succeeds.
     #
+    # The specified model instance will be deleted regardless of the options used when it was added.
+    #
+    # @example
+    #   model_a = Model.new
+    #   model_b = Model.new
+    #
+    #   collection.push(model_a, destroy: true)
+    #   collection.push(model_b)
+    #   collection.push(model_a, destroy: false)
+    #   collection.count  #=> 3
+    #
+    #   collection.delete(model_a)
+    #   collection.count  #=> 1
+    #
     # @param model [Object] model instance
     # @return [self] Successful deletion
     # @return [nil] If deletion fails
     def delete(model)
-      wrapped = wrap(model)
-      return nil unless models.delete(wrapped)
+      matched = models.select { _1.__raw_model == model }
+      return nil if matched.blank?
 
+      matched.each { models.delete(_1) }
       self
     end
 

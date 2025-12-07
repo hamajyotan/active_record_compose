@@ -68,15 +68,15 @@ module ActiveRecordCompose
 
     private
     attr_reader owner: Model
-    attr_reader models: Array[WrappedModel]
+    attr_reader models: Set[WrappedModel]
     def wrap: (ar_like, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> WrappedModel
     def symbol_proc_map: () -> Hash[Symbol, (destroy_context_type | condition_type)]
 
     module PackagePrivate
-      def __wrapped_models: () -> Array[WrappedModel]
+      def __wrapped_models: () -> Enumerable[WrappedModel]
 
       private
-      def models: () -> Array[WrappedModel]
+      def models: () -> Set[WrappedModel]
     end
 
     include PackagePrivate
@@ -190,7 +190,7 @@ module ActiveRecordCompose
     attr_reader model: ar_like
     attr_reader destroy_context_type: (bool | destroy_context_type)
     attr_reader if_option: (nil | condition_type)
-    def equality_key: () -> [ar_like]
+    def equality_key: () -> [ar_like, (bool | destroy_context_type), (nil | condition_type)]
 
     module PackagePrivate
       def __raw_model: () -> ar_like
