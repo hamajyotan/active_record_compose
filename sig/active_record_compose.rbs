@@ -47,6 +47,9 @@ module ActiveRecordCompose
     def delete: (ar_like) -> ComposedCollection?
   end
 
+  class CircularReferenceDetected < StandardError
+  end
+
   class Model
     include ActiveModel::Model
     include ActiveModel::Validations::Callbacks
