@@ -97,12 +97,12 @@ class MultipleModelCreationTest < ActiveSupport::TestCase
     refute { @registration.update(registration_params) }
 
     assert { @registration.errors.count == 3 }
-    assert @registration.errors.of_kind?(:password, :blank)
-    assert @registration.errors.of_kind?(:password_confirmation, :blank)
-    assert @registration.errors.of_kind?(:terms_of_service, :accepted)
-    assert @registration.errors.to_a.include?("Password can't be blank")
-    assert @registration.errors.to_a.include?("Password confirmation can't be blank")
-    assert @registration.errors.to_a.include?("Terms of service must be accepted")
+    assert { @registration.errors.of_kind?(:password, :blank) }
+    assert { @registration.errors.of_kind?(:password_confirmation, :blank) }
+    assert { @registration.errors.of_kind?(:terms_of_service, :accepted) }
+    assert { @registration.errors.to_a.include?("Password can't be blank") }
+    assert { @registration.errors.to_a.include?("Password confirmation can't be blank") }
+    assert { @registration.errors.to_a.include?("Terms of service must be accepted") }
 
     registration_params = {
       name: "alice-in-wonderland",
@@ -118,8 +118,8 @@ class MultipleModelCreationTest < ActiveSupport::TestCase
     refute { @registration.update(registration_params) }
 
     assert { @registration.errors.count == 1 }
-    assert @registration.errors.of_kind?(:password_confirmation, :blank)
-    assert @registration.errors.to_a.include?("Password confirmation can't be blank")
+    assert { @registration.errors.of_kind?(:password_confirmation, :blank) }
+    assert { @registration.errors.to_a.include?("Password confirmation can't be blank") }
 
     registration_params = {
       name: "alice-in-wonderland",
@@ -135,8 +135,8 @@ class MultipleModelCreationTest < ActiveSupport::TestCase
     refute { @registration.update(registration_params) }
 
     assert { @registration.errors.count == 1 }
-    assert @registration.errors.of_kind?(:password_confirmation, :confirmation)
-    assert @registration.errors.to_a.include?("Password confirmation doesn't match Password")
+    assert { @registration.errors.of_kind?(:password_confirmation, :confirmation) }
+    assert { @registration.errors.to_a.include?("Password confirmation doesn't match Password") }
   end
 
   test "When all the attributes required for registration are present, data operations required for resigning are completed." do
@@ -153,7 +153,7 @@ class MultipleModelCreationTest < ActiveSupport::TestCase
 
     assert_difference -> { Account.count } => 1, -> { Profile.count } => 1, -> { Credential.count } => 1 do
       assert_changes -> { @registration.send_registered_mail_called } do
-        assert @registration.update(registration_params)
+        assert { @registration.update(registration_params) }
       end
     end
   end

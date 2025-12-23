@@ -41,7 +41,7 @@ class ActiveRecordCompose::ModelWithDestroyContextTest < ActiveSupport::TestCase
     model.lastname = nil
     model.age = nil
 
-    assert model.valid?
+    assert { model.valid? }
   end
 
   test "models with destroy: true must be deleted by a #save operation" do

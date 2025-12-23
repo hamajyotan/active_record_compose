@@ -38,16 +38,16 @@ class ActiveRecordCompose::WrappedModelTest < ActiveSupport::TestCase
     already_persisted_account = Account.create(name: "foo", email: "foo@example.com")
     wrapped_model = described_class.new(already_persisted_account, destroy: false)
 
-    assert wrapped_model.save
-    assert already_persisted_account.persisted?
+    assert { wrapped_model.save }
+    assert { already_persisted_account.persisted? }
   end
 
   test "when `destroy` option is true, delete model by `#save`" do
     already_persisted_account = Account.create(name: "foo", email: "foo@example.com")
     wrapped_model = described_class.new(already_persisted_account, destroy: true)
 
-    assert wrapped_model.save
-    assert already_persisted_account.destroyed?
+    assert { wrapped_model.save }
+    assert { already_persisted_account.destroyed? }
   end
 
   private

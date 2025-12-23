@@ -47,7 +47,7 @@ class ActiveRecordCompose::ModelNestedTest < ActiveSupport::TestCase
     model = OuterComposedModel.new
     model.assign_attributes(name: "veryverylongname")
 
-    assert model.invalid?
+    assert { model.invalid? }
     assert { model.errors.to_a == [ "Email can't be blank", "Name is too long (maximum is 10 characters)" ] }
   end
 end

@@ -32,9 +32,9 @@ class ActiveRecordCompose::ModelCallbackAbortTest < ActiveSupport::TestCase
     model.assign_attributes(name: "foo", email: "foo@example.com", throw_flag: false)
 
     assert_difference -> { Account.count } => 1 do
-      assert model.save
+      assert { model.save }
     end
-    assert model.after_save_called
+    assert { model.after_save_called }
   end
 
   test "when :abort is thrown in the before hook, the save must fail" do
