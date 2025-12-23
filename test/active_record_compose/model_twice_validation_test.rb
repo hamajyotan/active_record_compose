@@ -27,8 +27,8 @@ class ActiveRecordCompose::ModelTwiceValidationTest < ActiveSupport::TestCase
   test "FailureOnTwiceValidation model cannot be validated more than once." do
     model = FailureOnTwiceValidation.new
     assert model.valid?
-    assert_not model.valid?
-    assert_not model.valid?
+    refute { model.valid? }
+    refute { model.valid? }
   end
 
   test "Validation must be performed only once for the encompassing model." do

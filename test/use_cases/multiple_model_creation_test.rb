@@ -94,7 +94,7 @@ class MultipleModelCreationTest < ActiveSupport::TestCase
       terms_of_service: false
     }
 
-    assert_not @registration.update(registration_params)
+    refute { @registration.update(registration_params) }
 
     assert { @registration.errors.count == 3 }
     assert @registration.errors.of_kind?(:password, :blank)
@@ -115,7 +115,7 @@ class MultipleModelCreationTest < ActiveSupport::TestCase
       terms_of_service: true
     }
 
-    assert_not @registration.update(registration_params)
+    refute { @registration.update(registration_params) }
 
     assert { @registration.errors.count == 1 }
     assert @registration.errors.of_kind?(:password_confirmation, :blank)
@@ -132,7 +132,7 @@ class MultipleModelCreationTest < ActiveSupport::TestCase
       terms_of_service: true
     }
 
-    assert_not @registration.update(registration_params)
+    refute { @registration.update(registration_params) }
 
     assert { @registration.errors.count == 1 }
     assert @registration.errors.of_kind?(:password_confirmation, :confirmation)

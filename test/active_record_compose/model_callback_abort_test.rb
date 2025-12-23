@@ -42,8 +42,8 @@ class ActiveRecordCompose::ModelCallbackAbortTest < ActiveSupport::TestCase
     model.assign_attributes(name: "foo", email: "foo@example.com", throw_flag: true)
 
     assert_no_changes -> { Account.count } do
-      assert_not model.save
+      refute { model.save }
     end
-    assert_not model.after_save_called
+    refute { model.after_save_called }
   end
 end

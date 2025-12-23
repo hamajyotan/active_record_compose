@@ -69,7 +69,7 @@ class ActiveRecordCompose::ModelContextTest < ActiveSupport::TestCase
     assert_no_changes -> { Account.count }, -> { Profile.count } do
       model = new_model(accept: false)
 
-      assert_not model.save(context: :education)
+      refute { model.save(context: :education) }
       assert model.errors.of_kind?(:accept, :blank)
       assert { model.errors.to_a == [ "Accept can't be blank" ] }
     end
@@ -83,7 +83,7 @@ class ActiveRecordCompose::ModelContextTest < ActiveSupport::TestCase
     assert_no_changes -> { Account.count }, -> { Profile.count } do
       model = new_model(email: "foo@example.com", age: 99)
 
-      assert_not model.save(context: :education)
+      refute { model.save(context: :education) }
       assert model.errors.of_kind?(:email, :invalid)
       assert model.errors.of_kind?(:age, :less_than_or_equal_to)
       assert { model.errors.to_a.sort == [ "Age must be less than or equal to 18", "Email is invalid" ].sort }

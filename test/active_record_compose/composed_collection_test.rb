@@ -11,7 +11,7 @@ class ActiveRecordCompose::ComposedCollectionTest < ActiveSupport::TestCase
 
     collection << Account.new
 
-    assert_not collection.empty?
+    refute { collection.empty? }
   end
 
   test "can be made empty by #clear" do
