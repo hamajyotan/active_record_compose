@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "active_record_compose/composed_collection"
 
 class ActiveRecordCompose::ComposedCollectionTest < ActiveSupport::TestCase
   test "#empty should return true if the element is absent and false if the element is present" do

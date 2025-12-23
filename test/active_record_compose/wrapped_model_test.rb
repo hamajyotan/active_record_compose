@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "active_record_compose/wrapped_model"
 
 class ActiveRecordCompose::WrappedModelTest < ActiveSupport::TestCase
   test "returns true if and only if model is equivalent" do

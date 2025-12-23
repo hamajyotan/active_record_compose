@@ -3,7 +3,6 @@
 require "pp"
 require "stringio"
 require "test_helper"
-require "active_record_compose/model"
 require "active_support/core_ext/time"
 
 class ActiveRecordCompose::ModelInspectTest < ActiveSupport::TestCase
