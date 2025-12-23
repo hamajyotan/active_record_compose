@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "active_record_compose/model"
 
 class ActiveRecordCompose::ModelUniquifySaveTest < ActiveSupport::TestCase
   class Inner

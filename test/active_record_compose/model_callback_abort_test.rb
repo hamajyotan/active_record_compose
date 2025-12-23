@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "active_record_compose/model"
 
 class ActiveRecordCompose::ModelCallbackAbortTest < ActiveSupport::TestCase
   class CallbackWithAbort < ActiveRecordCompose::Model
@@ -32,9 +31,9 @@ class ActiveRecordCompose::ModelCallbackAbortTest < ActiveSupport::TestCase
     model.assign_attributes(name: "foo", email: "foo@example.com", throw_flag: false)
 
     assert_difference -> { Account.count } => 1 do
-      assert model.save
+      assert { model.save }
     end
-    assert model.after_save_called
+    assert { model.after_save_called }
   end
 
   test "when :abort is thrown in the before hook, the save must fail" do
@@ -42,8 +41,8 @@ class ActiveRecordCompose::ModelCallbackAbortTest < ActiveSupport::TestCase
     model.assign_attributes(name: "foo", email: "foo@example.com", throw_flag: true)
 
     assert_no_changes -> { Account.count } do
-      assert_not model.save
+      refute { model.save }
     end
-    assert_not model.after_save_called
+    refute { model.after_save_called }
   end
 end

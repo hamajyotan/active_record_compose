@@ -99,7 +99,7 @@ class BatchUpdateAndDeleteTest < ActiveSupport::TestCase
     assert_no_changes -> { @account.reload.resigned_at } do
       assert_no_difference -> { Profile.count }, -> { Credential.count } do
         assert_no_changes -> { @resignation.send_resigned_mail_called } do
-          assert_not @resignation.update(resignation_params)
+          refute { @resignation.update(resignation_params) }
         end
       end
     end

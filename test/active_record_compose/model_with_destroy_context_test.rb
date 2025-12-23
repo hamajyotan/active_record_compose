@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "active_record_compose/model"
 
 class ActiveRecordCompose::ModelWithDestroyContextTest < ActiveSupport::TestCase
   class WithDestroyContext < ActiveRecordCompose::Model
@@ -41,7 +40,7 @@ class ActiveRecordCompose::ModelWithDestroyContextTest < ActiveSupport::TestCase
     model.lastname = nil
     model.age = nil
 
-    assert model.valid?
+    assert { model.valid? }
   end
 
   test "models with destroy: true must be deleted by a #save operation" do

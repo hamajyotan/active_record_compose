@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "active_record_compose/model"
 
 class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
   class ComposedModel < ActiveRecordCompose::Model
@@ -24,11 +23,11 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     model = ComposedModel.new
     model.assign_attributes(invalid_attributes)
 
-    assert model.invalid?
-    assert model.errors.of_kind?(:name, :blank)
-    assert model.errors.of_kind?(:firstname, :too_long)
-    assert model.errors.of_kind?(:lastname, :too_long)
-    assert model.errors.of_kind?(:age, :greater_than_or_equal_to)
+    assert { model.invalid? }
+    assert { model.errors.of_kind?(:name, :blank) }
+    assert { model.errors.of_kind?(:firstname, :too_long) }
+    assert { model.errors.of_kind?(:lastname, :too_long) }
+    assert { model.errors.of_kind?(:age, :greater_than_or_equal_to) }
     expected_error_messasges =
       [
         "Name can't be blank",

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_helper"
-require "active_record_compose/model"
 
 class ActiveRecordCompose::ModelTwiceValidationTest < ActiveSupport::TestCase
   class FailureOnTwiceValidation < ActiveRecordCompose::Model
@@ -26,15 +25,15 @@ class ActiveRecordCompose::ModelTwiceValidationTest < ActiveSupport::TestCase
 
   test "FailureOnTwiceValidation model cannot be validated more than once." do
     model = FailureOnTwiceValidation.new
-    assert model.valid?
-    assert_not model.valid?
-    assert_not model.valid?
+    assert { model.valid? }
+    refute { model.valid? }
+    refute { model.valid? }
   end
 
   test "Validation must be performed only once for the encompassing model." do
     inner_model = FailureOnTwiceValidation.new
     model = FailureOnTwiceValidation.new(inner_model)
 
-    assert model.save
+    assert { model.save }
   end
 end
