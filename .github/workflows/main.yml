@@ -20,7 +20,7 @@ jobs:
           - '~> 7.1.0'
           - '~> 7.2.0'
           - '~> 8.0.0'
-          - '8-1-stable'
+          - '~> 8.1.0'
           - 'head'
         exclude:
           - ruby: '3.1'
@@ -28,7 +28,7 @@ jobs:
           - ruby: '3.1'
             ar: '~> 8.0.0'
           - ruby: '3.1'
-            ar: '8-1-stable'
+            ar: '~> 8.1.0'
     env:
       AR: ${{ matrix.ar }}
     steps:
