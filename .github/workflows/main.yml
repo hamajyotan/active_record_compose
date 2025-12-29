@@ -50,7 +50,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3
+          ruby-version: 4.0
           bundler-cache: true
       - name: Run type check
         run: rbs collection install && bundle exec steep check
