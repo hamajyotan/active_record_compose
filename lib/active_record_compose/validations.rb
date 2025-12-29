@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "composed_collection"
+require_relative "validations/circular_reference_detection"
 
 module ActiveRecordCompose
   using ComposedCollection::PackagePrivate
@@ -8,6 +9,9 @@ module ActiveRecordCompose
   module Validations
     extend ActiveSupport::Concern
     include ActiveModel::Validations::Callbacks
+
+    include ActiveRecordCompose::Validations::CircularReferenceDetection # steep:ignore
+    using ActiveRecordCompose::Validations::CircularReferenceDetection # steep:ignore
 
     included do
       validate :validate_models
@@ -80,6 +84,8 @@ module ActiveRecordCompose
 
     # @private
     def validate_models
+      detect_circular_reference # steep:ignore
+
       context = override_validation_context
       models.__wrapped_models.lazy.select { _1.invalid?(context) }.each { errors.merge!(_1) }
     end
