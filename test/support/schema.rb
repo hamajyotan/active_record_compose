@@ -1,26 +1,26 @@
 # frozen_string_literal: true
 
-ActiveRecord::Base.establish_connection(
-  adapter: "sqlite3",
-  database: ":memory:",
-)
+require "test/support/configuration"
 
-ActiveRecord::Migration.verbose = false
+class ApplicationRecord < ActiveRecord::Base
+  primary_abstract_class
+  connects_to database: { writing: :primary }
+end
 
-ActiveRecord::Schema.define do
-  create_table :accounts, force: true do |t|
+ApplicationRecord.connection_pool.with_connection do |conn|
+  conn.create_table :accounts, force: true do |t|
     t.string :name, null: false
     t.string :email, null: false
     t.datetime :resigned_at
     t.timestamps
   end
 
-  create_table :credentials, force: true do |t|
+  conn.create_table :credentials, force: true do |t|
     t.references :account, null: false, index: { unique: true }, foreign_key: true
     t.string :password_digest, null: false
   end
 
-  create_table :profiles, force: true do |t|
+  conn.create_table :profiles, force: true do |t|
     t.references :account, null: false, index: { unique: true }, foreign_key: true
     t.string :firstname, null: false
     t.string :lastname, null: false
@@ -28,7 +28,7 @@ ActiveRecord::Schema.define do
     t.timestamps
   end
 
-  create_table :operation_logs, force: true do |t|
+  conn.create_table :operation_logs, force: true do |t|
     t.string :action, null: false
   end
 end
