@@ -16,7 +16,6 @@ require "active_support/test_case"
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "active_record_compose"
 
-require_relative "support/schema"
-require_relative "support/model"
+Dir[File.join(__dir__, "support/*.rb")].each { require _1 }
 
 require "minitest/autorun"
