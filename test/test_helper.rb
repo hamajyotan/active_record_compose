@@ -5,6 +5,9 @@ Minitest::Reporters.use!
 
 require "minitest/power_assert"
 
+require "i18n"
+I18n.load_path += Dir[File.join(__dir__, "config/locales/*.yml")]
+
 # Since Rails 7.1, test_case implicitly depends on deprecator.
 require "active_support/deprecator"
 
