@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "composed_collection"
-require_relative "validations/circular_reference_detection"
 
 module ActiveRecordCompose
   using ComposedCollection::PackagePrivate
@@ -9,9 +8,6 @@ module ActiveRecordCompose
   module Validations
     extend ActiveSupport::Concern
     include ActiveModel::Validations::Callbacks
-
-    include ActiveRecordCompose::Validations::CircularReferenceDetection # steep:ignore
-    using ActiveRecordCompose::Validations::CircularReferenceDetection # steep:ignore
 
     included do
       validate :validate_models
@@ -79,6 +75,18 @@ module ActiveRecordCompose
     #       registration.errors.map { _1.attribute }  #=> [:name, :email, :confirmation]
     #
     #   @return [ActiveModel::Errors]
+
+    # steep:ignore:start
+    # @private
+    def detect_circular_reference(targets = [])
+      raise CircularReferenceDetected if targets.include?(object_id)
+
+      targets += [ object_id ]
+      models.select { _1.respond_to?(:detect_circular_reference) }.each do |m|
+        m.detect_circular_reference(targets)
+      end
+    end
+    # steep:ignore:end
 
     private
 

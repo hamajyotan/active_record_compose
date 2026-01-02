@@ -32,13 +32,6 @@ class CircularReferenceDetectionTest < ActiveSupport::TestCase
     assert { outer.save }
   end
 
-  test "The circular reference detection method #detect_circular_reference is not externally accessible." do
-    model = klass.new
-
-    refute { model.respond_to?(:detect_circular_reference, true) }
-    assert_raises(NoMethodError) { model.detect_circular_reference }
-  end
-
   private
 
   def klass
