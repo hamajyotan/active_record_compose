@@ -93,4 +93,8 @@ module ActiveRecordCompose
     private
     def models: -> ComposedCollection
   end
+
+  class Railtie < Rails::Railtie
+    extend Rails::Initializable::ClassMethods
+  end
 end
