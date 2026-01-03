@@ -76,23 +76,23 @@ module ActiveRecordCompose
     #
     #   @return [ActiveModel::Errors]
 
-    # steep:ignore:start
     # @private
     def detect_circular_reference(targets = [])
       raise CircularReferenceDetected if targets.include?(object_id)
 
       targets += [ object_id ]
+      # steep:ignore:start
       models.select { _1.respond_to?(:detect_circular_reference) }.each do |m|
         m.detect_circular_reference(targets)
       end
+      # steep:ignore:end
     end
-    # steep:ignore:end
 
     private
 
     # @private
     def validate_models
-      detect_circular_reference # steep:ignore
+      detect_circular_reference
 
       context = override_validation_context
       models.__wrapped_models.lazy.select { _1.invalid?(context) }.each { errors.merge!(_1) }

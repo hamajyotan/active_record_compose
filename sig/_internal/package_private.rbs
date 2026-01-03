@@ -158,6 +158,7 @@ module ActiveRecordCompose
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped
     def valid?: (?validation_context context) -> bool
+    def detect_circular_reference: (?Array[Integer])-> untyped
 
     @context_for_override_validation: OverrideValidationContext
 
