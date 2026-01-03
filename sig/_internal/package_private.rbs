@@ -71,6 +71,7 @@ module ActiveRecordCompose
     attr_reader models: Set[WrappedModel]
     def wrap: (ar_like, ?destroy: (bool | Symbol | destroy_context_type), ?if: (nil | Symbol | condition_type)) -> WrappedModel
     def symbol_proc_map: () -> Hash[Symbol, (destroy_context_type | condition_type)]
+    def instance_variables_to_inspect: () -> Array[Symbol]
 
     module PackagePrivate
       def __wrapped_models: () -> Enumerable[WrappedModel]
@@ -146,10 +147,6 @@ module ActiveRecordCompose
     def raise_on_save_error_message: -> String
   end
 
-  class Railtie < Rails::Railtie
-    extend Rails::Initializable::ClassMethods
-  end
-
   module Validations : Model
     extend ActiveSupport::Concern
     extend ActiveModel::Validations::ClassMethods
@@ -157,6 +154,7 @@ module ActiveRecordCompose
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped
     def valid?: (?validation_context context) -> bool
+    def detect_circular_reference: (?Array[Integer])-> untyped
 
     @context_for_override_validation: OverrideValidationContext
 
