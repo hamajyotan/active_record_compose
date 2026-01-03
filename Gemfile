@@ -44,7 +44,7 @@ gem "rubocop-rails-omakase"
 gem "steep", require: false
 
 # document.
-gem "yard"
+gem "yard", "0.9.37" # TODO: Side navigation links don't work in 0.9.38, so I'm working around it.
 gem "yard-activesupport-concern"
 gem "webrick"
 gem "redcarpet"
