@@ -121,6 +121,8 @@ module ActiveRecordCompose
         end
     end
 
+    def instance_variables_to_inspect = %i[@owner @models]
+
     # @private
     module PackagePrivate
       refine ComposedCollection do
