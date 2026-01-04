@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+* Avoid issuing multiple saves on the same object.
+  (https://github.com/hamajyotan/active_record_compose/pull/56)
+* The storage of `#models` has been changed from an Array to a Set.
+  This prevents duplicate additions of the same object and option combinations.
+  Also, `#models#delete` now deletes the model regardless of the options used when it was added.
+  (https://github.com/hamajyotan/active_record_compose/pull/57)
+* Adding an `ActiveRecordCompose::Model` to `#models` now throws an error if there is a circular reference.
+  (https://github.com/hamajyotan/active_record_compose/pull/58)
+
 ## [1.1.1] - 2025-12-04
 
 * fix: the save method would return nil instead of false.
