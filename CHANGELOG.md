@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.2.0] - 2026-01-05
+
 * Avoid issuing multiple saves on the same object.
   (https://github.com/hamajyotan/active_record_compose/pull/56)
 * The storage of `#models` has been changed from an Array to a Set.
