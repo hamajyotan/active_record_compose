@@ -25,6 +25,8 @@ jobs:
         exclude:
           - ruby: '3.1'
             ar: 'head'
+          - ruby: '3.2'
+            ar: 'head'
           - ruby: '3.1'
             ar: '~> 8.0.0'
           - ruby: '3.1'
