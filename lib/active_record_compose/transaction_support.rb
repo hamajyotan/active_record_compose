@@ -113,7 +113,7 @@ module ActiveRecordCompose
           ensure_finalize = !connection.transaction_open?
 
           connection.transaction do
-            connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?) # steep:ignore
+            connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?)
 
             yield.tap { raise ActiveRecord::Rollback unless _1 }
           end || false
