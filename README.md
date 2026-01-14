@@ -1,7 +1,7 @@
 # ActiveRecordCompose
 
 ActiveRecordCompose lets you build form objects that combine multiple ActiveRecord models into a single, unified interface.
-More than just a simple form object, it is designed as a **business-oriented composed model** that encapsulates complex operations-such as user registration spanning multiple tables-making them easier to write, validate, and maintain.
+More than a simple form object, ActiveRecordCompose is designed as a **business-oriented composed model** that encapsulates complex operations, such as user registration spanning multiple tables, making them easier to write, validate, and maintain.
 
 [![Gem Version](https://badge.fury.io/rb/active_record_compose.svg)](https://badge.fury.io/rb/active_record_compose)
 ![CI](https://github.com/hamajyotan/active_record_compose/workflows/CI/badge.svg)
@@ -29,15 +29,14 @@ More than just a simple form object, it is designed as a **business-oriented com
 
 ## Motivation
 
-In Rails, `ActiveRecord::Base` is responsible for persisting data to the database.
-By defining validations and callbacks, you can model use cases effectively.
+In Rails, `ActiveRecord::Base` is responsible for persisting data to the database and modeling application behavior through validations and callbacks.
 
 However, when a single model must serve multiple different use cases, you often end up with conditional validations (`on: :context`) or workarounds like `save(validate: false)`.
 This mixes unrelated concerns into one model, leading to unnecessary complexity.
 
-`ActiveModel::Model` helps here — it provides the familiar API (`attribute`, `errors`, validations, callbacks) without persistence, so you can isolate logic per use case.
+`ActiveModel::Model` helps address this by providing a familiar API (`attribute`, `errors`, validations, callbacks) without persistence, allowing you to isolate logic per use case.
 
-**ActiveRecordCompose** builds on `ActiveModel::Model` and is a powerful **business object** that acts as a first-class model within Rails.
+**ActiveRecordCompose** builds on `ActiveModel::Model` and provides a powerful **business object** that acts as a first-class model within Rails.
 - Transparently accesses attributes across multiple models
 - Saves all associated models atomically in a transaction
 - Collects and exposes error information consistently
@@ -106,7 +105,7 @@ class UserRegistration < ActiveRecordCompose::Model
 end
 ```
 
-Usage:
+Example usage:
 
 ```ruby
 # === Standalone script ===
@@ -174,7 +173,7 @@ registration.attributes
 
 ### Unified Error Handling
 
-Validation errors from inner models are collected into the composed model:
+Validation errors from the inner models are collected into the composed object:
 
 ```ruby
 user_registration = UserRegistration.new(
@@ -274,7 +273,7 @@ model.save
 
 ### Notes on adding models dynamically
 
-Avoid adding `models` to the models array **after validation has already run**
+Avoid adding models to the `models` array **after validation has already run**
 (for example, inside `after_validation` or `before_save` callbacks).
 
 ```ruby
@@ -323,5 +322,5 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the ActiveRecord::Compose project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/hamajyotan/active_record_compose/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the ActiveRecordCompose project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/hamajyotan/active_record_compose/blob/main/CODE_OF_CONDUCT.md).
 
