@@ -44,7 +44,7 @@ module ActiveRecordCompose
     #   Returns the `ActiveModel::Errors` object that holds all information about attribute error messages.
     #
     #   The `ActiveModel::Base` implementation itself,
-    #   but also aggregates error information for objects stored in {#models} when validation is performed.
+    #   but also aggregates error information for objects stored in {ActiveRecordCompose::Model#models} when validation is performed.
     #
     #       class Account < ActiveRecord::Base
     #         validates :name, :email, presence: true
