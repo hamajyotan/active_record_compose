@@ -5,6 +5,8 @@ Minitest::Reporters.use!
 
 require "minitest/power_assert"
 
+require "debug"
+
 require "i18n"
 I18n.load_path += Dir[File.join(__dir__, "config/locales/*.yml")]
 

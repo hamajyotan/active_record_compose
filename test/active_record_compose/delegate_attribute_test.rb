@@ -73,15 +73,17 @@ class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
   end
 
   test "Raises ArgumentError if instance variable is directly specified in :to option of delegate_attribute" do
-    assert_raises(ArgumentError, "Instance variables cannot be specified in delegate to. (@model)") do
-      Class.new(ActiveRecordCompose::Model) do
-        def initialize(attributes)
-          @model = Inner.new
-          super(attributes)
-        end
+    e =
+      assert_raises(ArgumentError) do
+        Class.new(ActiveRecordCompose::Model) do
+          def initialize(attributes)
+            @model = Inner.new
+            super(attributes)
+          end
 
-        delegate_attribute :x, :y, to: :@model
+          delegate_attribute :x, :y, to: :@model
+        end
       end
-    end
+    assert { e.message == "Instance variables cannot be specified in delegate to. (@model)" }
   end
 end

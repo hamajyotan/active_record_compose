@@ -78,8 +78,10 @@ class ActiveRecordCompose::ModelTest < ActiveSupport::TestCase
     model = ComposedModel.new(account_with_bang.new)
     model.assign_attributes(valid_attributes)
 
-    assert_raises(RuntimeError, "bang!!") { model.save }
-    assert_raises(RuntimeError, "bang!!") { model.save! }
+    e = assert_raises(RuntimeError) { model.save }
+    assert { e.message == "bang!" }
+    e = assert_raises(RuntimeError) { model.save! }
+    assert { e.message == "bang!" }
   end
 
   test "RecordInvalid errors that occur during internal saving of the model are propagated externally only if #save!" do
