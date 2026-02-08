@@ -98,4 +98,7 @@ module ActiveRecordCompose
   class Railtie < Rails::Railtie
     extend Rails::Initializable::ClassMethods
   end
+
+  class UninitializedAttribute < StandardError
+  end
 end

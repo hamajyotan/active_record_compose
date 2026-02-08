@@ -3,6 +3,7 @@
 require_relative "attributes/attribute_predicate"
 require_relative "attributes/delegation"
 require_relative "attributes/querying"
+require_relative "exceptions"
 
 module ActiveRecordCompose
   # Provides attribute-related functionality for use within ActiveRecordCompose::Model.
@@ -127,7 +128,11 @@ module ActiveRecordCompose
     #
     # @see #attributes
     # @return [Array<String>] array of attribute name.
-    def attribute_names = super + delegated_attributes.to_a.map { _1.attribute_name }
+    def attribute_names
+      _require_attributes_initialized do
+        super + delegated_attributes.to_a.map { _1.attribute_name }
+      end
+    end
 
     # Returns a hash with the attribute name as key and the attribute value as value.
     # Attributes declared with {.delegate_attribute} are also merged.
@@ -155,7 +160,24 @@ module ActiveRecordCompose
     #
     # @return [Hash<String, Object>] hash with the attribute name as key and the attribute value as value.
     def attributes
-      super.merge(*delegated_attributes.to_a.map { _1.attribute_hash(self) })
+      _require_attributes_initialized do
+        super.merge(*delegated_attributes.to_a.map { _1.attribute_hash(self) })
+      end
+    end
+
+    private
+
+    def _write_attribute(...) = _require_attributes_initialized { super } # steep:ignore
+
+    def attribute(...) = _require_attributes_initialized { super }
+
+    def _require_attributes_initialized
+      unless @attributes
+        raise ActiveRecordCompose::UninitializedAttribute,
+              "No attributes have been set. Is proper initialization performed, such as calling `super` in `initialize`?"
+      end
+
+      yield
     end
   end
 end
