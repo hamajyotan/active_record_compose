@@ -26,4 +26,19 @@ module ActiveRecordCompose
   #     outer.save  #=> raises ActiveRecordCompose::CircularReferenceDetected
   #
   class CircularReferenceDetected < StandardError; end
+
+  # Occurs when accessing Attributes without initializing it.
+  #
+  # @example
+  #     class Model < ActiveRecordCompose::Model
+  #       def initialize
+  #         # Intentionally not calling super...
+  #       end
+  #
+  #       attribute :foo
+  #     end
+  #     model = Model.new
+  #     model.foo = 1  #=> raises ActiveRecordCompose::UninitializedAttribute
+  #
+  class UninitializedAttribute < StandardError; end
 end

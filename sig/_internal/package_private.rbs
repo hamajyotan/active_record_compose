@@ -11,6 +11,9 @@ module ActiveRecordCompose
 
     @attributes: untyped
 
+    private
+    def _require_attributes_initialized: [T] () { () -> T } -> T
+
     class AttributePredicate
       def initialize: (untyped value) -> void
       def call: -> bool
