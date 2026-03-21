@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [1.2.1] - 2026-03-21
+
+* Improved clarity of error when accessing uninitialized attributes.
+  (https://github.com/hamajyotan/active_record_compose/pull/71)
+* doc: Minor document adjustments, etc.
+
 ## [1.2.0] - 2026-01-05
 
 * Avoid issuing multiple saves on the same object.
