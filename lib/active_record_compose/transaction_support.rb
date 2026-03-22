@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "active_support/core_ext/module"
+require_relative "transaction_support/active_transaction"
+require_relative "transaction_support/transaction_coordinator"
 
 module ActiveRecordCompose
   module TransactionSupport
@@ -86,17 +88,17 @@ module ActiveRecordCompose
 
       # @private
       def before_committed!
-        _run_before_commit_callbacks
+        transaction_coordinator.on_before_comitted { _run_before_commit_callbacks }
       end
 
       # @private
       def committed!(should_run_callbacks: true)
-        _run_commit_callbacks if should_run_callbacks
+        transaction_coordinator.on_after_transaction { _run_commit_callbacks if should_run_callbacks }
       end
 
       # @private
       def rolledback!(force_restore_state: false, should_run_callbacks: true)
-        _run_rollback_callbacks if should_run_callbacks
+        transaction_coordinator.on_after_transaction { _run_rollback_callbacks if should_run_callbacks }
       end
     end
 
@@ -112,7 +114,9 @@ module ActiveRecordCompose
         with_pool_transaction_isolation_level(connection) do
           ensure_finalize = !connection.transaction_open?
 
-          connection.transaction do
+          connection.transaction do |tran|
+            tran ||= ActiveTransaction.new(connection.current_transaction) # steep:ignore
+            transaction_coordinator.add_transaction(tran)
             connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?)
 
             yield.tap { raise ActiveRecord::Rollback unless _1 }
@@ -120,6 +124,9 @@ module ActiveRecordCompose
         end
       end
     end
+
+    # @private
+    def transaction_coordinator = @transaction_coordinator ||= TransactionCoordinator.new
 
     # @private
     def default_ar_class = ActiveRecord::Base
