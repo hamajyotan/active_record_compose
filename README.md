@@ -59,6 +59,10 @@ $ bundle
 
 ## Quick Start
 
+For a complete runnable application, see the Sample Application section below.
+
+The examples in this section focus on ActiveRecordCompose itself and intentionally omit surrounding application code such as migrations, routes, views, and jobs.
+
 ### Basic Example
 
 Suppose you have two models:
