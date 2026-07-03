@@ -10,6 +10,8 @@ require "debug"
 require "i18n"
 I18n.load_path += Dir[File.join(__dir__, "config/locales/*.yml")]
 
+require "active_support"
+
 # Since Rails 7.1, test_case implicitly depends on deprecator.
 require "active_support/deprecator"
 
