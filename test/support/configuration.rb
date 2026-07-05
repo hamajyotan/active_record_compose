@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
 ActiveRecord::Base.configurations = {
-  primary: { adapter: "sqlite3", database: ":memory:" }
+  primary: { adapter: "sqlite3", database: ":memory:" },
+  secondary: { adapter: "sqlite3", database: ":memory:" }
 }

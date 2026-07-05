@@ -26,3 +26,6 @@ end
 class OperationLog < ApplicationRecord
   validates :action, presence: true
 end
+
+class SecondaryModel < SecondaryRecord
+end
