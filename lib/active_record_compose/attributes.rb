@@ -167,10 +167,13 @@ module ActiveRecordCompose
 
     private
 
+    # @private
     def _write_attribute(...) = _require_attributes_initialized { super } # steep:ignore
 
+    # @private
     def attribute(...) = _require_attributes_initialized { super }
 
+    # @private
     def _require_attributes_initialized
       unless @attributes
         raise ActiveRecordCompose::UninitializedAttribute.new(self)
