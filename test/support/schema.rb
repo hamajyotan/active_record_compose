@@ -7,6 +7,11 @@ class ApplicationRecord < ActiveRecord::Base
   connects_to database: { writing: :primary }
 end
 
+class SecondaryRecord < ActiveRecord::Base
+  self.abstract_class = true
+  connects_to database: { writing: :secondary }
+end
+
 ApplicationRecord.connection_pool.with_connection do |conn|
   conn.create_table :accounts, force: true do |t|
     t.string :name, null: false
@@ -31,4 +36,8 @@ ApplicationRecord.connection_pool.with_connection do |conn|
   conn.create_table :operation_logs, force: true do |t|
     t.string :action, null: false
   end
+end
+
+SecondaryRecord.connection_pool.with_connection do |conn|
+  conn.create_table :secondary_models, force: true
 end

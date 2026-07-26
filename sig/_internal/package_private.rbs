@@ -118,6 +118,8 @@ module ActiveRecordCompose
     include ActiveSupport::Callbacks
     extend ActiveSupport::Callbacks::ClassMethods
 
+    @transaction_coordinator: ActiveRecordCompose::TransactionSupport::TransactionCoordinator
+
     def self.before_commit: (*untyped) -> untyped
     def self.after_commit: (*untyped) -> untyped
     def self.after_rollback: (*untyped) -> untyped
@@ -127,11 +129,28 @@ module ActiveRecordCompose
     def _run_before_commit_callbacks: () -> untyped
     def _run_commit_callbacks: () -> untyped
     def _run_rollback_callbacks: () -> untyped
+    def connection_pools: () -> Array[ActiveRecord::ConnectionAdapters::ConnectionPool]
 
     private
+    def models: -> ComposedCollection
     def default_ar_class: -> singleton(ActiveRecord::Base)
     def connection_pool: (?ar_class: singleton(ActiveRecord::Base)) -> ActiveRecord::ConnectionAdapters::ConnectionPool
     def with_pool_transaction_isolation_level: [T] (ActiveRecord::ConnectionAdapters::AbstractAdapter) { () -> T } -> T
+    def transaction_coordinator: () -> ActiveRecordCompose::TransactionSupport::TransactionCoordinator
+
+    class TransactionCoordinator
+      @_before_committed_called: bool
+      @transactions: Set[ActiveRecord::ConnectionAdapters::Transaction]
+
+      def add_transaction: (ActiveRecord::ConnectionAdapters::Transaction) -> void
+      def on_after_transaction: () { () -> void } -> void
+      def on_before_comitted: () { () -> void } -> void
+
+      private
+      def all_finished?: -> bool
+      def transactions: () -> Set[ActiveRecord::ConnectionAdapters::Transaction]
+      def with_transaction_cleanup: () { () -> void } -> void
+    end
   end
 
   module Persistence
