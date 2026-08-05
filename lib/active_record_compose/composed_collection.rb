@@ -118,7 +118,7 @@ module ActiveRecordCompose
     def symbol_proc_map
       @symbol_proc_map ||=
         Hash.new do |h, k|
-          h[k] = -> { owner.__send__(k) }
+          h[k] = -> { owner.__send__(k) } # steep:ignore
         end
     end
 
