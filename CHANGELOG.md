@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## [1.3.0] - 2026-08-09
+
+* Support secondary and multiple database
+  (https://github.com/hamajyotan/active_record_compose/pull/74)
+  - When models connecting to different databases are used together, the system behaves in a manner simulating a two-phase commit.
+  - Due to the nature of the ActiveRecord API supported by Rails, a true two-phase commit is not implemented; instead, transactions are nested when multiple database connections are involved.
+  - Note that operations remain unchanged when all models belong to a single primary database.
+
 ## [1.2.1] - 2026-03-21
 
 * Improved clarity of error when accessing uninitialized attributes.
