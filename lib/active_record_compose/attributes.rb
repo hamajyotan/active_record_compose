@@ -173,8 +173,7 @@ module ActiveRecordCompose
 
     def _require_attributes_initialized
       unless @attributes
-        raise ActiveRecordCompose::UninitializedAttribute,
-              "No attributes have been set. Is proper initialization performed, such as calling `super` in `initialize`?"
+        raise ActiveRecordCompose::UninitializedAttribute.new(self)
       end
 
       yield

@@ -36,6 +36,9 @@ module ActiveRecordCompose
   type destroy_context_type = ((^() -> boolish) | (^(ar_like) -> boolish))
   type condition_type = ((^() -> boolish) | (^(ar_like) -> boolish))
 
+  class ActiveRecordComposeError < StandardError
+  end
+
   class ComposedCollection
     include ::Enumerable[ar_like]
 
@@ -47,7 +50,7 @@ module ActiveRecordCompose
     def delete: (ar_like) -> ComposedCollection?
   end
 
-  class CircularReferenceDetected < StandardError
+  class CircularReferenceDetected < ActiveRecordComposeError
   end
 
   class Model
@@ -99,6 +102,9 @@ module ActiveRecordCompose
     extend Rails::Initializable::ClassMethods
   end
 
-  class UninitializedAttribute < StandardError
+  class UninitializedAttribute < ActiveRecordComposeError
+    def initialize: (?untyped) -> void
+
+    attr_reader record: untyped
   end
 end

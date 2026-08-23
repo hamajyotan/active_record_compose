@@ -24,6 +24,7 @@ class ActiveRecordCompose::ModelAttributeTest < ActiveSupport::TestCase
       assert_raises(ActiveRecordCompose::UninitializedAttribute) do
         model.confirmation = true
       end
+    assert { e.record == model }
     assert { e.message == "No attributes have been set. Is proper initialization performed, such as calling `super` in `initialize`?" }
   end
 

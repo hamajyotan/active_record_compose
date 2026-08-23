@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module ActiveRecordCompose
+  # Generic Active Record Compose exception class.
+  #
+  class ActiveRecordComposeError < StandardError
+  end
+
   # Occurs when a circular reference is detected in the containing model.
   #
   # @example
@@ -25,7 +30,7 @@ module ActiveRecordCompose
   #     inner.model = outer  # There is a circular reference in the form outer > middle > inner > outer.
   #     outer.save  #=> raises ActiveRecordCompose::CircularReferenceDetected
   #
-  class CircularReferenceDetected < StandardError; end
+  class CircularReferenceDetected < ActiveRecordComposeError; end
 
   # Occurs when accessing Attributes without initializing it.
   #
@@ -40,5 +45,13 @@ module ActiveRecordCompose
   #     model = Model.new
   #     model.foo = 1  #=> raises ActiveRecordCompose::UninitializedAttribute
   #
-  class UninitializedAttribute < StandardError; end
+  class UninitializedAttribute < ActiveRecordComposeError
+    attr_reader :record
+
+    def initialize(record = nil)
+      @record = record
+      message = "No attributes have been set. Is proper initialization performed, such as calling `super` in `initialize`?"
+      super(message)
+    end
+  end
 end
