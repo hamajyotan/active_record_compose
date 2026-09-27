@@ -15,24 +15,26 @@ module ActiveRecordCompose
     # steep:ignore:start
 
     class_methods do
-      # @private
-      # @deprecated
-      def with_connection(...)
-        ActiveRecord.deprecator.warn("`with_connection` is deprecated. Use `ActiveRecord::Base.with_connection` instead.")
-        ActiveRecord::Base.with_connection(...)
-      end
+      if ActiveRecord.version >= Gem::Version.new("7.2")
+        # @private
+        # @deprecated
+        def with_connection(...)
+          ActiveRecordCompose.deprecator.deprecation_warning(:with_connection, "Use `ActiveRecord::Base.with_connection` instead.")
+          ActiveRecord::Base.with_connection(...)
+        end
 
-      # @private
-      # @deprecated
-      def lease_connection(...)
-        ActiveRecord.deprecator.warn("`lease_connection` is deprecated. Use `ActiveRecord::Base.lease_connection` instead.")
-        ActiveRecord::Base.lease_connection(...)
+        # @private
+        # @deprecated
+        def lease_connection(...)
+          ActiveRecordCompose.deprecator.deprecation_warning(:lease_connection, "Use `ActiveRecord::Base.lease_connection` instead.")
+          ActiveRecord::Base.lease_connection(...)
+        end
       end
 
       # @private
       # @deprecated
       def connection(...)
-        ActiveRecord.deprecator.warn("`connection` is deprecated. Use `ActiveRecord::Base.connection` instead.")
+        ActiveRecordCompose.deprecator.deprecation_warning(:connection, "Use `ActiveRecord::Base.connection` instead.")
         ActiveRecord::Base.connection(...)
       end
     end

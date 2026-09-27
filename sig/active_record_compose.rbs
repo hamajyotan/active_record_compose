@@ -4,6 +4,9 @@
 module ActiveRecordCompose
   VERSION: String
 
+  def self.version: () -> Gem::Version
+  def self.deprecator: () -> ActiveSupport::Deprecation
+
   interface _ARLike
     def save: (**untyped options) -> bool
     def save!: (**untyped options) -> untyped

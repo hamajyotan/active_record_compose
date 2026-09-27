@@ -11,6 +11,10 @@ require_relative "active_record_compose/model"
 # Most of the functionality resides in {ActiveRecordCompose::Model}.
 #
 module ActiveRecordCompose
+  # @private
+  def self.deprecator
+    @deprecator ||= ActiveSupport::Deprecation.new(next_major_version, "ActiveRecordCompose") # steep:ignore
+  end
 end
 
 require "active_record_compose/railtie" if defined?(::Rails::Railtie)

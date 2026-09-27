@@ -1,4 +1,7 @@
 module ActiveRecordCompose
+  private
+  def self.next_major_version: () -> Integer
+
   module Attributes
     extend ActiveSupport::Concern
     include ActiveModel::Attributes
