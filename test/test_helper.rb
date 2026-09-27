@@ -12,9 +12,6 @@ I18n.load_path += Dir[File.join(__dir__, "config/locales/*.yml")]
 
 require "active_support"
 
-# Since Rails 7.1, test_case implicitly depends on deprecator.
-require "active_support/deprecator"
-
 require "active_support/test_case"
 
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
