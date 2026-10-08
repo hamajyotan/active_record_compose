@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ActiveRecordCompose
-  VERSION = "1.3.0"
+  VERSION = "1.4.0"
 
   class << self
     def version = Gem::Version.new(VERSION)

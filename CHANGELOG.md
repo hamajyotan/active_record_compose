@@ -1,5 +1,19 @@
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-14
+
+* Use a dedicated deprecator for deprecated APIs.
+  (https://github.com/hamajyotan/active_record_compose/pull/75)
+* Fix `before_commit` callback timing for transactions spanning multiple database connections.
+  (https://github.com/hamajyotan/active_record_compose/pull/76)
+  - Ensure that `before_commit` callbacks are invoked at the appropriate point before the outermost transaction commits.
+  - Leave behavior unchanged when all models use a single database connection.
+* Perform validations outside a transaction.
+  (https://github.com/hamajyotan/active_record_compose/pull/78)
+* Execute inner models' `after_commit` callbacks before outer models' callbacks.
+  (https://github.com/hamajyotan/active_record_compose/pull/79)
+* Add `ActiveRecordCompose::UninitializedAttribute#record`.
+
 ## [1.3.0] - 2026-08-09
 
 * Support secondary and multiple database
