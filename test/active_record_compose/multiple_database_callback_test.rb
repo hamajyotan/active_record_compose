@@ -53,9 +53,9 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
     end
     expected =
       [
-        "__1: before_commit called!",
         "p_1: before_commit called!",
         "p_1: after_commit called!",
+        "__1: before_commit called!",
         "s_1: before_commit called!",
         "__1: after_commit called!",
         "s_1: after_commit called!"
@@ -81,11 +81,11 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
     end
     expected =
       [
-        "__3: before_commit called!",
         "__1: before_commit called!",
         "p_1: before_commit called!",
         "__1: after_commit called!",
         "p_1: after_commit called!",
+        "__3: before_commit called!",
         "__2: before_commit called!",
         "s_1: before_commit called!",
         "__3: after_commit called!",
@@ -119,10 +119,10 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
     expected =
       [
         "---: inner transaction",
-        "__1: before_commit called!",
         "s_1: before_commit called!",
         "s_1: after_commit called!",
         "---: secondary outer transaction",
+        "__1: before_commit called!",
         "p_1: before_commit called!",
         "__1: after_commit called!",
         "p_1: after_commit called!",

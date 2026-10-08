@@ -15,10 +15,9 @@ module ActiveRecordCompose
       # but not just before any inner transactions commit.
       #
       def on_before_comitted
-        return if @_before_committed_called
+        return unless final_transaction?
 
         yield
-        @_before_committed_called = true
       end
 
       # It processes after_commit/after_rollback only immediately
@@ -35,9 +34,10 @@ module ActiveRecordCompose
       def with_transaction_cleanup
         yield
       ensure
-        @_before_committed_called = false
         transactions.reject! { _1.closed? }
       end
+
+      def final_transaction? = transactions.one? { !_1.closed? }
 
       def all_finished? = transactions.all? { _1.closed? }
 

@@ -142,7 +142,6 @@ module ActiveRecordCompose
     def transaction_coordinator: () -> ActiveRecordCompose::TransactionSupport::TransactionCoordinator
 
     class TransactionCoordinator
-      @_before_committed_called: bool
       @transactions: Set[ActiveRecord::ConnectionAdapters::Transaction]
 
       def add_transaction: (ActiveRecord::ConnectionAdapters::Transaction) -> void
@@ -150,6 +149,7 @@ module ActiveRecordCompose
       def on_before_comitted: () { () -> void } -> void
 
       private
+      def final_transaction?: -> bool
       def all_finished?: -> bool
       def transactions: () -> Set[ActiveRecord::ConnectionAdapters::Transaction]
       def with_transaction_cleanup: () { () -> void } -> void
