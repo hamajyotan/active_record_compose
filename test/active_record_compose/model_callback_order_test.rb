@@ -10,15 +10,15 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
       super()
     end
 
-    before_save { tracer << "before_save called" }
-    before_create { tracer << "before_create called" }
-    before_update { tracer << "before_update called" }
-    before_commit { tracer << "before_commit called" }
-    after_save { tracer << "after_save called" }
-    after_create { tracer << "after_create called" }
-    after_update { tracer << "after_update called" }
-    after_rollback { tracer << "after_rollback called" }
-    after_commit { tracer << "after_commit called" }
+    before_save { tracer << "before_save" }
+    before_create { tracer << "before_create" }
+    before_update { tracer << "before_update" }
+    before_commit { tracer << "before_commit" }
+    after_save { tracer << "after_save" }
+    after_create { tracer << "after_create" }
+    after_update { tracer << "after_update" }
+    after_rollback { tracer << "after_rollback" }
+    after_commit { tracer << "after_commit" }
 
     def persisted? = !!@persisted
 
@@ -34,12 +34,12 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model.save
     expected =
       [
-        "before_save called",
-        "before_update called",
-        "after_update called",
-        "after_save called",
-        "before_commit called",
-        "after_commit called"
+        "before_save",
+        "before_update",
+        "after_update",
+        "after_save",
+        "before_commit",
+        "after_commit"
       ]
     assert { tracer == expected }
   end
@@ -51,12 +51,12 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model.save
     expected =
       [
-        "before_save called",
-        "before_create called",
-        "after_create called",
-        "after_save called",
-        "before_commit called",
-        "after_commit called"
+        "before_save",
+        "before_create",
+        "after_create",
+        "after_save",
+        "before_commit",
+        "after_commit"
       ]
     assert { tracer == expected }
   end
@@ -68,12 +68,12 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model.update({})
     expected =
       [
-        "before_save called",
-        "before_update called",
-        "after_update called",
-        "after_save called",
-        "before_commit called",
-        "after_commit called"
+        "before_save",
+        "before_update",
+        "after_update",
+        "after_save",
+        "before_commit",
+        "after_commit"
       ]
     assert { tracer == expected }
   end
@@ -85,12 +85,12 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model.update({})
     expected =
       [
-        "before_save called",
-        "before_create called",
-        "after_create called",
-        "after_save called",
-        "before_commit called",
-        "after_commit called"
+        "before_save",
+        "before_create",
+        "after_create",
+        "after_save",
+        "before_commit",
+        "after_commit"
       ]
     assert { tracer == expected }
   end
@@ -113,14 +113,14 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
       [
         "outer transsaction starts",
         "inner transsaction starts",
-        "before_save called",
-        "before_create called",
-        "after_create called",
-        "after_save called",
+        "before_save",
+        "before_create",
+        "after_create",
+        "after_save",
         "inner transsaction ends",
         "outer transsaction ends",
-        "before_commit called",
-        "after_commit called"
+        "before_commit",
+        "after_commit"
       ]
     assert { tracer == expected }
   end
@@ -144,13 +144,13 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
       [
         "outer transsaction starts",
         "inner transsaction starts",
-        "before_save called",
-        "before_create called",
-        "after_create called",
-        "after_save called",
+        "before_save",
+        "before_create",
+        "after_create",
+        "after_save",
         "inner transsaction ends",
         "outer transsaction ends",
-        "after_rollback called"
+        "after_rollback"
       ]
     assert { tracer == expected }
   end
