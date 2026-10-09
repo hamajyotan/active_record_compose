@@ -3,6 +3,26 @@
 require "test_helper"
 
 class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCase
+  class Pri < Account
+    attribute :name, :string, default: -> { "foo" }
+    attribute :email, :string, default: -> { "foo@example.com" }
+    attribute :tracer
+    attribute :tag, :string
+
+    before_commit { tracer << "#{tag}: before_commit called!" }
+    after_commit { tracer << "#{tag}: after_commit called!" }
+    after_rollback { tracer << "#{tag}: after_rollback called!" }
+  end
+
+  class Sec < SecondaryModel
+    attribute :tracer
+    attribute :tag, :string
+
+    before_commit { tracer << "#{tag}: before_commit called!" }
+    after_commit { tracer << "#{tag}: after_commit called!" }
+    after_rollback { tracer << "#{tag}: after_rollback called!" }
+  end
+
   class ComposeModel < ActiveRecordCompose::Model
     attribute :tracer
     attribute :tag, :string
@@ -20,11 +40,11 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
   test "before_commit and after_commit are called upon commit" do
     tracer = []
 
-    pri_1 = new_primary_model(tracer:, tag: "p_1")
-    pri_2 = new_primary_model(tracer:, tag: "p_2")
+    pri_1 = Pri.new(tracer:, tag: "p_1")
+    pri_2 = Pri.new(tracer:, tag: "p_2")
     model = ComposeModel.new(pri_1, pri_2, tracer:, tag: "__1")
 
-    assert_difference -> { primary_model_class.count } => 2 do
+    assert_difference -> { Pri.count } => 2 do
       model.save!
     end
     expected =
@@ -42,12 +62,12 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
   test "before_commit fires just before the first commit operation, and after_commit fires just after the last commit operation." do
     tracer = []
 
-    pri_1 = new_primary_model(tracer:, tag: "p_1")
-    sec_1 = new_secondary_model(tracer:, tag: "s_1")
+    pri_1 = Pri.new(tracer:, tag: "p_1")
+    sec_1 = Sec.new(tracer:, tag: "s_1")
     model = ComposeModel.new(pri_1, sec_1, tracer:, tag: "__1")
 
-    assert_difference -> { primary_model_class.count } => 1 do
-      assert_difference -> { secondary_model_class.count } => 1 do
+    assert_difference -> { Pri.count } => 1 do
+      assert_difference -> { Sec.count } => 1 do
         model.save!
       end
     end
@@ -66,16 +86,16 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
   test "If there are multiple database connections, after_commit will only be executed once all connections have terminated." do
     tracer = []
 
-    pri_1 = new_primary_model(tracer:, tag: "p_1")
+    pri_1 = Pri.new(tracer:, tag: "p_1")
     inner_1 = ComposeModel.new(pri_1, tracer:, tag: "__1")
 
-    sec_1 = new_secondary_model(tracer:, tag: "s_1")
+    sec_1 = Sec.new(tracer:, tag: "s_1")
     inner_2 = ComposeModel.new(sec_1, tracer:, tag: "__2")
 
     model = ComposeModel.new(inner_1, inner_2, tracer:, tag: "__3")
 
-    assert_difference -> { primary_model_class.count } => 1 do
-      assert_difference -> { secondary_model_class.count } => 1 do
+    assert_difference -> { Pri.count } => 1 do
+      assert_difference -> { Sec.count } => 1 do
         model.save!
       end
     end
@@ -98,13 +118,13 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
   test "When executed within an explicit transaction, the callback execution is deferred until the end of the outer transaction." do
     tracer = []
 
-    pri_1 = new_primary_model(tracer:, tag: "p_1")
-    sec_1 = new_secondary_model(tracer:, tag: "s_1")
+    pri_1 = Pri.new(tracer:, tag: "p_1")
+    sec_1 = Sec.new(tracer:, tag: "s_1")
 
     model = ComposeModel.new(pri_1, sec_1, tracer:, tag: "__1")
 
-    assert_difference -> { primary_model_class.count } => 1 do
-      assert_difference -> { secondary_model_class.count } => 1 do
+    assert_difference -> { Pri.count } => 1 do
+      assert_difference -> { Sec.count } => 1 do
         ApplicationRecord.transaction do
           SecondaryRecord.transaction do
             model.save!
@@ -129,39 +149,5 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
         "---: primary outer transaction"
       ]
     assert { tracer == expected }
-  end
-
-  private
-
-  def primary_model_class
-    @primary_model_class ||=
-      Class.new(Account) do
-        attribute :tracer
-        attribute :tag, :string
-
-        before_commit { tracer << "#{tag}: before_commit called!" }
-        after_commit { tracer << "#{tag}: after_commit called!" }
-        after_rollback { tracer << "#{tag}: after_rollback called!" }
-      end
-  end
-
-  def secondary_model_class
-    @secondary_model_class ||=
-      Class.new(SecondaryModel) do
-        attribute :tracer
-        attribute :tag, :string
-
-        before_commit { tracer << "#{tag}: before_commit called!" }
-        after_commit { tracer << "#{tag}: after_commit called!" }
-        after_rollback { tracer << "#{tag}: after_rollback called!" }
-      end
-  end
-
-  def new_primary_model(tracer:, tag:)
-    primary_model_class.new(name: "foo", email: "foo@example.com", tracer:, tag:)
-  end
-
-  def new_secondary_model(tracer:, tag:)
-    secondary_model_class.new(tracer:, tag:)
   end
 end
