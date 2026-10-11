@@ -11,10 +11,12 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
       Array.wrap(inner).each { models << _1 }
     end
 
+    before_validation { tracer << "before_validation" }
     before_save { tracer << "before_save" }
     before_create { tracer << "before_create" }
     before_update { tracer << "before_update" }
     before_commit { tracer << "before_commit" }
+    after_validation { tracer << "after_validation" }
     after_save { tracer << "after_save" }
     after_create { tracer << "after_create" }
     after_update { tracer << "after_update" }
@@ -31,10 +33,12 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
   class Inner < Account
     attribute :tracer
 
+    before_validation { tracer << "--- before_validation" }
     before_save { tracer << "--- before_save" }
     before_create { tracer << "--- before_create" }
     before_update { tracer << "--- before_update" }
     before_commit { tracer << "--- before_commit" }
+    after_validation { tracer << "--- after_validation" }
     after_save { tracer << "--- after_save" }
     after_create { tracer << "--- after_create" }
     after_update { tracer << "--- after_update" }
@@ -49,6 +53,8 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model.save
     expected =
       [
+        "before_validation",
+        "after_validation",
         "before_save",
         "before_update",
         "after_update",
@@ -66,6 +72,8 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model.save
     expected =
       [
+        "before_validation",
+        "after_validation",
         "before_save",
         "before_create",
         "after_create",
@@ -83,6 +91,8 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model.update({})
     expected =
       [
+        "before_validation",
+        "after_validation",
         "before_save",
         "before_update",
         "after_update",
@@ -100,6 +110,8 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model.update({})
     expected =
       [
+        "before_validation",
+        "after_validation",
         "before_save",
         "before_create",
         "after_create",
@@ -128,6 +140,8 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
       [
         "outer transsaction starts",
         "inner transsaction starts",
+        "before_validation",
+        "after_validation",
         "before_save",
         "before_create",
         "after_create",
@@ -159,6 +173,8 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
       [
         "outer transsaction starts",
         "inner transsaction starts",
+        "before_validation",
+        "after_validation",
         "before_save",
         "before_create",
         "after_create",
@@ -178,6 +194,10 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     model.save
     expected =
       [
+        "before_validation",
+        "--- before_validation",
+        "--- after_validation",
+        "after_validation",
         "before_save",
         "before_create",
         "--- before_save",
