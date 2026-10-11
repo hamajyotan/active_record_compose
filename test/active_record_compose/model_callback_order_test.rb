@@ -46,6 +46,18 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
     after_commit { tracer << "--- after_commit" }
   end
 
+  class FailOnSave < Account
+    attribute :tracer
+
+    before_validation { tracer << "--- before_validation" }
+    before_save { tracer << "--- before_save" }
+    before_commit { tracer << "--- before_commit" }
+    after_validation { tracer << "--- after_validation" }
+    after_save { raise "bang!" }
+    after_rollback { tracer << "--- after_rollback" }
+    after_commit { tracer << "--- after_commit" }
+  end
+
   test "when persisted, #save causes (before|after)_(save|update) and after_commit callback to work" do
     tracer = []
     model = CallbackOrder.new(tracer, persisted: true)
@@ -210,6 +222,44 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
         "--- before_commit",
         "after_commit",
         "--- after_commit"
+      ]
+    assert { tracer == expected }
+  end
+
+  test "when validation error occurs, the save hook will not be executed." do
+    tracer = []
+    inner = Inner.new(name: nil, email: "foo@example.com", tracer:)
+    model = CallbackOrder.new(tracer, inner:)
+
+    model.save
+    expected =
+      [
+        "before_validation",
+        "--- before_validation",
+        "--- after_validation",
+        "after_validation",
+        "after_rollback"
+      ]
+    assert { tracer == expected }
+  end
+
+  test "when error occurs during the save operation, the `after_rollback` hook is executed." do
+    tracer = []
+    inner = FailOnSave.new(name: "foo", email: "foo@example.com", tracer:)
+    model = CallbackOrder.new(tracer, inner:)
+
+    assert_raises(StandardError, "bang!") { model.save }
+    expected =
+      [
+        "before_validation",
+        "--- before_validation",
+        "--- after_validation",
+        "after_validation",
+        "before_save",
+        "before_create",
+        "--- before_save",
+        "after_rollback",
+        "--- after_rollback"
       ]
     assert { tracer == expected }
   end
