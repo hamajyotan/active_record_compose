@@ -85,8 +85,8 @@ module ActiveRecordCompose
 
     include ActiveRecordCompose::Attributes
     include ActiveRecordCompose::Persistence
-    include ActiveRecordCompose::Validations
     include ActiveRecordCompose::TransactionSupport
+    include ActiveRecordCompose::Validations
     include ActiveRecordCompose::Inspectable
 
     def initialize(attributes = {})

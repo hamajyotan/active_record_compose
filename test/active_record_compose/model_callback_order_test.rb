@@ -237,8 +237,7 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
         "before_validation",
         "--- before_validation",
         "--- after_validation",
-        "after_validation",
-        "after_rollback"
+        "after_validation"
       ]
     assert { tracer == expected }
   end
