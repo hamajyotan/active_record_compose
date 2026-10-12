@@ -218,10 +218,10 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
         "--- after_save",
         "after_create",
         "after_save",
-        "before_commit",
         "--- before_commit",
-        "after_commit",
-        "--- after_commit"
+        "before_commit",
+        "--- after_commit",
+        "after_commit"
       ]
     assert { tracer == expected }
   end
@@ -257,8 +257,8 @@ class ActiveRecordCompose::ModelCallbackOrderTest < ActiveSupport::TestCase
         "before_save",
         "before_create",
         "--- before_save",
-        "after_rollback",
-        "--- after_rollback"
+        "--- after_rollback",
+        "after_rollback"
       ]
     assert { tracer == expected }
   end
