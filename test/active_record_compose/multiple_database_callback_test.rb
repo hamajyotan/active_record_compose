@@ -49,12 +49,12 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
     end
     expected =
       [
-        ": before_commit",
         "---- p1: before_commit",
         "---- p2: before_commit",
-        ": after_commit",
+        ": before_commit",
         "---- p1: after_commit",
-        "---- p2: after_commit"
+        "---- p2: after_commit",
+        ": after_commit"
       ]
     assert { tracer == expected }
   end
@@ -75,10 +75,10 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
       [
         "---- p: before_commit",
         "---- p: after_commit",
-        ": before_commit",
         "---- s: before_commit",
-        ": after_commit",
-        "---- s: after_commit"
+        ": before_commit",
+        "---- s: after_commit",
+        ": after_commit"
       ]
     assert { tracer == expected }
   end
@@ -101,16 +101,16 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
     end
     expected =
       [
-        "---- P: before_commit",
         "-------- p: before_commit",
-        "---- P: after_commit",
+        "---- P: before_commit",
         "-------- p: after_commit",
-        ": before_commit",
-        "---- S: before_commit",
+        "---- P: after_commit",
         "-------- s: before_commit",
-        ": after_commit",
+        "---- S: before_commit",
+        ": before_commit",
+        "-------- s: after_commit",
         "---- S: after_commit",
-        "-------- s: after_commit"
+        ": after_commit"
       ]
     assert { tracer == expected }
   end
@@ -142,10 +142,10 @@ class ActiveRecordCompose::MultipleDatabaseCallbackTest < ActiveSupport::TestCas
         "---- s: before_commit",
         "---- s: after_commit",
         "secondary outer transaction",
-        ": before_commit",
         "---- p: before_commit",
-        ": after_commit",
+        ": before_commit",
         "---- p: after_commit",
+        ": after_commit",
         "primary outer transaction"
       ]
     assert { tracer == expected }

@@ -137,9 +137,12 @@ module ActiveRecordCompose
               connection.transaction do |tran|
                 tran ||= ActiveTransaction.new(connection.current_transaction) # steep:ignore
                 transaction_coordinator.add_transaction(tran)
-                connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?)
 
-                inner_proc.call.tap { raise ActiveRecord::Rollback unless _1 }
+                begin
+                  inner_proc.call.tap { raise ActiveRecord::Rollback unless _1 }
+                ensure
+                  connection.add_transaction_record(self, ensure_finalize || has_transactional_callbacks?)
+                end
               end
             end
           end
