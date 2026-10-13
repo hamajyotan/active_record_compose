@@ -168,7 +168,7 @@ module ActiveRecordCompose
     private
 
     # @private
-    def _write_attribute(...) = _require_attributes_initialized { super } # steep:ignore
+    def _write_attribute(...) = _require_attributes_initialized { super }
 
     # @private
     def attribute(...) = _require_attributes_initialized { super }

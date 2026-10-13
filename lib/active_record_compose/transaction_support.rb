@@ -160,7 +160,7 @@ module ActiveRecordCompose
     # @private
     def connection_pool(ar_class: default_ar_class)
       connection_specification_name = ar_class.connection_specification_name
-      role = ar_class.current_role
+      role = ar_class.current_role # steep:ignore
       shard = ar_class.current_shard # steep:ignore
       connection_handler = ar_class.connection_handler # steep:ignore
       retrieve_options = { role:, shard: }
@@ -172,7 +172,7 @@ module ActiveRecordCompose
     # @private
     def with_pool_transaction_isolation_level(connection, &block)
       if ActiveRecord.gem_version.release >= Gem::Version.new("8.1.0")
-        isolation_level = ActiveRecord.default_transaction_isolation_level # steep:ignore
+        isolation_level = ActiveRecord.default_transaction_isolation_level
         connection.pool.with_pool_transaction_isolation_level(isolation_level, connection.transaction_open?, &block)
       else
         block.call
