@@ -174,6 +174,22 @@ module ActiveRecordCompose
     def attribute(...) = _require_attributes_initialized { super }
 
     # @private
+    #
+    # Overrides `ActiveModel::AttributeMethods#attribute_method?`, which is used by
+    # `method_missing` and `respond_to?`.
+    # The original implementation builds the whole `#attributes` hash, which reads every
+    # delegated attribute. This causes unnecessary reads and raises an error when
+    # a delegation target of an unrelated attribute is nil.
+    # Here we determine it by attribute name only, without reading any values.
+    # As with the original implementation (via `#attributes`), it raises
+    # `ActiveRecordCompose::UninitializedAttribute` if the attributes are not initialized.
+    #
+    def attribute_method?(attr_name)
+      _require_attributes_initialized { @attributes.key?(attr_name) } ||
+        delegated_attributes.to_a.any? { _1.attribute_name == attr_name }
+    end
+
+    # @private
     def _require_attributes_initialized
       unless @attributes
         raise ActiveRecordCompose::UninitializedAttribute.new(self)
