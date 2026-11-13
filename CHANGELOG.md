@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+* Fix attribute methods resolved via `method_missing` reading all delegated attributes.
+  - When generated attribute methods are removed (e.g. by calling `attribute_method_suffix` after declaring attributes),
+    attribute methods such as `#foo`, `#foo?` were resolved by building the whole `#attributes` hash.
+  - As a result, they raised `ActiveSupport::DelegationError` when the delegation target of an unrelated attribute was nil.
+  - Attribute methods are now determined by attribute name only, without reading any attribute values.
+
 ## [1.4.0] - 2026-10-14
 
 * Use a dedicated deprecator for deprecated APIs.
