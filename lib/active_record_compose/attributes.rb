@@ -161,7 +161,11 @@ module ActiveRecordCompose
     # @return [Hash<String, Object>] hash with the attribute name as key and the attribute value as value.
     def attributes
       _require_attributes_initialized do
-        super.merge(*delegated_attributes.to_a.map { _1.attribute_hash(self) })
+        super.tap do |hash|
+          delegated_attributes&.each do |delegation|
+            hash[delegation.attribute_name] = public_send(delegation.attribute)
+          end
+        end
       end
     end
 

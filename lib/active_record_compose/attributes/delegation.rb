@@ -29,11 +29,6 @@ module ActiveRecordCompose
       # @return [String] The attribute name as string
       def attribute_name = attribute.to_s
 
-      # @return [Hash<String, Object>]
-      def attribute_hash(model)
-        { attribute_name => model.public_send(attribute) }
-      end
-
       private
 
       attr_reader :to, :allow_nil

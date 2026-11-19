@@ -32,7 +32,6 @@ module ActiveRecordCompose
       def initialize: (attribute: String, to: Symbol, ?allow_nil: bool) -> void
       def attribute: () -> Symbol
       def attribute_name: () -> String
-      def attribute_hash: (Object model) -> Hash[String, untyped]
       def define_delegated_attribute: ((Module & ActiveModel::AttributeMethods::ClassMethods) klass) -> void
 
       @attribute: Symbol
