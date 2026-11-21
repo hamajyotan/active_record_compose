@@ -86,6 +86,38 @@ class ActiveRecordCompose::MultipleDatabaseTest < ActiveSupport::TestCase
     assert { model.after_rollback_calls == 1 }
   end
 
+  test "dup inside a transaction does not share transaction_coordinator with the original model" do
+    klass = Class.new(ActiveRecordCompose::Model) do
+      def initialize(inner_model)
+        @inner_model = inner_model
+        super()
+        models << inner_model
+      end
+
+      attribute :after_commit_calls, :integer, default: 0
+      after_commit { self.after_commit_calls += 1 }
+
+      def replace_model(new_model)
+        models.clear
+        models << new_model
+      end
+    end
+
+    pri_model = klass.new(new_primary_model)
+    duped_after_commit_calls = nil
+
+    ApplicationRecord.transaction do
+      pri_model.save!
+      duped = pri_model.dup
+      duped.replace_model(new_secondary_model)
+      duped.save!
+      duped_after_commit_calls = duped.after_commit_calls
+    end
+
+    assert { pri_model.after_commit_calls == 1 }
+    assert { duped_after_commit_calls == 1 }
+  end
+
   private
 
   def new_primary_model = PRIMARY_DB_MODEL.new(name: "foo", email: "foo@example.com")

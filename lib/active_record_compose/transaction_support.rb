@@ -104,6 +104,13 @@ module ActiveRecordCompose
       end
     end
 
+    # @private
+    # A duplicated model must not share the transaction coordinator with the original.
+    def initialize_dup(other)
+      @transaction_coordinator = nil # steep:ignore
+      super
+    end
+
     def save(**options) = with_transaction_returning_status { super }
 
     def save!(**options) = with_transaction_returning_status { super }
