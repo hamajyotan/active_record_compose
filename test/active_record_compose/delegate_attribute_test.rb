@@ -86,4 +86,132 @@ class ActiveRecordCompose::DelegateAttributeTest < ActiveSupport::TestCase
       end
     assert { e.message == "Instance variables cannot be specified in delegate to. (@model)" }
   end
+
+  test "overriding delegate_attribute with plain attribute in subclass deduplicates attribute_names and uses plain attribute" do
+    parent_class = Class.new(ActiveRecordCompose::Model) do
+      def initialize(data = Inner.new(x: "delegated"))
+        @data = data
+        super()
+      end
+
+      delegate_attribute :x, to: :data
+
+      private
+
+      attr_reader :data
+    end
+
+    child_class = Class.new(parent_class) do
+      attribute :x, :string, default: "plain"
+    end
+
+    data = Inner.new(x: "delegated")
+    model = child_class.new(data)
+
+    assert { child_class.attribute_names == %w[x] }
+    assert { model.attribute_names == %w[x] }
+    assert { model.x == "plain" }
+    assert { model.x? }
+    assert { model.attributes == { "x" => "plain" } }
+
+    model.x = "updated"
+    assert { model.x == "updated" }
+    assert { data.x == "delegated" }
+    assert { model.attributes == { "x" => "updated" } }
+  end
+
+  test "overriding plain attribute with delegate_attribute in subclass deduplicates attribute_names and uses delegated attribute" do
+    parent_class = Class.new(ActiveRecordCompose::Model) do
+      def initialize(data = Inner.new(x: "delegated"))
+        @data = data
+        super()
+      end
+
+      attribute :x, :string, default: "plain"
+
+      private
+
+      attr_reader :data
+    end
+
+    child_class = Class.new(parent_class) do
+      delegate_attribute :x, to: :data
+    end
+
+    data = Inner.new(x: "delegated")
+    model = child_class.new(data)
+
+    assert { child_class.attribute_names == %w[x] }
+    assert { model.attribute_names == %w[x] }
+    assert { model.x == "delegated" }
+    assert { model.x? }
+    assert { model.attributes == { "x" => "delegated" } }
+
+    model.x = "updated"
+    assert { model.x == "updated" }
+    assert { data.x == "updated" }
+    assert { model.attributes == { "x" => "updated" } }
+  end
+
+  test "redeclaring a delegated attribute as plain attribute in the same class deduplicates attribute_names and uses plain attribute" do
+    klass = Class.new(ActiveRecordCompose::Model) do
+      def initialize(data = Inner.new(x: "delegated"))
+        @data = data
+        super()
+      end
+
+      delegate_attribute :x, to: :data
+      attribute :x, :string, default: "plain"
+
+      private
+
+      attr_reader :data
+    end
+
+    data = Inner.new(x: "delegated")
+    model = klass.new(data)
+
+    assert { klass.attribute_names == %w[x] }
+    assert { model.attribute_names == %w[x] }
+    assert { model.x == "plain" }
+    assert { model.x? }
+    assert { model.attributes == { "x" => "plain" } }
+
+    model.x = ""
+    assert { model.x == "" }
+    refute { model.x? }
+    assert { data.x == "delegated" }
+    assert { model.attributes == { "x" => "" } }
+  end
+
+  test "redeclaring a plain attribute as delegated attribute in the same class deduplicates attribute_names and uses delegated attribute" do
+    klass = Class.new(ActiveRecordCompose::Model) do
+      def initialize(data = Inner.new(x: "delegated"))
+        @data = data
+        super()
+      end
+
+      attribute :x, :string, default: "plain"
+      delegate_attribute :x, to: :data
+
+      private
+
+      attr_reader :data
+    end
+
+    data = Inner.new(x: "delegated")
+    model = klass.new(data)
+
+    assert { klass.attribute_names == %w[x] }
+    assert { model.attribute_names == %w[x] }
+    assert { model.x == "delegated" }
+    assert { model.x? }
+    assert { model.attributes == { "x" => "delegated" } }
+
+    model.x = ""
+    assert { model.x == "" }
+    refute { model.x? }
+    assert { data.x == "" }
+    assert { model.attributes == { "x" => "" } }
+  end
 end

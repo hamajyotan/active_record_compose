@@ -33,6 +33,7 @@ module ActiveRecordCompose
       def attribute: () -> Symbol
       def attribute_name: () -> String
       def define_delegated_attribute: ((Module & ActiveModel::AttributeMethods::ClassMethods) klass) -> void
+      def undefine_delegated_attribute: ((Module & ActiveModel::AttributeMethods::ClassMethods) klass) -> void
 
       @attribute: Symbol
       @to: Symbol
@@ -43,6 +44,7 @@ module ActiveRecordCompose
       def allow_nil: () -> bool
       def reader: () -> String
       def writer: () -> String
+      def predicator: () -> String
     end
 
     module Querying

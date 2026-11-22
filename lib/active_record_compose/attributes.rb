@@ -65,10 +65,28 @@ module ActiveRecordCompose
     # steep:ignore:start
 
     class_methods do
+      # Defines a model attribute and removes any conflicting delegated attribute
+      # with the same name so that the later declaration takes precedence.
+      #
+      # @see ActiveModel::Attributes::ClassMethods#attribute
+      def attribute(name, ...)
+        target = name.to_sym
+        delegations, remaining = delegated_attributes.to_a.partition { _1.attribute == target }
+        if delegations.any?
+          self.delegated_attributes = remaining
+          delegations.each { _1.undefine_delegated_attribute(self) }
+        end
+
+        super
+      end
+
       # Provides a method of attribute access to the encapsulated model.
       #
       # It provides a way to access the attributes of the model it encompasses,
       # allowing transparent access as if it had those attributes itself.
+      #
+      # If an attribute with the same name was previously declared via
+      # {.attribute} or {.delegate_attribute}, the later declaration takes precedence.
       #
       # @param [Array<Symbol, String>] attributes
       #   attributes A variable-length list of attribute names to delegate.
@@ -97,7 +115,7 @@ module ActiveRecordCompose
       #
       # @see #attribute_names
       # @return [Array<String>] array of attribute name.
-      def attribute_names = super + delegated_attributes.to_a.map { _1.attribute_name }
+      def attribute_names = (super + delegated_attributes.to_a.map { _1.attribute_name }).uniq
     end
 
     # steep:ignore:end
@@ -130,7 +148,7 @@ module ActiveRecordCompose
     # @return [Array<String>] array of attribute name.
     def attribute_names
       _require_attributes_initialized do
-        super + delegated_attributes.to_a.map { _1.attribute_name }
+        (super + delegated_attributes.to_a.map { _1.attribute_name }).uniq
       end
     end
 

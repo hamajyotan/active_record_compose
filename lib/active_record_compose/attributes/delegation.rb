@@ -21,8 +21,14 @@ module ActiveRecordCompose
         klass.delegate(reader, writer, to:, allow_nil:)
 
         attr = attribute
-        klass.define_method(:"#{reader}?") do
+        klass.define_method(predicator) do
           ActiveRecordCompose::Attributes::AttributePredicate.new(public_send(attr)).call # steep:ignore
+        end
+      end
+
+      def undefine_delegated_attribute(klass)
+        [ reader, writer, predicator ].each do |method_name|
+          klass.remove_method(method_name) if klass.method_defined?(method_name, false)
         end
       end
 
@@ -36,6 +42,8 @@ module ActiveRecordCompose
       def reader = attribute.to_s
 
       def writer = "#{attribute}="
+
+      def predicator = "#{reader}?"
     end
   end
 end
