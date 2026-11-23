@@ -1,10 +1,21 @@
 ## [Unreleased]
 
+## [1.4.1] - 2026-11-23
+
 * Fix attribute methods resolved via `method_missing` reading all delegated attributes.
+  (https://github.com/hamajyotan/active_record_compose/pull/80)
   - When generated attribute methods are removed (e.g. by calling `attribute_method_suffix` after declaring attributes),
     attribute methods such as `#foo`, `#foo?` were resolved by building the whole `#attributes` hash.
   - As a result, they raised `ActiveSupport::DelegationError` when the delegation target of an unrelated attribute was nil.
   - Attribute methods are now determined by attribute name only, without reading any attribute values.
+* Reset `@transaction_coordinator` on `#dup`.
+  (https://github.com/hamajyotan/active_record_compose/pull/83)
+  - Duplicating a model inside a transaction no longer shares `@transaction_coordinator` with the original instance.
+* Fix overriding and redeclaring attributes with `delegate_attribute`.
+  (https://github.com/hamajyotan/active_record_compose/pull/84)
+  - Remove conflicting `delegated_attributes` entries and delegation methods when `.attribute` is declared with the same name, and deduplicate `attribute_names`.
+* refactor: Refactor `define_delegated_attribute` and optimize `#attributes` merging.
+  (https://github.com/hamajyotan/active_record_compose/pull/81, https://github.com/hamajyotan/active_record_compose/pull/82)
 
 ## [1.4.0] - 2026-10-14
 
